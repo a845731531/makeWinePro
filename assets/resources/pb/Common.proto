@@ -1,0 +1,24 @@
+package GameCmd;
+
+//客户端请求Req:100,服务器响应Rsp:200,服务器推送Ntf:300
+message DataUserCmd
+{
+	enum Param {
+        NtfMoneyChanged = 301;
+        NtfPropChanged = 302;
+    }
+}
+message NtfMoneyChanged {
+    optional int32 moneyType = 1;  //30001金币，30002钻石
+    optional int32 num = 2;
+}
+
+message PropData {
+    optional int32 propId = 1;
+    optional int32 num = 2;
+}
+
+message NtfPropChanged {
+    repeated PropData propList = 1;
+    optional int32 silent = 2;  //0要显示恭喜获得，1静默
+}

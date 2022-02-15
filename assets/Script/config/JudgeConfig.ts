@@ -1,0 +1,135 @@
+type JudgeConfigData = {
+	id: number,
+	quality: string,
+	minJudge1: number,
+	maxJudge1: number,
+	minJudge2: number,
+	maxJudge2: number,
+	minJudge3: number,
+	maxJudge3: number,
+	minJudge4: number,
+	maxJudge4: number,
+	minJudge5: number,
+	maxJudge5: number,
+	minJudge6: number,
+	maxJudge6: number,
+	descRandom: number[],
+}
+let JudgeConfig: { [id: string]: JudgeConfigData } = {
+    "1": {
+        "id": 1,
+        "quality": "不合格",
+        "minJudge1": 1,
+        "maxJudge1": 10,
+        "minJudge2": 1,
+        "maxJudge2": 20,
+        "minJudge3": 1,
+        "maxJudge3": 30,
+        "minJudge4": 1,
+        "maxJudge4": 40,
+        "minJudge5": 1,
+        "maxJudge5": 50,
+        "minJudge6": 1,
+        "maxJudge6": 60,
+        "descRandom": [
+            101,
+            102,
+            103,
+            104,
+            105
+        ]
+    },
+    "2": {
+        "id": 2,
+        "quality": "一般",
+        "minJudge1": 11,
+        "maxJudge1": 20,
+        "minJudge2": 21,
+        "maxJudge2": 40,
+        "minJudge3": 31,
+        "maxJudge3": 60,
+        "minJudge4": 41,
+        "maxJudge4": 80,
+        "minJudge5": 51,
+        "maxJudge5": 100,
+        "minJudge6": 61,
+        "maxJudge6": 120,
+        "descRandom": [
+            201,
+            202,
+            203,
+            204,
+            205
+        ]
+    },
+    "3": {
+        "id": 3,
+        "quality": "良好",
+        "minJudge1": 21,
+        "maxJudge1": 30,
+        "minJudge2": 41,
+        "maxJudge2": 60,
+        "minJudge3": 61,
+        "maxJudge3": 90,
+        "minJudge4": 81,
+        "maxJudge4": 120,
+        "minJudge5": 101,
+        "maxJudge5": 150,
+        "minJudge6": 121,
+        "maxJudge6": 180,
+        "descRandom": [
+            301,
+            302,
+            303,
+            304,
+            305
+        ]
+    },
+    "4": {
+        "id": 4,
+        "quality": "优质",
+        "minJudge1": 31,
+        "maxJudge1": 40,
+        "minJudge2": 61,
+        "maxJudge2": 80,
+        "minJudge3": 91,
+        "maxJudge3": 120,
+        "minJudge4": 121,
+        "maxJudge4": 160,
+        "minJudge5": 151,
+        "maxJudge5": 200,
+        "minJudge6": 181,
+        "maxJudge6": 240,
+        "descRandom": [
+            401,
+            402,
+            403,
+            404,
+            405
+        ]
+    },
+    "5": {
+        "id": 5,
+        "quality": "完美",
+        "minJudge1": 41,
+        "maxJudge1": 9999,
+        "minJudge2": 81,
+        "maxJudge2": 9999,
+        "minJudge3": 121,
+        "maxJudge3": 9999,
+        "minJudge4": 161,
+        "maxJudge4": 9999,
+        "minJudge5": 201,
+        "maxJudge5": 9999,
+        "minJudge6": 241,
+        "maxJudge6": 9999,
+        "descRandom": [
+            501,
+            502,
+            503,
+            504,
+            505
+        ]
+    }
+}
+export default JudgeConfig;

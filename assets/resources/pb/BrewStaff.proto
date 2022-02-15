@@ -1,0 +1,78 @@
+package GameCmd;
+
+//客户端请求Req:100,服务器响应Rsp:200,服务器推送Ntf:300
+message BrewStaffCmd
+{
+	enum Param
+	{
+        StaffListBrewStaffCmd_CS = 101;
+        StaffListBrewStaffCmd_SC = 201;
+        RecruitBrewStaffCmd_CS = 102;
+        RecruitBrewStaffCmd_SC = 202;
+        HireBrewStaffCmd_CS = 103;
+        HireBrewStaffCmd_SC = 203;
+        RenewalBrewStaffCmd_CS = 104;
+        RenewalBrewStaffCmd_SC = 204;
+        RiseStarBrewStaffCmd_CS = 105;
+        RiseStarBrewStaffCmd_SC = 205;
+    }
+}
+
+message StaffDataBrewStaffCmd {
+    optional int32 staff_id     							= 1;  //员工ID
+    optional int32 contract_end_time    					= 2;  //合同到期时间，秒
+    //已上阵的建筑？
+}
+
+//请求员工列表
+message StaffListBrewStaffCmd_CS {
+}
+message StaffListBrewStaffCmd_SC {
+    repeated StaffDataBrewStaffCmd staff_list = 1;  //员工列表
+}
+
+//猎头招聘
+message RecruitBrewStaffCmd_CS {
+	optional int32 recruit_type       = 1;  //1普通猎头，2高级猎头
+}
+message RecruitBrewStaffCmd_SC {
+    optional int32        error_code    = 1;  //1:zqb不足
+    optional string       error_msg     = 2;
+    optional int32 staff_id = 3;        //面试结果：员工ID
+}
+
+//雇佣已拥有的话要转成碎片
+message HirePropBrewStaffCmd {
+    optional int32 id     = 1;  //道具的类型
+    optional int32 num    = 2;  //数量
+}
+//聘用
+message HireBrewStaffCmd_CS {
+    optional int32 staff_id    = 1;  //员工ID
+}
+message HireBrewStaffCmd_SC {
+    optional int32        error_code                		= 1;  //雇佣失败，1:zqb不足
+    optional string       error_msg                 		= 2;
+    optional StaffDataBrewStaffCmd staff      = 3;      //增加员工
+	repeated HirePropBrewStaffCmd  chip_list  = 4;   //已拥有的话转成的碎片列表	
+}
+//续签合同1年
+message RenewalBrewStaffCmd_CS {
+    optional int32 staff_id    = 1;  //员工ID
+}
+message RenewalBrewStaffCmd_SC {
+    optional int32        error_code                		= 1;  //雇佣失败，1:zqb不足
+    optional string       error_msg                 		= 2;
+    optional StaffDataBrewStaffCmd staff      = 3;      //增加聘用时长
+}
+
+
+//升星
+message RiseStarBrewStaffCmd_CS {
+    optional int32 staff_id    = 1;  //员工ID
+}
+message RiseStarBrewStaffCmd_SC {
+    optional int32        error_code                		= 1;  //升星失败，1碎片不足,2满星
+    optional string       error_msg                 		= 2;
+    optional StaffDataBrewStaffCmd staff      = 3;      //更新员工信息
+}

@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "fcdd880c-2de8-4b5e-8fa7-59f92b655b63",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 1740,
+  "height": 515,
+  "platformSettings": {},
+  "subMetas": {
+    "building_chujiuqu_1": {
+      "ver": "1.0.6",
+      "uuid": "4f22eb7a-3062-40c5-922e-4c5a43d9c9aa",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "fcdd880c-2de8-4b5e-8fa7-59f92b655b63",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -0.5,
+      "offsetY": -0.5,
+      "trimX": 0,
+      "trimY": 1,
+      "width": 1739,
+      "height": 514,
+      "rawWidth": 1740,
+      "rawHeight": 515,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

@@ -1,0 +1,55 @@
+
+caiqu.png
+size: 410,288
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+01
+  rotate: false
+  xy: 194, 61
+  size: 132, 136
+  orig: 132, 136
+  offset: 0, 0
+  index: -1
+02
+  rotate: false
+  xy: 194, 7
+  size: 120, 52
+  orig: 120, 60
+  offset: 0, 8
+  index: -1
+03
+  rotate: false
+  xy: 321, 205
+  size: 44, 81
+  orig: 45, 83
+  offset: 1, 1
+  index: -1
+04
+  rotate: false
+  xy: 94, 2
+  size: 98, 195
+  orig: 109, 195
+  offset: 11, 0
+  index: -1
+05
+  rotate: false
+  xy: 2, 2
+  size: 90, 284
+  orig: 96, 284
+  offset: 6, 0
+  index: -1
+06
+  rotate: false
+  xy: 328, 91
+  size: 80, 112
+  orig: 80, 112
+  offset: 0, 0
+  index: -1
+q
+  rotate: false
+  xy: 94, 199
+  size: 225, 87
+  orig: 225, 87
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,174 @@
+
+nv.png
+size: 124,78
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+C1 #r15
+  rotate: true
+  xy: 77, 3
+  size: 8, 14
+  orig: 8, 14
+  offset: 0, 0
+  index: -1
+C2 #r15
+  rotate: false
+  xy: 2, 6
+  size: 26, 29
+  orig: 26, 34
+  offset: 0, 0
+  index: -1
+C2a
+  rotate: false
+  xy: 110, 13
+  size: 12, 15
+  orig: 12, 15
+  offset: 0, 0
+  index: -1
+C3
+  rotate: true
+  xy: 102, 45
+  size: 8, 20
+  orig: 8, 20
+  offset: 0, 0
+  index: -1
+C4
+  rotate: true
+  xy: 71, 23
+  size: 8, 20
+  orig: 8, 20
+  offset: 0, 0
+  index: -1
+C5
+  rotate: true
+  xy: 59, 2
+  size: 7, 16
+  orig: 7, 16
+  offset: 0, 0
+  index: -1
+D1 #r20
+  rotate: false
+  xy: 107, 55
+  size: 13, 21
+  orig: 13, 21
+  offset: 0, 0
+  index: -1
+D2 #r15
+  rotate: true
+  xy: 71, 55
+  size: 21, 34
+  orig: 21, 41
+  offset: 0, 0
+  index: -1
+D2a
+  rotate: true
+  xy: 55, 11
+  size: 13, 12
+  orig: 13, 12
+  offset: 0, 0
+  index: -1
+D3 #r10
+  rotate: true
+  xy: 69, 13
+  size: 8, 19
+  orig: 8, 19
+  offset: 0, 0
+  index: -1
+D4
+  rotate: false
+  xy: 30, 11
+  size: 10, 27
+  orig: 10, 27
+  offset: 0, 0
+  index: -1
+D5
+  rotate: false
+  xy: 30, 11
+  size: 10, 27
+  orig: 10, 27
+  offset: 0, 0
+  index: -1
+a1 #r10
+  rotate: true
+  xy: 29, 40
+  size: 11, 28
+  orig: 11, 28
+  offset: 0, 0
+  index: -1
+a2
+  rotate: true
+  xy: 29, 53
+  size: 23, 40
+  orig: 23, 43
+  offset: 0, 0
+  index: -1
+a2a
+  rotate: false
+  xy: 93, 11
+  size: 15, 17
+  orig: 15, 17
+  offset: 0, 0
+  index: -1
+a3 #r15
+  rotate: true
+  xy: 93, 2
+  size: 7, 16
+  orig: 7, 16
+  offset: 0, 0
+  index: -1
+a4 #r10
+  rotate: false
+  xy: 42, 14
+  size: 11, 24
+  orig: 11, 24
+  offset: 0, 0
+  index: -1
+a5 #r10
+  rotate: false
+  xy: 42, 14
+  size: 11, 24
+  orig: 11, 24
+  offset: 0, 0
+  index: -1
+b1 #r85
+  rotate: true
+  xy: 71, 45
+  size: 8, 29
+  orig: 8, 29
+  offset: 0, 0
+  index: -1
+b2
+  rotate: false
+  xy: 2, 37
+  size: 25, 39
+  orig: 25, 39
+  offset: 0, 0
+  index: -1
+b2a
+  rotate: true
+  xy: 98, 30
+  size: 13, 19
+  orig: 13, 19
+  offset: 0, 0
+  index: -1
+b3 #r75
+  rotate: false
+  xy: 59, 26
+  size: 10, 25
+  orig: 10, 25
+  offset: 0, 0
+  index: -1
+b4 #r15
+  rotate: true
+  xy: 71, 33
+  size: 10, 25
+  orig: 10, 25
+  offset: 0, 0
+  index: -1
+b5
+  rotate: true
+  xy: 30, 2
+  size: 7, 27
+  orig: 7, 27
+  offset: 0, 0
+  index: -1

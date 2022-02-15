@@ -1,0 +1,166 @@
+package Pmd;
+
+message Chat
+{
+	enum Param
+	{
+		CommonChatUserPmd_CS 					= 1;
+		GMCommandChatUserPmd_C 					= 2;
+		GMCommandListChatUserPmd_S				= 4;
+		PrivateChatUserPmd_CS 					= 5;
+		CurrentGmLevelChatUserPmd_S				= 6;
+		stAddHideButtonBookChatUserPmd_S 		= 7;
+		stAddHideButtonChatUserPmd_S 			= 8;
+		stAddHideButtonNewFunctionChatUserPmd_S = 9;
+		stAddHideButtonServerHotKeyChatUserPmd_S= 10;
+		stCommonChatUserPmd_CS 					= 11;
+		stMessageBoxChatUserPmd_S 				= 12;
+
+	}
+}
+enum ChatType
+{
+	ChatType_Map		= 2;
+}
+
+message CommonChatUserPmd_CS
+{
+	enum ChatType
+	{
+	    ChatType_None      	= 0x00;		// 世界聊天
+	    ChatType_Lobby     	= 0x01;		// 大厅聊天
+	    ChatType_Room       = 0x02;		// 房间聊天
+	    ChatType_Robot      = 0x04;		// 机器人聊天
+	}
+	enum ChatPos
+	{
+	    ChatPos_None      	= 0x00;		// 普通聊天输出
+	    ChatPos_Normal      = 0x01;		// 普通聊天输出
+	    ChatPos_Sys         = 0x02;		// 系统提示输出
+	    ChatPos_Tips        = 0x04;		// 冒泡提示
+	    ChatPos_Pop         = 0x08;		// 右下角弹出
+	    ChatPos_Private     = 0x10;		// 私聊输出
+	    ChatPos_Important   = 0x20;		// 重要信息，屏幕中央输出(电视)
+	    ChatPos_Honor       = 0x40;		// 荣耀信息
+	    ChatPos_Gm          = 0x80;		// GM系统公告输出位置
+	    ChatPos_GmVip       = 0x90;		// VIP
+	    ChatPos_ImportantDown = 0xa0;	// 固定显
+		
+	}
+	optional uint64 id		    = 1;
+	optional string name		= 2;
+	optional bool sexman		= 3;
+	optional uint32 chatpos 	= 4;
+	optional uint32 chattype 	= 5;
+	required string info 		= 6;
+	optional uint64 time        = 7; 	// 增加时间戳
+}
+
+message GMCommandChatUserPmd_C
+{
+	optional uint64 charid		= 1;
+	optional string charname	= 2;
+	required string method		= 3;
+	optional string params		= 4;
+}
+
+message GMHelpInfo
+{
+	required string method		=1;
+	required string example		=2;
+}
+message GMCommandListChatUserPmd_S
+{
+	repeated GMHelpInfo list	= 1;	// [packed=true]
+}
+
+message PrivateChatUserPmd_CS
+{
+	optional uint64 id			= 1;
+	optional string name		= 2;
+	optional bool sexman		= 3;
+	required string info 		= 4;
+	optional uint64 time        = 5; 	// 增加时间戳
+}
+
+// 玩家当前gm权限
+message CurrentGmLevelChatUserPmd_S
+{
+	optional uint32 gmlevel       = 1; // 权限等级,0表示无权限
+}
+
+// 服务器端发送右边提示
+message stAddHideButtonBookChatUserPmd_S
+{
+	optional uint32 lifetime = 1;	// 生存时间，以秒为单位
+	optional uint32 bookid = 2;		// 窗口id
+	optional uint32 iconid = 3;		// 资源id
+	optional uint32 close = 4;		// 是否点开就关闭
+	optional string tips = 5;		// 悬浮提示
+}
+
+// 服务器端发送右边提示
+message stAddHideButtonChatUserPmd_S
+{
+	optional uint32 lifetime = 1;	// 生存时间，以秒为单位
+	optional uint32 hotkeyid = 2;	// 窗口id
+	optional uint32 iconid = 3;		// 资源id
+	optional uint32 tabid = 4;		// tab页面
+	optional uint32 tabframe = 5;	// tab页面
+	optional uint32 close = 6;		// 是否点开就关闭
+	optional string tips = 7;		// 悬浮提示
+}
+
+// 服务器端发送右边未使用功能帮助
+message stAddHideButtonNewFunctionChatUserPmd_S
+{
+	optional uint32 lifetime = 1;	// 生存时间，以秒为单位
+	optional uint32 functionid = 2;	// 功能id
+	optional uint32 iconid = 3;		// 资源id
+	optional uint32 close = 4;		// 是否点开就关闭
+	optional string tips = 5;		// 悬浮提示
+}
+
+// 服务器端发送右边ServerHotKey功能
+message stAddHideButtonServerHotKeyChatUserPmd_S
+{
+	optional uint32 lifetime = 1;	// 生存时间，以秒为单位
+	optional uint32 serverhotkeyid = 2;
+	optional uint32 iconid = 3;		// 资源id
+	optional uint32 close = 4;		// 是否点开就关闭
+	optional string tips = 5;		// 悬浮提示
+}
+
+message stCommonChatUserPmd_CS
+{
+	optional uint32 byChatType = 1;		// CHATTYPE
+	optional uint32 byChatColor = 2;
+	optional uint32 byItemNum = 3;
+	optional uint32 byChatPos = 4;
+	optional uint32 reserved = 5;
+	optional uint32 country = 6;
+	optional uint32 function = 7;
+	optional uint32 dwOPDes = 8;
+	optional uint32 levelOrder = 9;
+	optional uint32 vipflag = 10;
+	optional uint32 wdOldZoneID = 11;
+	optional uint32 byBitmask = 12;
+	optional uint32 byUserCmd = 13;
+	optional uint32 byUserParam = 14;
+	optional string szInfo = 15;
+	optional uint32 profession = 16;	// 职业enumProfession
+	optional uint32 sex = 17;			// 性别enmCharSex
+	optional uint32 timestamp = 18;		// 时间(unix时间戳)
+	optional string name = 19;          //名字
+}
+
+// 系统对话框，支持打开指定窗口
+message stMessageBoxChatUserPmd_S
+{
+	optional string buttons = 1;
+	optional string szInfo = 2;			// 聊天信息
+	optional uint32 data0 = 3;
+	optional uint32 data1 = 4;
+	optional uint32 data2 = 5;
+}
+

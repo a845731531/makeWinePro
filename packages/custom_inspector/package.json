@@ -1,0 +1,9 @@
+{
+  "name": "custom_inspector",
+  "version": "0.0.1",
+  "description": "custom component inspector",
+  "author": "lyzz0612",
+  "main": "main.js",
+  "main-menu": {
+  }
+}

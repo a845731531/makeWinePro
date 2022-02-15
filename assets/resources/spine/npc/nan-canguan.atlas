@@ -1,0 +1,272 @@
+
+nan-canguan.png
+size: 297,78
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+a1
+  rotate: false
+  xy: 145, 37
+  size: 13, 39
+  orig: 13, 39
+  offset: 0, 0
+  index: -1
+a2
+  rotate: true
+  xy: 2, 2
+  size: 26, 39
+  orig: 26, 39
+  offset: 0, 0
+  index: -1
+a2a
+  rotate: false
+  xy: 267, 57
+  size: 13, 19
+  orig: 13, 19
+  offset: 0, 0
+  index: -1
+a3
+  rotate: false
+  xy: 25, 30
+  size: 14, 46
+  orig: 14, 46
+  offset: 0, 0
+  index: -1
+a3a
+  rotate: true
+  xy: 282, 64
+  size: 12, 13
+  orig: 12, 13
+  offset: 0, 0
+  index: -1
+a4
+  rotate: false
+  xy: 41, 30
+  size: 14, 46
+  orig: 14, 46
+  offset: 0, 0
+  index: -1
+a4a
+  rotate: true
+  xy: 282, 50
+  size: 12, 13
+  orig: 12, 13
+  offset: 0, 0
+  index: -1
+a5
+  rotate: false
+  xy: 219, 15
+  size: 15, 29
+  orig: 15, 29
+  offset: 0, 0
+  index: -1
+b1
+  rotate: false
+  xy: 92, 36
+  size: 35, 40
+  orig: 35, 40
+  offset: 0, 0
+  index: -1
+b1a
+  rotate: false
+  xy: 250, 57
+  size: 15, 19
+  orig: 15, 19
+  offset: 0, 0
+  index: -1
+b2
+  rotate: false
+  xy: 154, 2
+  size: 12, 33
+  orig: 12, 33
+  offset: 0, 0
+  index: -1
+b3
+  rotate: false
+  xy: 189, 43
+  size: 12, 33
+  orig: 12, 33
+  offset: 0, 0
+  index: -1
+b4
+  rotate: true
+  xy: 245, 3
+  size: 10, 20
+  orig: 10, 20
+  offset: 0, 0
+  index: -1
+b5
+  rotate: false
+  xy: 72, 9
+  size: 13, 21
+  orig: 13, 21
+  offset: 0, 0
+  index: -1
+bu/images/J1
+  rotate: false
+  xy: 101, 2
+  size: 17, 32
+  orig: 17, 32
+  offset: 0, 0
+  index: -1
+bu/images/J2
+  rotate: false
+  xy: 253, 27
+  size: 15, 18
+  orig: 15, 18
+  offset: 0, 0
+  index: -1
+bu/images/J3
+  rotate: false
+  xy: 2, 30
+  size: 21, 46
+  orig: 21, 46
+  offset: 0, 0
+  index: -1
+bu/images/J4
+  rotate: false
+  xy: 160, 40
+  size: 13, 36
+  orig: 13, 36
+  offset: 0, 0
+  index: -1
+bu/images/J5
+  rotate: false
+  xy: 255, 16
+  size: 18, 9
+  orig: 18, 9
+  offset: 0, 0
+  index: -1
+bu/images/J6
+  rotate: false
+  xy: 168, 2
+  size: 13, 36
+  orig: 13, 36
+  offset: 0, 0
+  index: -1
+bu/images/J7
+  rotate: true
+  xy: 270, 38
+  size: 17, 6
+  orig: 17, 6
+  offset: 0, 0
+  index: -1
+bu/images/J8
+  rotate: false
+  xy: 120, 2
+  size: 17, 32
+  orig: 17, 32
+  offset: 0, 0
+  index: -1
+c1
+  rotate: false
+  xy: 233, 47
+  size: 15, 29
+  orig: 15, 29
+  offset: 0, 0
+  index: -1
+c2
+  rotate: false
+  xy: 57, 32
+  size: 33, 44
+  orig: 33, 44
+  offset: 0, 0
+  index: -1
+c2a
+  rotate: true
+  xy: 278, 33
+  size: 15, 17
+  orig: 15, 17
+  offset: 0, 0
+  index: -1
+c3
+  rotate: false
+  xy: 129, 37
+  size: 14, 39
+  orig: 14, 39
+  offset: 0, 0
+  index: -1
+c3a
+  rotate: true
+  xy: 234, 2
+  size: 11, 9
+  orig: 11, 9
+  offset: 0, 0
+  index: -1
+c4a
+  rotate: true
+  xy: 219, 2
+  size: 11, 13
+  orig: 11, 13
+  offset: 0, 0
+  index: -1
+c5
+  rotate: false
+  xy: 87, 9
+  size: 12, 21
+  orig: 12, 21
+  offset: 0, 0
+  index: -1
+d1
+  rotate: false
+  xy: 183, 3
+  size: 34, 35
+  orig: 34, 35
+  offset: 0, 0
+  index: -1
+d1a
+  rotate: false
+  xy: 236, 25
+  size: 15, 20
+  orig: 15, 20
+  offset: 0, 0
+  index: -1
+d2
+  rotate: false
+  xy: 175, 40
+  size: 12, 36
+  orig: 12, 36
+  offset: 0, 0
+  index: -1
+d3
+  rotate: false
+  xy: 139, 2
+  size: 13, 33
+  orig: 13, 33
+  offset: 0, 0
+  index: -1
+d4
+  rotate: false
+  xy: 203, 46
+  size: 13, 30
+  orig: 13, 30
+  offset: 0, 0
+  index: -1
+d4a
+  rotate: true
+  xy: 236, 15
+  size: 8, 17
+  orig: 8, 17
+  offset: 0, 0
+  index: -1
+d5
+  rotate: false
+  xy: 218, 46
+  size: 13, 30
+  orig: 13, 30
+  offset: 0, 0
+  index: -1
+d5a
+  rotate: true
+  xy: 250, 47
+  size: 8, 17
+  orig: 8, 17
+  offset: 0, 0
+  index: -1
+yz
+  rotate: false
+  xy: 43, 4
+  size: 27, 24
+  orig: 31, 28
+  offset: 2, 2
+  index: -1

@@ -1,0 +1,123 @@
+package GameCmd;
+//import "Common.proto";
+
+//客户端请求Req:100,服务器响应Rsp:200,服务器推送Ntf:300
+message BrewUserCmd
+{
+	enum Param
+	{
+        BuyBrewUserCmd_CS = 101;
+        BuyBrewUserCmd_SC = 201;
+		
+		TestAddMoneyBrewUserCmd_CS = 102;
+        TestAddMoneyBrewUserCmd_SC = 202;
+		
+		MakeFormulaBrewUserCmd_CS = 103;
+		MakeFormulaBrewUserCmd_SC = 203;
+		
+		PackingWineBrewUserCmd_CS = 104;
+		PackingWineBrewUserCmd_SC = 204;
+		
+		ExchangeCodeListBrewUserCmd_CS = 105;
+		ExchangeCodeListBrewUserCmd_SC = 205;
+		
+		WeatherBrewUserCmd_CS = 106;
+		WeatherBrewUserCmd_SC = 206;
+		
+		NewcomerFinishBrewUserCmd_CS = 107;
+		NewcomerFinishBrewUserCmd_SC = 207;
+    }
+}
+
+
+message BuyBrewUserCmdItem {
+	optional uint32 prop_id    = 1;  //物品
+    optional uint32 num 		 = 2;  //数量
+}
+
+//购买
+message BuyBrewUserCmd_CS {
+    repeated BuyBrewUserCmdItem items = 1;
+}
+message BuyBrewUserCmd_SC {
+    optional int32        error_code    = 1;
+    optional string       error_msg     = 2;
+}
+
+//加钱方便测试
+message TestAddMoneyBrewUserCmd_CS {
+	 optional int32        money    = 1;
+}
+message TestAddMoneyBrewUserCmd_SC {
+	optional int32        error_code    = 1;
+    optional string       error_msg     = 2;
+	optional int32        money    		= 3;
+}
+
+//制作配方
+message MaterialInfo {
+	optional int32 		id  = 1;   //原料id
+	optional int32 		num = 2;  // 占总数单位数量
+}
+message MakeFormulaBrewUserCmd_CS {
+	optional int32        	     produce_id      = 1;    //产物表道具ID，0表示自定义
+	repeated MaterialInfo        material_list   = 2;    // 原料 自定义原料的道具id自定义
+}
+message MakeFormulaBrewUserCmd_SC {
+	optional int32        	error_code	    = 1;
+    optional string       	error_msg       = 2;
+	optional int32       	formaula_id     = 3;		//配方id
+}
+
+//自定义包装
+message PackingWineBrewUserCmd_CS {
+	required int32 		box_id   	= 1;  //盒子
+	required int32 		bottle_id   = 2;  //瓶子		
+	required int32 		wine_id	   	= 3;  //消耗id
+	required int32 		num	   		= 4;  //数量
+	required string 	name	   	= 5;  //名字
+	required string 	desc	   	= 6;  //描述
+}
+message PackingWineBrewUserCmd_SC {
+	optional int32        	error_code	    = 1;
+    optional string       	error_msg       = 2;
+}
+
+//兑换码列表
+message BrewExchangeCode {					   
+	optional int32 		id   	         = 1;  //兑换码id
+	optional int32 		box_id   	     = 2;  //盒子
+	optional int32 		bottle_id        = 3;  //瓶子		
+	optional int32 		wine_id	   	     = 4;  //酒id
+	optional int32 		num	   		     = 5;  //数量
+	optional string 	name	   	     = 6;  //酒自定义的名称
+	optional string 	create_user_name = 7;  //制作人
+	optional int32 		create_time      = 8;  //制作日期
+	optional string 	desc	   	     = 9;  //描述
+	optional int32 		status      	 = 10; //状态 '0:初始化状态， 1：拍卖中  2：已兑换',
+}
+message ExchangeCodeListBrewUserCmd_CS {
+    
+}
+message ExchangeCodeListBrewUserCmd_SC {
+	repeated BrewExchangeCode 		 items      = 1;
+	optional int32        	error_code	    = 2;
+    optional string       	error_msg       = 3;
+}
+
+message	WeatherBrewUserCmd_CS {
+	
+}
+		
+message WeatherBrewUserCmd_SC {
+	optional string weather_json = 1;
+}
+
+//新手完成
+message	NewcomerFinishBrewUserCmd_CS {
+	
+}
+
+message NewcomerFinishBrewUserCmd_SC {
+
+}

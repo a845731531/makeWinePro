@@ -1,0 +1,281 @@
+package GameCmd;
+
+//客户端请求Req:100,服务器响应Rsp:200,服务器推送Ntf:300
+message BrewBuildingCmd
+{
+	enum Param
+	{
+        BuildingListBrewBuildingCmd_CS = 101;
+        BuildingListBrewBuildingCmd_SC = 201;
+        StartProduceBrewBuildingCmd_CS = 102;
+        StartProduceBrewBuildingCmd_SC = 202;
+        GatherBrewBuildingCmd_CS       = 103;
+        GatherBrewBuildingCmd_SC       = 203;
+		ResumeProduceBrewBuildingCmd_CS   =104;
+		ResumeProduceBrewBuildingCmd_SC   =204;
+
+		AccelerateProduceBrewBuildingCmd_CS   =105;
+		AccelerateProduceBrewBuildingCmd_SC   =205;
+
+
+		WorldBuildingListBrewBuildingCmd_CS   =106;
+		WorldBuildingListBrewBuildingCmd_SC   =206;
+
+		BuyWorldBuildingBrewBuildingCmd_CS =107;
+		BuyWorldBuildingBrewBuildingCmd_SC =207;
+
+		IdleWorldBuildingBrewBuildingCmd_CS = 108;
+		IdleWorldBuildingBrewBuildingCmd_SC = 208;
+
+		WorldBuildingByCodeBrewBuildingCmd_CS = 109;
+		WorldBuildingByCodeBrewBuildingCmd_SC = 209;
+
+		RentWorldBuildingBrewBuildingCmd_CS = 110;
+		RentWorldBuildingBrewBuildingCmd_SC = 210;
+
+		StoreWineBrewBuildingCmd_CS = 111;
+		StoreWineBrewBuildingCmd_SC = 211;
+		
+		CellarBrewBuildingCmd_CS = 112;
+		CellarBrewBuildingCmd_SC = 212;
+		
+		BuyCellarBrewBuildingCmd_CS = 113;
+		BuyCellarBrewBuildingCmd_SC = 213;
+		
+		AccelerateCellarBrewBuildingCmd_CS = 114;
+		AccelerateCellarBrewBuildingCmd_SC = 214;
+		
+		GatherCellarBrewBuildingCmd_CS = 115;
+		GatherCellarBrewBuildingCmd_SC = 215;
+		
+		BuildingInfoBrewBuildingCmd_CS = 116;
+		BuildingInfoBrewBuildingCmd_SC = 216;
+
+
+        UpdateBrewBuildingCmd_SC = 301;
+    }
+}
+
+//收获 触发放背包
+message GatherPropBrewBuildingCmd {
+    optional int32 id     = 1;  //道具的类型
+    optional int32 num    = 2;  //数量
+}
+
+message BuildingDataBrewBuildingCmd {
+    optional int32 building_id     							= 1;  //建筑类型
+    optional int32 building_index    						= 2;  //该种建筑的第几个
+    optional int32 produce_id      							= 3;  //产物id，0未生产
+    optional int32 produce_num       						= 4;  //正在生产的数量
+	optional int32 produce_cur_time 						= 5;  //当前时间点
+	optional int32 produce_left_time 						= 6;  //剩余时间段
+    optional int32 produce_passed_time  					= 7;  //生产时间段
+	optional int32 status       							= 8;  //生产状态 0：未生产 1：生产中 2：暂停 3:完成
+	optional int32 pause_reason    							= 9;  //暂停原因
+	optional int32 world_building_id 						= 10;  //world_building_id
+	optional string world_building_code 					= 11;  //编码
+	optional int64 expiration 								= 12;  //有效期  -1为永久
+	repeated GatherPropBrewBuildingCmd  gather_prop_list  	= 13;   //待收获的奖励道具列表
+}
+
+message BuildingListBrewBuildingCmd_CS {
+
+}
+message BuildingListBrewBuildingCmd_SC {
+    repeated BuildingDataBrewBuildingCmd building_list = 1;  //建筑列表
+}
+
+//开始生产
+message StartProduceBrewBuildingCmd_CS {
+	optional int32 building_id       = 1;  //建筑ID
+	optional int32 building_index    = 2;  //该种建筑的第几个
+    optional int32 produce_id   = 3;  // 产物表道具ID
+    optional int32 produce_num    = 4;  //正在生产的数量
+	optional int32 use_type    = 5;  //1:rent 2:buy
+}
+message StartProduceBrewBuildingCmd_SC {
+    optional int32        error_code    = 1;
+    optional string       error_msg     = 2;
+    optional BuildingDataBrewBuildingCmd building_data = 3; //更新数据
+}
+
+//收获
+message GatherBrewBuildingCmd_CS {
+    optional int32 building_id    = 1;  //建筑类型
+    optional int32 building_index = 2;  //建筑序号
+}
+message GatherBrewBuildingCmd_SC {
+    optional int32        error_code                		= 1;  //收获失败
+    optional string       error_msg                 		= 2;
+    optional BuildingDataBrewBuildingCmd building_data      = 3;  //更新数据
+	repeated GatherPropBrewBuildingCmd  gather_prop_list  	= 4;   //收获的奖励道具列表
+	
+}
+
+message UpdateBrewBuildingCmd_SC {
+    optional BuildingDataBrewBuildingCmd building_data = 3;     //更新数据
+}
+
+//恢复暂停
+message ResumeProduceBrewBuildingCmd_CS {
+    optional int32 building_id    = 1;  //建筑类型
+    optional int32 building_index = 2;  //建筑序号
+}
+message ResumeProduceBrewBuildingCmd_SC {
+    optional int32        error_code    = 1;
+    optional string       error_msg     = 2;
+    optional BuildingDataBrewBuildingCmd building_data = 3; //更新数据
+}
+
+//加速生产
+message AccelerateProduceBrewBuildingCmd_CS {
+	optional int32 building_id    = 1;  //建筑类型
+    optional int32 building_index = 2;  //建筑序号
+}
+
+message AccelerateProduceBrewBuildingCmd_SC {
+	optional int32        error_code    = 1;
+    optional string       error_msg     = 2;
+    optional BuildingDataBrewBuildingCmd building_data 		= 3; 	//更新数据
+	repeated GatherPropBrewBuildingCmd  gather_prop_list  	= 4;    //收获的奖励道具列表
+}
+
+//世界建筑列表
+message WorldBuildingListBrewBuildingCmd_CS {
+	optional int32 		building_id    = 1;  //建筑类型
+	optional int32		page_size  	   = 2;
+	optional int32		page_num      = 3;
+}
+message WorldBuildingInfo {
+	optional string 	code              = 1;  //编号
+	optional int32 		building_id       = 2;  //建筑类型
+	optional string 	owner_name 	      = 3;	//主人名
+	optional int32 		world_building_id = 4;  //id
+}
+message WorldBuildingListBrewBuildingCmd_SC {
+	optional int32        			error_code	= 1;
+    optional string       			error_msg   = 2;
+	optional int32 	      			total  		= 3;
+	repeated WorldBuildingInfo		items  		= 4;
+}
+
+//买世界建筑
+message BuyWorldBuildingBrewBuildingCmd_CS {
+	optional int32 		world_building_id = 1;  //世界建筑id
+}
+message BuyWorldBuildingBrewBuildingCmd_SC {
+	optional int32        			error_code	= 1;
+    optional string       			error_msg   = 2;
+}
+
+//租世界建筑
+message RentWorldBuildingBrewBuildingCmd_CS {
+	optional int32 		world_building_id = 1;  //id
+	optional int32 		num = 2;  // 月数量
+}
+message RentWorldBuildingBrewBuildingCmd_SC {
+	optional int32        			error_code	= 1;
+    optional string       			error_msg   = 2;
+}
+
+//随机获取未购买或租聘的世界建筑
+message IdleWorldBuildingBrewBuildingCmd_CS {
+	optional int32 		building_id    = 1;  //建筑类型
+}
+message IdleWorldBuildingBrewBuildingCmd_SC {
+	optional int32        			error_code	  = 1;
+    optional string       			error_msg     = 2;
+	repeated WorldBuildingInfo 		items 		  = 3;
+}
+
+//由编号获取建筑信息
+message WorldBuildingByCodeBrewBuildingCmd_CS {
+	required string 	code    		= 1;  //编号
+	required int32 		building_id    	= 2;  //建筑类型
+}
+message WorldBuildingByCodeBrewBuildingCmd_SC {
+	optional int32        			error_code	  	= 1;
+    optional string       			error_msg     	= 2;
+	optional WorldBuildingInfo 		world_building 	= 3;
+}
+
+//藏酒
+message StoreWineBrewBuildingCmd_CS {
+	required int32 		building_id    	= 1;  //建筑类型
+	required int32 		building_index  = 2;  //建筑序号
+	repeated int32 	    produce_ids	    = 3;  //产物表id
+}
+message StoreWineBrewBuildingCmd_SC {
+	optional int32        	error_code	    = 1;
+    optional string       	error_msg       = 2;
+	optional int32 			lack_cellar_num = 3; //当error_code:1
+	optional int32 			need_money 	    = 4;
+}
+
+//获取酒窖格子信息
+message BrewCellarInfo {
+    optional int32 id   		 = 1;  //道具的类型
+    optional int32 num   		 = 2;  //数量
+	optional int32 status        = 3;  //生产状态 0：未生产 1：生产中 2：暂停 3:完成
+	optional int64 left_time	 = 4;  //需要藏酒时长 秒
+}
+message CellarBrewBuildingCmd_CS {
+	
+}
+message CellarBrewBuildingCmd_SC {
+	optional int32        	error_code	    = 1;
+    optional string       	error_msg       = 2;
+	repeated BrewCellarInfo 	items	    = 3;  //酒窖格子列表
+}
+
+//购买酒窖格子
+message BuyCellarBrewBuildingCmd_CS {
+	optional int32 num = 1;     //购买酒窖格子数量
+}
+message BuyCellarBrewBuildingCmd_SC {
+	optional int32        	error_code	    = 1;// 1：钱不够 2：扩容上限
+    optional string       	error_msg       = 2;
+}
+
+//加速酒窖藏酒
+message AccelerateCellarBrewBuildingCmd_CS {
+	required int32 		cellar_index  = 1;  //cellar格子序号  一键加速：-1;
+}
+message AccelerateCellarBrewBuildingCmd_SC {
+	optional int32        	error_code	    = 1;
+    optional string       	error_msg       = 2;
+	repeated GatherPropBrewBuildingCmd  gather_prop_list  	= 3;   //收获的奖励道具列表
+}
+
+//酒仓的酒窖收获
+message GatherCellarBrewBuildingCmd_CS {
+	required int32 		cellar_index  = 1;  //cellar格子序号，一键收获：-1;
+}
+message GatherCellarBrewBuildingCmd_SC {
+	optional int32        					error_code	    = 1;
+    optional string       					error_msg       = 2;
+	repeated GatherPropBrewBuildingCmd  gather_prop_list  	= 3;   //收获的奖励道具列表
+}
+
+//建筑状态信息
+message BuildingInfoBrewBuildingCmd_CS {
+	required int32 		building_id    	= 1;  //建筑类型
+	required int32 		building_index  = 2;  //建筑序号
+}
+message BuildingInfoBrewBuildingCmd_SC {
+	optional BuildingDataBrewBuildingCmd building_data = 1; //更新数据
+}
+
+
+
+//员工上岗 应放到Building.proto中
+message StaffWorkOnBrewBuildingCmd_CS {
+    optional int32 building_id    = 1;  //建筑类型
+    optional int32 building_index = 2;  //建筑序号
+    optional int32 staff_id    = 3;  //员工ID
+}
+message StaffWorkOnBrewBuildingCmd_SC {
+    optional int32        error_code    = 1;
+    optional string       error_msg     = 2;
+    optional BuildingDataBrewBuildingCmd building_data = 3; //更新数据
+}

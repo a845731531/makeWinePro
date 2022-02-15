@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "6762750d-1ee8-4acb-a006-da497e848903",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 130,
+  "height": 258,
+  "platformSettings": {},
+  "subMetas": {
+    "smallgame_basewine_bar": {
+      "ver": "1.0.6",
+      "uuid": "b25406d2-31b9-40bb-bb17-5a4af150b60d",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "6762750d-1ee8-4acb-a006-da497e848903",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 130,
+      "height": 258,
+      "rawWidth": 130,
+      "rawHeight": 258,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

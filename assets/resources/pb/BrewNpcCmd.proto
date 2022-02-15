@@ -1,0 +1,56 @@
+package GameCmd;
+
+//
+message BrewNpcCmd
+{
+	enum Param
+	{
+		stNpcDataBrewNpcCmd_NT = 101;		//npc数据推送
+		stNpcChangeBrewNpcCmd_NT = 102;		//npc改变推送
+		stDoNpcRandBrewNpcCmd_CS = 103;		//处理随机事件
+		stDoNpcRandBrewNpcCmd_SC = 104;		//处理随机事件返回
+    }
+}
+
+//npc随机事件数据
+message tRandEvent
+{
+	optional uint32 randid = 1;//随机事件id
+	optional uint32 randstat = 2;//随机事件状态(1未处理， 2已经处理)
+}
+
+//npc数据
+message tNpcData
+{
+	optional uint32 npcId = 1; //npc的id
+	optional uint32 degree = 2;//好感度
+	repeated tRandEvent randEvent = 3;		// 随机事件列表
+}
+
+//npc数据推送（所有的npc数据）
+message stNpcDataBrewNpcCmd_NT
+{
+    repeated tNpcData npcData = 1;		// npc数据列表
+}
+
+//npc改变推送
+message stNpcChangeBrewNpcCmd_NT
+{
+    optional tNpcData npcData = 1;		// npc数据
+}
+
+//处理随机事件
+message stDoNpcRandBrewNpcCmd_CS
+{
+	optional uint32 npcId = 1; 	//npc的id
+	optional uint32	randId = 2; //随机事件id
+}
+
+//处理随机事件返回
+message stDoNpcRandBrewNpcCmd_SC
+{
+	optional uint32 errCode = 1;		        // 
+    optional string errMsg = 2;		            // 
+	optional uint32 npcId = 3; 					//npc的id
+	optional uint32	randId = 4; 				//随机事件id
+}

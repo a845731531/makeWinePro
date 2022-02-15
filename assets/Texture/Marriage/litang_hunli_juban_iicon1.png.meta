@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "05ea9c7c-8714-45fe-8c49-9db2fe015a26",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 139,
+  "height": 176,
+  "platformSettings": {},
+  "subMetas": {
+    "litang_hunli_juban_iicon1": {
+      "ver": "1.0.6",
+      "uuid": "5946ccfe-cc96-4024-bf61-3739c99a6841",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "05ea9c7c-8714-45fe-8c49-9db2fe015a26",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -0.5,
+      "offsetY": -0.5,
+      "trimX": 0,
+      "trimY": 1,
+      "width": 138,
+      "height": 175,
+      "rawWidth": 139,
+      "rawHeight": 176,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

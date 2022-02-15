@@ -1,0 +1,6 @@
+{
+  "exportPath": "C:\\MyProject\\brewMaster\\assets\\resources\\prefab",
+  "resourcePath": "db://assets/UnityUI",
+  "prefabSrcFolder": "db://assets/UnityUI/Assets/GameMain",
+  "prefabTargetFolder": "db://assets/UnityUI/export"
+}

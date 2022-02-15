@@ -1,0 +1,34 @@
+
+pingzi.png
+size: 511,246
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+a1
+  rotate: true
+  xy: 339, 21
+  size: 223, 106
+  orig: 223, 106
+  offset: 0, 0
+  index: -1
+b1
+  rotate: true
+  xy: 447, 55
+  size: 189, 48
+  orig: 198, 61
+  offset: 4, 6
+  index: -1
+b2
+  rotate: true
+  xy: 497, 65
+  size: 179, 12
+  orig: 180, 12
+  offset: 1, 0
+  index: -1
+p1
+  rotate: true
+  xy: 2, 2
+  size: 242, 335
+  orig: 243, 336
+  offset: 1, 0
+  index: -1

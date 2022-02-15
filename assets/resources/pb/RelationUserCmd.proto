@@ -1,0 +1,3268 @@
+package GameCmd;
+
+import "Cmd.proto";
+
+// 1 请求列表 2 清空列表
+enum enumCorpsListJoyType
+{
+	CORPS_LIST_SHOW = 1;
+	CORPS_LIST_CLEAR = 2;
+}
+
+// GM帐号分割线
+enum enumRoleDivision
+{
+	MAX_SUPER_GM_ID		  = 2;
+	MAX_GROUP_GM_ID		  = 100;
+	MAX_GAME_MASTER_ID	   = 1000;
+	MAX_GAME_YUNYING_ID	  = 2000;
+	MAX_GAME_NORMALCEHUA_ID	 = 2800;
+	MAX_GAME_CEHUA_ID		= 3000;
+	MAX_GAME_YANFA_ID		= 4000;
+	MAX_GAME_MEISHU_ID	   = 4500;
+	MAX_GAME_CHANPIN_ID		 = 5000;
+	NONE_GAME_PLAER_ID		 = 5001;
+}
+
+// 玩家身份。客户端依赖以下值索引，请勿轻易更改
+enum enumCharacterIdentity
+{
+	eCharacterIdentity_None				= 0;	// 无效身份 0
+	eCharacterIdentity_SuperGM			= 1;	// 超级GM 1
+	eCharacterIdentity_CommonGM			= 2;	// 普通GM [2;1000)
+	eCharacterIdentity_Operation		= 3;	// 运营   [1000;2000]
+	eCharacterIdentity_MasterMind		= 4;	// 策划   [2000;3000)
+	eCharacterIdentity_Programmer		= 5;	// 程序   [3000;4000)
+	eCharacterIdentity_Product			= 6;	// 产品   [4000;4500)
+	eCharacterIdentity_Artist			= 7;	// 美术   [4500;5000)
+	eCharacterIdentity_CommonPlayer		= 8;	// 普通玩家
+	eCharacterIdentity_CommonFriend		= 9;	// 好友
+	eCharacterIdentity_CommonSelf		= 10;	// 自己
+}
+
+enum PersonalInfoOpenType
+{
+	PersonalInfoOpenType_Normal 		= 1;	// 个人信息公开
+	PersonalInfoOpenType_CorpsMobile 	= 2;	// 个人信息公开
+}
+
+enum SendRelationType
+{
+	SendRelation_Friend					= 0x0001;		// 好友，请确保这个在第一个且为0
+	SendRelation_Honey					= 0x0002;		// 恋人
+	SendRelation_Spouse					= 0x0004;		// 夫妻
+	SendRelation_Enemy					= 0x0008;		// 仇人成员
+	SendRelation_Black					= 0x0010;		// 黑名单成员
+	SendRelation_Soldier				= 0x0020;		// 战士
+	SendRelation_Team					= 0x0040;		// 组队
+	SendRelation_Corps					= 0x0080;		// 团
+	SendRelation_Army					= 0x0100;		// 军
+	SendRelation_Country				= 0x0200;		// 国
+	SendRelation_World					= 0x0400;		// 世界
+	SendRelation_FightTeam				= 0x0800;		// 战队
+}
+
+// 个人职务结构
+message stUserFunction
+{
+	optional uint32 function = 1;
+}
+
+// 国家勋章枚举
+enum enumCountryMedal
+{
+	MedalType_Natural			= 25;	// 自然勋章
+	MedalType_Lightning			= 26;	// 闪电勋章
+	MedalType_Fire				= 27;	// 火焰勋章
+	MedalType_IceMedal			= 28;	// 冰霜勋章
+}
+
+// 社会关系权限枚举
+enum enumRightType
+{
+	RightType_CountryFunction	= 100;	// 国家官职任免
+	RightType_CountryBoard		= 101;	// 国家公告
+	RightType_CountryCall		= 102;	// 国家召集
+	RightType_CountryControl	= 103;	// 国家抓人
+	RightType_CountrySilent		= 104;	// 国家禁言
+	RightType_CountryGomap		= 105;	// 国家跳转
+	RightType_CountryQBTask		= 106;	// 情报任务发布
+	RightType_CountryYZTask		= 107;	// 远征任务发布
+	RightType_CountryGYTask		= 108;	// 国运任务发布
+	RightType_CountryWMTask		= 109;	// 国家文明任务
+	RightType_CountryJSKB		= 110;	// 极速狂飙
+	RightType_CountryWHTask		= 111;	// 国家舞会
+
+	RightType_CorpsRecruit		= 200;	// 团招人
+	RightType_CorpsFunction		= 201;	// 团职务任免
+	RightType_CorpsBoard		= 202;	// 团公告
+	RightType_CorpTraining		= 203;	// 团突袭任务
+	RightType_CorpLogistics		= 204;	// 团训练任务发布
+	RightType_CorpSciencePak	= 205;	// 团建设包裹
+	RightType_CorpAmmoPak		= 206;	// 军火包裹
+	RightType_CorpAttendPak		= 207;	// 团训练包裹
+	RightType_CorpArmyequipUse	= 208;	// 团魔甲
+	RightType_CorpWaiQinPak		= 209;	// 团成就包裹权限
+	RightType_CorpAttend		= 210;	// 出勤任免
+	RightType_CorpOutSB			= 211;	// 开除某人
+	RightType_CorpStorage		= 212;	// 团仓库
+	RightType_CorpLineUp		= 216;	// 团列阵
+
+	RightType_ArmyRecruit		= 300;	// 军招人
+	RightType_ArmyFunction		= 301;	// 军职务任免
+	RightType_ArmyBoard			= 302;	// 军公告
+}
+
+// 国王操作枚举，客户端脚本接口中使用
+enum enumKingOperateType
+{
+	KingOperateType_NULL			= 0;	// 无效
+
+	KingOperateType_ApViceMarshal	= 1;	// 任命元帅
+	KingOperateType_ApInterior		= 2;	// 任命内务大臣
+	KingOperateType_ApTreasury		= 3;	// 任命财务大臣
+	KingOperateType_ApDefense		= 4;	// 任命军务大臣
+	KingOperateType_ApPolice		= 5;	// 任命警长
+	KingOperateType_ApVicePolice	= 6;	// 任命代理警长
+
+	KingOperateType_DpViceMarshal	= 21;	// 罢免元帅
+	KingOperateType_DpInterior		= 22;	// 罢免内务大臣
+	KingOperateType_DpTreasury		= 23;	// 罢免财务大臣
+	KingOperateType_DpDefense		= 24;	// 罢免军务大臣
+	KingOperateType_DpPolice		= 25;	// 罢免警长
+	KingOperateType_DpVicePolice	= 26;	// 罢免代理警长
+
+	KingOperateType_CountryControl	= 40;	// 国家抓人
+	KingOperateType_CountrySilent	= 41;	// 国家禁言
+
+	KingOperateType_CountryRename	= 60;	// 国家改名
+}
+
+/////////////////////国家相关////////////////////////////
+
+// 国家职务信息
+message stFunctionInfo
+{
+	optional uint32  fun = 1;		// 职务
+	optional uint32 userid = 2;		// 人员ID
+	optional uint32 support = 3;	// 支持度
+}
+
+enum CountryStateType
+{
+	CountryStateNormal	= 0;	//正常
+	CountryStateWeak	= 1;	//弱国
+	CountryStateStrong	= 2;	//强国
+}
+
+enum CountrysRelation
+{
+	Countrys_Relation_None		= 0;	// 无
+	Countrys_Relation_Me		= 1;	// 自己
+	Countrys_Relation_Enemy		= 2;	// 敌国
+	Countrys_Relation_Ally		= 3;	// 盟国
+}
+
+// 国战状态
+enum CountryWarState
+{
+	Country_War_State_None		= 0;	// 无
+	Country_War_State_Ready		= 1;	// 准备
+	Country_War_State_Start		= 2;	// 开始
+	Country_War_State_Stop		= 3;	// 结束
+}
+
+enum BorderOccupyType
+{
+	Border_Occupy_Type_None		= 0;	// 无
+	Border_Occupy_Type_Defense	= 1;	// 防守方占领
+	Border_Occupy_Type_Attack	= 2;	// 攻击方占领
+}
+
+// 国战风云录
+message stCountryWarRecord
+{
+	optional uint32	murder = 1;
+	optional uint32	killnum = 2;
+}
+
+// 国家活动信息
+message stCountryActivityInfo
+{
+	optional uint32 time = 1;
+	optional uint32 userid = 2;
+	optional uint32 fun = 3;
+	optional uint32 activity = 4;
+}
+
+// 国战基本信息
+message stCountryWarBaseInfo
+{
+	optional uint32	byBorderOccupy 		= 1;	// 边境战神占领情况
+	optional uint32	byOutsideOccupy 	= 2;	// 外城守卫占领情况
+	optional uint32	dwInnerLife 		= 3;	// 内城守卫血量
+	optional uint32	dwAltarLife 		= 4;	// 天象祭坛生命值
+	optional uint32	dwStatueLife 		= 5;	// 霸者雕像生命
+	optional uint32	dwAttackKillNum 	= 6;	// 攻方杀敌数
+	optional uint32	dwDefenseKillNum 	= 7;	// 防守杀敌数
+	optional uint32	dwAttackCountry 	= 8;	// 攻击方
+	optional uint32	dwDefenseCountry 	= 9;	// 防守方
+	optional uint32	byLadyOccupy 		= 10;	// 戎装公主占领情况
+	optional uint32	dwPalaceMaster 		= 11;	// 宫殿战主神
+}
+
+// 国战排行数据
+message stCountryWarRank
+{
+	optional uint32 dwCountryID = 1;
+	optional uint32	dwWinNum = 2;
+	optional uint32 dwLoseNum = 3;
+}
+enum CountryWarValType
+{
+	Country_War_Start				= 0;	// 国战开始
+	Country_War_Border				= 1;	// 边境战神
+	Country_War_Outside				= 2;	// 外城守卫
+	Country_War_Inner_Life_Num		= 3;	// 内城守卫生命值
+	Country_War_Alter_Life_Num		= 4;	// 天象祭坛生命值
+	Country_War_Statue_Life_Num		= 5;	// 霸者雕像生命值
+	Country_War_Attack_Kill_Num 	= 6;	// 攻方杀敌数
+	Country_War_Defense_Kill_Num	= 7;	// 守方杀敌数
+	Country_War_Stop				= 8;	// 国战结束
+	Country_War_Lady				= 9;	// 戎装公主
+	Country_War_Palace_Master_Life	= 10;	// 宫殿战主神血量
+}
+
+enum CoutryWarOccupyType
+{
+	Country_War_Occupy_None			= 0;	// 无
+	Country_War_Occupy_Defense		= 1;	// 守方占领
+	Country_War_Occupy_Attack		= 2;	// 攻方占领
+}
+
+// 国战记事
+message stCountryWarNotepadInfo
+{
+	optional uint32	dweventtime = 1;		// 国战事件发生时间
+	optional string	strEvent = 2;
+}
+
+// 国战攻防
+enum enumCountryWarMode
+{
+	Country_War_Mode_None = 0;
+	Country_War_Mode_Defense = 1;
+	Country_War_Mode_Attack = 2;
+}
+
+// 是否同意团移民
+enum enumCorpsImmigrationAttitude
+{
+	Corps_Immigration_Attitude = 0;
+	Refuse_Corps_Immigration = 1;
+	Agree_Corps_Immigration = 2;
+}
+
+// 国家活动类型
+enum eCountryActivity
+{
+	Country_Activity_Qingbao = 1;
+	Country_Activity_Yuanzheng = 2;
+	Country_Activity_Wuhui = 3;
+	Country_Activity_Sudi = 4;
+	Country_Activity_Weishe = 5;
+}
+
+// 帝皇战状态
+enum WorldWarState
+{
+	World_War_State_None		  = 0;		// 无
+	World_War_State_Ready		 = 1;		// 准备
+	World_War_State_Start		 = 2;		// 开始
+	World_War_State_Stop		  = 3;		// 结束
+}
+
+// 帝皇记录
+message stEmperorLog
+{
+	optional uint32 term = 1;				// 任期
+	optional uint32 country = 2;			// 国家
+	optional uint32 kingid = 3;				// 帝皇ID
+	optional uint32 kingtime = 4;			// 登基时间
+	optional uint32 outtime = 5;			// 退位时间
+}
+
+// 跨区国战信息
+message stChangeCountryWarInfo
+{
+	optional uint32 zoneid = 1;
+	optional uint32 attackcountry = 2;
+	optional uint32 defensecountry = 3;
+	optional uint32 startday = 4;
+	optional uint32 startweek = 5;
+	optional uint32 worldlevel = 6;
+	optional uint32 betattack = 7;
+	optional uint32 betdefense = 8;
+}
+
+/////////////////////团相关////////////////////////////
+// 团状态标志位
+enum enumCorpsState
+{
+	CorpsState_Normal		= 0;	// 正常状态
+	CorpsState_ToRemove		= 1;	// 待删除
+}
+
+// 建筑类型
+enum buildingType
+{
+	Building_Command		= 1;	// 指挥所
+	Building_Service		= 2;	// 后勤部
+	Building_Science		= 3;	// 科技馆
+	Building_Max			= 4;
+}
+
+// 团建筑数据结构
+message stBuildingData
+{
+	optional uint32	type = 1;		// 建筑类型
+	optional uint32	state = 2;		// 建筑状态
+	optional uint32	level = 3;		// 建筑等级
+}
+
+
+//////////////////////// 军相关////////////////////////////
+// 军状态标志位
+enum enumArmyState
+{
+	ArmyState_Normal		= 0;	// 正常状态
+	ArmyState_ToRemove		= 1;	// 待删除
+}
+
+
+// 社会关系基本数据
+
+message tRelationBaseData
+{
+	optional uint32	id = 1;			// 要加入的角色id
+	optional uint32	online = 2;		// 是否在线
+}
+
+// 队伍模式
+enum TeamMode
+{
+	TeamMode_Normal = 0;	// 普通组队
+	TeamMode_Friend = 1;	// 好友模式
+	TeamMode_Max = 2;		// 最大值
+}
+
+// Team exp distribute mode
+enum TeamExpMode
+{
+	TeamExpMode_Level = 0;		// 等级分配模式
+	TeamExpMode_Average = 1;	// 平均分配模式
+	TeamExpMode_Honor = 2;		// 新手分配模式
+	TeamExpMode_Max = 3;
+}
+
+
+// Team item distribute mode
+enum TeamItemMode
+{
+	TeamItemMode_Free = 1;		// 自由拾取模式
+	TeamItemMode_InTurn = 2;	// 轮流拾取模式
+	TeamItemMode_Max = 3;
+}
+
+
+// Team member status
+enum enumTeamStatus
+{
+	TeamMemberStatus_Died		= 0;	// Died
+	TeamMemberStatus_Offline	= 1;	// Offline
+	TeamMemberStatus_FarAway	= 2;	// Far away (default)
+	TeamMemberStatus_Normal		= 3;	// Among 9 screen
+	TeamMemberStatus_Max		= 4;
+}
+
+
+// 组队标志信息
+enum enumTeamMaskInfo
+{
+	TeamMask_FateCopy		= 1;	// 命运房间中
+	TeamMask_HeroCopy_1		= 2;	// 王者试炼房间中第一层
+	TeamMask_HeroCopy_2		= 4;	// 王者试炼房间中第二层
+	TeamMask_HeroCopy_3		= 8;	// 王者试炼房间中第三层
+	TeamMask_HeroCopy_4		= 16;	// 王者试炼房间中第四层
+}
+
+
+// 好友分组数据
+message GroupData
+{
+	optional uint32 groupid = 1;
+	optional uint32 member = 2;
+	optional string name = 3;
+}
+
+// 好友等级枚举（根据好友度划分)
+enum FriendLevel
+{
+	FriendLevel_Null	= 0;		// 不是好友
+	FriendLevel_PSXF	= 1;		// 萍水相逢
+	FriendLevel_FFZJ	= 2;		// 泛泛之交
+	FriendLevel_ZTDH	= 3;		// 志同道合
+	FriendLevel_XYLX	= 4;		// 心有灵犀
+	FriendLevel_TYZJ	= 5;		// 天涯知己
+	FriendLevel_TGGK	= 6;		// 共甘共苦
+	FriendLevel_GDXZ	= 7;		// 肝胆相照
+	FriendLevel_QTSZ	= 8;		// 情同手足
+	FriendLevel_SSZJ	= 9;		// 生死之交
+}
+
+enum FriendRank
+{
+	FriendLevel_NULL	= 0;
+	FriendLevel_YMZY	= 1;
+	FriendLevel_JQSQ	= 2;
+	FriendLevel_Ffzj	= 3;
+	FriendLevel_JLQY	= 4;
+	FriendLevel_HNZJ	= 5;
+	FriendLevel_EYRS	= 6;
+	FriendLevel_SSYG	= 7;
+}
+
+enum OrderListType
+{
+	// 需要添加倒全局容器内的排行榜
+	OrderListType_None 				= 0;
+	OrderListType_Level				= 1;		// 等级排行榜
+	OrderListType_Money				= 2;		// 财富排行榜
+	OrderListType_KillNum			= 3;		// 战斗排行榜
+	OrderListType_Prestige			= 4;		// 声望排行榜
+	OrderListType_Judge				= 5;		// 鉴定达人榜
+	OrderListType_DemonPeople		= 6;		// 驯化达人榜
+	OrderListType_HaLevel			= 7;		// 魂印等级排行榜
+	OrderListType_Week_LoveRace		= 8;		// 周极速狂飙榜
+	OrderListType_LoveRace			= 9;		// 极速狂飙榜
+	OrderListType_Army				= 10;		// 世界军实力排行榜
+	OrderListType_Corp				= 11;		// 世界团实力排行榜
+	OrderListType_Power				= 12;		// 世界玩家战斗力排行榜
+	OrderListType_Girl				= 13;		// 魅力值榜-淑女魅力
+	OrderListType_Boy				= 14;		// 魅力值榜-绅士魅力
+	OrderListType_Week_Girl			= 15;		// 魅力值榜-周淑女魅力
+	OrderListType_Week_Boy			= 16;		// 魅力值榜-周绅士魅力
+	OrderListType_Power_ZH			= 17;		// 战士战斗力榜
+	OrderListType_Power_TG			= 18;		// 特工战斗力榜
+	OrderListType_Power_QS			= 19;		// 枪手战斗力榜
+	OrderListType_Power_BP			= 20;		// 爆破战斗力榜
+	OrderListType_Power_XZ			= 21;		// 行者战斗力榜
+	OrderListType_Power_YS			= 22;		// 医生战斗力榜
+	OrderListType_Copy_Fate			= 23;		// 命运大厅榜
+	OrderListType_Copy_Guard		= 24;		// 要塞守卫榜
+	OrderListType_Corps_Glory		= 25;		// 团繁荣度榜
+	OrderListType_KillNum_Day		= 26;		// 每日战斗排行榜
+	OrderListType_Answer			= 27;		// 答题榜
+	OrderListType_Answer_Week		= 28;		// 每周答题榜
+	OrderListType_Short_Kill_Day	= 29;		// 今日历史连杀榜
+	OrderListType_Short_Kill_Last	= 30;		// 昨日历史连杀榜
+	OrderListType_Short_Kill		= 31;		// 历史连杀榜
+	OrderListType_HuGuo_Today		= 32;		// 今日护国榜
+	OrderListType_HuGuo_All			= 33;		// 护国榜
+	OrderListType_DIAMOND			= 34;		// 神石榜
+	OrderListType_BEAD				= 35;		// 龙珠榜
+	OrderListType_JADE				= 36;		// 护符榜
+	OrderListType_SHIELD			= 37;		// 护盾榜
+	OrderListType_SoulLevel			= 38;		// 狩魂等级榜
+	OrderListType_Country_Prestige	= 40;		// 国家排行(客户端用)
+	OrderListType_Country_Crystal	= 41;		// 生命水晶(客户端用)
+	OrderListType_CiShan			= 42;		// 慈善排行榜
+	OrderListType_PassFlower		= 43;		// 击鼓传花榜
+	OrderListType_QiangPresent		= 44;		// 偷菜榜
+	OrderListType_ShaiZi			= 45;		// 骰子榜
+	OrderListType_FlagScore			= 46;		// 夺旗榜
+	OrderListType_HuGuo_2			= 93; 		// 天之国护国榜
+	OrderListType_HuGuo_3			= 94; 		// 火之国护国榜
+	OrderListType_HuGuo_4			= 95; 		// 谁之国护国榜
+	OrderListType_HuGuo_5			= 50; 		// 沙之国护国榜
+	OrderListType_HuGuo_6			= 51; 		// 风之国护国榜
+	OrderListType_HuGuo_7			= 52; 		// 花之国护国榜
+	OrderListType_Power_2			= 56; 		// 天之国巅峰榜
+	OrderListType_Power_3			= 57; 		// 火之国巅峰榜
+	OrderListType_Power_4			= 58; 		// 谁之国巅峰榜
+	OrderListType_Power_5			= 59; 		// 沙之国巅峰榜
+	OrderListType_Power_6			= 60; 		// 风之国巅峰榜
+	OrderListType_Power_7			= 61; 		// 花之国巅峰榜
+	OrderListType_CountryBattle		= 66;		// 国家战争
+	OrderListType_WorldLevel		= 67;		// 封印排行榜(星辰(神座)总等级)
+	OrderListType_QQCallBack		= 68;		// QQ有缘人
+	OrderListType_Teacher			= 69;		// 辅导员排行榜
+	OrderListType_AdvanturePoint	= 70;		// 冒险岛积分
+	OrderListType_WeekAdvanturePoint= 71;		// 冒险岛周积分
+	OrderListType_HorseZiZhi		= 72;		// 坐骑资质榜
+	OrderListType_BaBieTower		= 73;		// 巴别塔排行榜
+	OrderListType_JoinDemon			= 74;		// 战宠评分榜
+	OrderListType_FollowDemon		= 75;		// 侍宠评分榜
+	OrderListType_CorpsPower		= 76;		// 团战力榜
+	OrderListType_ArmyPower			= 77;		// 军战力榜
+	OrderListType_Corps_AirshipCopy	= 78;		// 团飞跃大峡谷副本总积分榜
+	OrderListType_WeekGold			= 79;		// 周充值金币榜
+	OrderListType_Week_AirshipCopy	= 80;		// 团飞跃大峡谷副本周排行榜
+	OrderListType_WeekGold_World	= 81;		// 世界周充值金币榜
+	OrderListType_eESportType_Blook 		= 82;	// 血战到底
+	OrderListType_eESportType_ShiLian 		= 83;	// 王者试炼
+	OrderListType_eESportType_CorpsBattle 	= 84;	// 攻城战伤害榜
+	OrderListType_eESportType_Fish 			= 85;	// 钓鱼
+	OrderListType_eESportType_Rush 			= 86;	// 极速狂飙
+	OrderListType_eESportType_OnlineTime	= 87;	// 在线时间
+	OrderListType_OpenSrvConsumeGold	 	= 88;	// 开服累计消费排行榜
+//	OrderListType_MineLottery				= 89;	// 许愿排行榜
+	OrderListType_MineLottery				= 1000;	// 许愿排行榜 暂时注释不需要
+	OrderListType_Soul						= 90;	// 狩猎排行榜
+	OrderListType_Horse                     = 91;   // 坐骑排行榜
+    OrderListType_ActGoldIn                 = 92;   // 活动充值总额
+    OrderListType_OpenServer_Pay1           = 47;   // 第一期开服消费榜
+    OrderListType_OpenServer_Pay2           = 48;   // 第二期开服消费榜
+    OrderListType_OpenServer_Pay3           = 49;   // 第三期开服消费榜
+	OrderListType_WorldExam			= 96;		// 科举答题
+	OrderListType_ClanExam			= 97;		// 世界答题
+	OrderListType_Marry			= 98;
+	OrderListType_CopyPass			= 99;		// 闯关排行
+
+	OrderListType_Max				= 100;
+	// 不需要添加到全局容器内的排行榜
+	OrderListType_Simulation		= 101;
+	//宝藏秘闻
+	OrderListType_Mine				= 102;
+	OrderListType_Royal				= 103;
+	//红包打赏
+	OrderListType_RedPacketGrab		= 104;		// 抢红包历史
+	OrderListType_RedPacketRank		= 105;		// 抢红包排行
+	OrderListType_RedPacketReward	= 106;		// 抢红包打赏
+	OrderListType_RedPacketAuto		= 107;		// 抢红包自动
+
+	//帮会商店
+	OrderListType_ClanShop			= 108;
+	//帮会红包
+	OrderListType_ClanRedPacket		= 109;
+
+	OrderListType_SuperPond			= 110;		// 超级奖池
+	OrderListType_Turntable			= 111;		// 幸运转盘
+	OrderListType_ManorBase			= 112;		// 领地战(112~118),后续从119开始
+	OrderListType_HappyRecharge		= 120;		// 欢乐充值
+	OrderListType_ClanWar			= 121;		// 宗门势力战
+	OrderListType_WorldBoss			= 130;		//世界BOSS伤害排行榜
+
+	MAX_ORDER_SYSTEM_KEY = 100000;
+}
+
+//////////////////// 社会关系活动相关
+
+// 活动类型
+enum enumEventType
+{
+	EventType_None		= 0;		// 无效
+	EventType_Issue		= 1;		// 需要手动发布
+	EventType_Day		= 2;		// 自动每日
+	EventType_Week		= 4;		// 自动每周
+	EventType_Trigger	= 8;		// 触发事件
+}
+
+// 活动进度枚举
+enum enumEventStepType
+{
+	EventStep_None		= 0;		// 未发布
+	EventStep_Wait		= 1;		// 已发布等待开始
+	EventStep_Run		= 2;		// 进行中
+	EventStep_End		= 3;		// 结束
+	EventStep_Remove	= 4;		// 删除
+}
+
+enum enumEventID
+{
+	option allow_alias = true;
+	EventCorpsBattleStart		= 1;	// 团战时间
+	EventOccupyBattleStart		= 2;	// 团占领挑战
+	EventDayLotteryDarw			= 3;	// 每日彩票开奖
+	EventArmyBattle				= 4;	// 军战时间
+	EventCorpsCopy				= 5;	// 团副本
+	EventCountryOccupyStart		= 6;	// 国王争夺战
+	EventCountryWarReady		= 7;	// 国战准备
+	EventCountryVoteKingStart	= 8;	// 国王竞选战
+	EventArmyOccupyStart		= 9;	// 军称号争夺
+	EventWorldWarReady			= 10;	// 帝皇战准备
+
+	EventCorpsBattleSign		= 1001;	// 团战报名
+	EventOccupyBattleSign		= 1002;	// 团挑战报名
+	EventDayLotteryBuy			= 1003;	// 彩票可购买时间
+	EventArmyBattleSign			= 1004;	// 军战报名时间
+	EventJunXunTask				= 1006;	// 团突袭任务
+	EventCorpsJunXunPre			= 1007;	// 团突袭准备
+	EventJunXunBombTime			= 1009;	// 被放置炸弹
+
+	EventCorpsJunXunDoing		= 10001;// 团突袭进行中
+	EventRunningRacePrepare		= 10007;// 极速狂飙准备
+	EventRunningRaceStart		= 10008;// 极速狂飙开始
+	EventRunningIssuePrepare	= 10009;// 极速狂飙发布(国家)
+	EventRunningIssueStart		= 10010;// 极速狂飙发布(国家)
+
+	EventCopyNuclearPrepare		= 10011;	// 核子魔窟报名
+	// 此间ID已占用
+	EventCopyNuclearStart		= 10016;	// 核子魔窟开放
+	EventCountryBattleTime		= 10018;	// 国战时间
+	EventCopyHeroPrepare1		= 10020;	// 王者试炼报名
+	EventCopyHeroPrepare2		= 10021;	// 王者试炼报名
+	EventCopyHeroPrepare3		= 10022;	// 王者试炼报名
+
+	EventCSRunningRacePrepare	 = 10024;	// 跨区极速狂飙准备
+	EventCSRunningRaceStart	   = 10025;		// 跨区极速狂飙开始
+
+	// 活动提示
+	EventCopyHeziTip1			= 20001;	// 盒子魔窟提示
+	EventCopyHeziTip2			= 20002;
+	EventCopyHeziTip5			= 20005;
+	EventCopyHeziTip6			= 20006;
+	EventCopyHeziTip7			= 20007;
+	EventCopyHeziTip8			= 20008;
+	EventCopyHeziTip9			= 20009;
+	EventCopyHeziTip10			= 20010;
+	EventCopyHeziTip11			= 20011;
+	EventCopyHeziTip12			= 20012;
+
+	EventCopyHeziTip13			= 20013;
+	EventCopyHeziTip14			= 20014;
+	EventCopyHeziTip16			= 20016;
+	EventCopyHeziTip18			= 20018;
+
+	EventCopyHeroTip1			= 20020;	// 王者试炼提示
+	EventCopyHeroTip2			= 20021;
+	EventCopyHeroTip4			= 20023;
+	EventCopyHeroTip5			= 20024;
+	EventCopyHeroTip6			= 20025;
+	EventCopyHeroTip7			= 20026;
+	EventCopyHeroTip8			= 20027;
+
+	EventCorpBattleTip1			= 20030;	// 团战提示
+	EventCorpBattleTip2			= 20031;
+	EventCorpBattleTip3			= 20032;
+
+	EventArmyBattleTip1			= 20033; 	// 军战提示
+	EventArmyBattleTip2			= 20034;
+	EventArmyBattleTip3			= 20035;
+
+	EventLuckyCardTime			= 20040;	// 幸运卡片开奖
+	EventDeterRob				= 20041;	// 威慑与掠夺
+	EventCountryDancing			= 20042;	// 国家舞会
+
+	EventLoveTask				= 20046;	// 情缘任务
+
+	//以下是皇图新加的,上面的全部无效
+
+	EventJewelBattle			= 100;		//宝石战场(开启)
+	EventJewelBattle_Tip1		= 101;		//宝石战场(前5分钟提示)
+	EventJewelBattle2			= 102;		//宝石战场(开启)
+	EventJewelBattle_Tip2		= 103;		//宝石战场(前5分钟提示)
+
+	EventCaptureFlag1			= 200;		//夺旗战(10点开启)
+	EventCaptureFlag1_Tip		= 201;		//夺旗战(前5分钟提示)
+	EventCaptureFlag2			= 202;		//夺旗战(16点开启)
+	EventCaptureFlag2_Tip		= 203;		//夺旗战(前5分钟提示)
+	EventCaptureFlag3			= 204;		//夺旗战(23:10点开启)
+	EventCaptureFlag3_Tip		= 205;		//夺旗战(前5分钟提示)
+
+    EventAttackCity				= 300;		//攻城战(开启)
+    EventAttackCity_Tip1		= 301;		//攻城战tip(前15分钟提示)
+    EventAttackCity_Tip2		= 302;		//攻城战tip(前10分钟提示)
+    EventAttackCity_Tip3		= 303;		//攻城战tip(前5分钟提示)
+
+	EventMonsterAtkCity1		= 400;		//怪物攻城(开启)
+    EventMonsterAtkCity1_Tip    = 401;      //怪物攻城tip(前5分钟提示)
+	EventMonsterAtkCity2		= 402;		//怪物攻城(开启)
+	EventMonsterAtkCity2_Tip	= 403;		//怪物攻城tip(前5分钟提示)
+	EventMonsterAtkCity3		= 404;		//怪物攻城(开启)
+	EventMonsterAtkCity3_Tip	= 405;		//怪物攻城Tip(前5分钟提示)
+
+	EventSimulation				= 500;		//竞技场(开启)
+
+	EventMonsterCity1			= 600;		//巨兽围城(开启)
+	EventMonsterCity1_Tip		= 601;		//巨兽围城(前5分钟提示)
+	EventMonsterCity2			= 602;		//巨兽围城(开启)
+	EventMonsterCity2_Tip		= 603;		//巨兽围城(前5分钟提示)
+	EventMonsterCity3			= 604;		//巨兽围城(开启)
+	EventMonsterCity3_Tip		= 605;		//巨兽围城(前5分钟提示)
+
+	EventArena					= 700;		//擂台战(开启)
+	EventArena_Tip				= 701;		//擂台战(前5分钟提示)
+    EventArena1                  = 703;      //擂台战(开启)
+    EventArena_Tip1              = 704;      //擂台战(前5分钟提示)
+    EventArena2                  = 705;      //擂台战(开启)
+    EventArena_Tip2              = 706;      //擂台战(前5分钟提示)
+
+	EventHeroIndiana1			= 800;		//群雄夺宝(开启)
+	EventHeroIndiana1_Tip		= 801;		//群雄夺宝(前5分钟提示)
+	EventHeroIndiana2			= 802;		//群雄夺宝(开启)
+	EventHeroIndiana2_Tip		= 803;		//群雄夺宝(前5分钟提示)
+
+	EventDoubleExp1				= 900;		//双倍经验(开启)
+	EventDoubleExp2				= 901;		//双倍经验(开启)
+	EventDoubleExp3				= 902;		//双倍经验(开启)
+
+	EventChallengeBoss			= 1000;		//boss殿堂(开启)
+	EventChallengeBoss_Tip		= 1001;		//boss殿堂(前5分钟提示)
+    EventChallengeBoss1          = 1002;     //boss殿堂(开启)
+    EventChallengeBoss_Tip1      = 1003;     //boss殿堂(前5分钟提示)
+    EventChallengeBoss2          = 1004;     //boss殿堂(开启)
+    EventChallengeBoss_Tip2      = 1005;     //boss殿堂(前5分钟提示)
+
+	EventFight					= 1100;		//武斗大会(开启)
+	EventFight_Tip				= 1101;		//武斗大会报名
+	EventFight_ApplyOver		= 1102;		//武斗大会报名结束
+	EventFight2					= 1103;		//武斗大会(开启)
+	EventFight_Tip2				= 1104;		//武斗大会报名
+	EventFight_ApplyOver2		= 1105;		//武斗大会报名结束
+
+
+	EventVisitMaster1			= 1200;		//瞻仰城主(开启)
+	EventVisitMaster2			= 1201;		//瞻仰城主(开启)
+	EventVisitMaster3			= 1202;		//瞻仰城主(开启)
+
+    DoubleEscort1               = 1301;     //押镖开始
+    DoubleEscort1_Tip           = 1302;     //押镖(前5分钟提示)
+    DoubleEscort2               = 1303;     //押镖开始
+    DoubleEscort2_Tip           = 1304;     //押镖(前5分钟提示)
+//    DoubleEscort3               = 1305;     //押镖开始
+//    DoubleEscort3_Tip           = 1306;     //押镖(前5分钟提示)
+
+/*	Escort1		                = 1311;     //押镖开始
+	Escort1_Tip			        = 1312;     //押镖(前5分钟提示)
+	Escort2					    = 1313;     //押镖开始
+	Escort2_Tip					= 1314;     //押镖(前5分钟提示)
+*/
+    EventMine               = 2001;      //晶源矿脉
+
+    EventManor		           = 1601;     //领地战
+    EventManor_Sign1		   = 1602;     //领地战（30分钟）
+    EventManor_Sign2		   = 1603;     //领地战（报名截止1分钟）
+	EventManorTree			   = 1701;	   //帮会神树摘取
+
+	EventPickPreal		       = 1801;     //太妙宝莲
+	EventPreal1_Tip			   = 1802;		//太妙宝莲(前1分钟提示)
+
+	EventClanPractice			= 2301;		//宗门修炼
+
+	EventClanWar_Mode				=2400;		//宗门势力战
+	EventClanWar_Sign				=2400;		//宗门势力战
+	EventClanWar_824				=2401;		//宗门势力战8进4
+	EventClanWar_422				=2402;		//宗门势力战4进2
+	EventClanWar_221				=2403;		//宗门势力战决赛
+								//2400~2499宗门势力战全用了，下一个请从2500开始
+	EventWorldBoss				= 2501;
+}
+
+
+// 好友授勋送礼数据
+enum enumFriendMedalPresent
+{
+	MedalPreset_None			= 0;	// 未选礼物
+	MedalPreset_Rose1			= 1;	// 1朵玫瑰花
+	MedalPreset_Rose6		   	= 2;	// 6朵玫瑰花
+	MedalPreset_Rose36			= 3;	// 36多玫瑰花
+	MedalPreset_Chocolate1		= 4;	// 1巧克力
+	MedalPreset_Chocolate6	  	= 5;	// 6巧克力
+	MedalPreset_Chocolate36	 	= 6;	// 36巧克力
+	MedalPreset_Max				= 7;
+}
+
+// 好友升级送礼数据
+enum enumFriendLevelUpPresent
+{
+	LevelUpPreset_None			= 0;	// 未选礼物
+	LevelUpPreset_Rose1			= 1;	// 1朵玫瑰花
+	LevelUpPreset_Rose6		   	= 2;	// 6朵玫瑰花
+	LevelUpPreset_Rose36		= 3;	// 36多玫瑰花
+	LevelUpPreset_Chocolate1	= 4;	// 1巧克力
+	LevelUpPreset_Chocolate6	= 5;	// 6巧克力
+	LevelUpPreset_Chocolate36	= 6;	// 36巧克力
+	LevelUpPreset_Max			= 7;
+}
+
+// 恋爱送礼数据
+enum enumFriendLovePresent
+{
+	LovePresent_None			= 0;	// 未选礼物
+	LovePresent_Rose1			= 1;	// 1朵玫瑰花
+	LovePresent_Rose6			= 2;	// 6朵玫瑰花
+	LovePresent_Rose36			= 3;	// 36朵玫瑰花
+	LovePresent_Chocolate1		= 4;	// 1巧克力
+	LovePresent_Chocolate6		= 5;	// 6巧克力
+	LovePresent_Chocolate36		= 6;	// 36巧克力
+	LovePresent_Max				= 7;
+}
+
+
+// 求爱方式
+enum eFallInLoveMode
+{
+	FALL_IN_LOVE_NONE = 0;
+	FALL_IN_LOVE_ONE = 1;			// 不花钱方式
+	FALL_IN_LOVE_TWO = 2;			// 1500YB
+	FALL_IN_LOVE_THREE = 3;			// 6000YB
+	FALL_IN_LOVE_FOUR = 4;			// 30000YB
+}
+
+
+// 求婚方式
+enum eMarryMode
+{
+	MARRY_MODE_NONE = 0;
+	MARRY_MODE_ONE = 1;				// 0金币
+	MARRY_MODE_TWO = 2;				// 99金币
+	MARRY_MODE_THREE = 3;			// 999金币
+	MARRY_MODE_FOUR = 4;			// 9999金币
+}
+
+
+// 团工资兑换类型
+enum eWageTransferType
+{
+	TRANSFER_NONE = 0;
+	TRANSFER_CORPS_MONEY = 1;
+	TRANSFER_USER_MONEY = 2;
+}
+
+
+// 团工资评价
+enum eCorpsWageAppraisal
+{
+	CORPS_WAGE_APPRAISAL_NONE = 0;
+	CORPS_WAGE_APPRAISAL_GRATE = 1;			// 杰出
+	CORPS_WAGE_APPRAISAL_VERY_GOOD = 2;		// 优秀
+	CORPS_WAGE_APPRAISAL_GOOD = 3;			// 良好
+	CORPS_WAGE_APPRAISAL_NOMAL = 4;			// 一般
+	CORPS_WAGE_APPRAISAL_BAD = 5;			// 警告
+}
+
+// 团工资颁发状态
+enum eCorpsWageState
+{
+	CORPS_WAGE_STATE_NONE = 0;
+	CORPS_WAGE_STATE_NOT_ONLINE = 1;		// 不在线
+	CORPS_WAGE_STATE_GETED = 2;				// 已颁发
+	CORPS_WAGE_STATE_NOT_GETED = 3;			// 未颁发
+}
+
+// 团工资个人捐献记录
+message stCorpsWageTransfer
+{
+	optional uint32 time = 1;
+	optional uint32 uid = 2;
+	optional uint32 money = 3;
+}
+
+// 国家官员工资颁发状态
+enum eCountryWageState
+{
+	COUNTRY_WAGE_STATE_NONE = 0;
+	COUNTRY_WAGE_STATE_NOT_ONLINE = 1;		// 不在线
+	COUNTRY_WAGE_STATE_GETED = 2;			// 已颁发
+	COUNTRY_WAGE_STATE_NOT_GETED = 3;		// 未颁发
+}
+
+
+// 官员工资评价
+enum eCountryWageAppraisal
+{
+	COUNTRY_WAGE_APPRAISAL_NONE = 0;
+	COUNTRY_WAGE_APPRAISAL_GRATE = 1;		// 褒奖
+	COUNTRY_WAGE_APPRAISAL_VERY_GOOD = 2;	// 表彰
+	COUNTRY_WAGE_APPRAISAL_GOOD = 3;		// 良好
+	COUNTRY_WAGE_APPRAISAL_NOMAL = 4;		// 勉励
+	COUNTRY_WAGE_APPRAISAL_BAD = 5;			// 监察
+}
+
+
+// 模拟战分析选项
+enum eSimulationOption
+{
+	SIMULATION_OPTION_NONE = 0;
+	SIMULATION_OPTION_HP = 1;				// 血量
+	SIMULATION_OPTION_PDAM = 2;				// 物攻
+	SIMULATION_OPTION_PDEF = 3;				// 物防
+	SIMULATION_OPTION_MDAM = 4;				// 魔攻
+	SIMULATION_OPTION_MDEF = 5;				// 魔防
+	SIMULATION_OPTION_PHSUB = 6;			// 物减
+	SIMULATION_OPTION_MHSUB = 7;			// 魔减
+	SIMULATION_OPTION_LUCKY = 8;			// 致命
+	SIMULATION_OPTION_IGNOREDEF = 9;		// 忽视
+	SIMULATION_OPTION_FORCE = 10;			// 重击
+	SIMULATION_OPTION_HIDE = 11;			// 闪避
+	SIMULATION_OPTION_HURTECHO = 12;		// 反伤
+	SIMULATION_OPTION_SUPERDAM = 13;		// 特伤
+	SIMULATION_OPTION_SUPERDEF = 14;		// 特防
+}
+
+// 团移民状态
+enum enumCorpsImmigrationState
+{
+	CORPS_IMMIGRATION_STATE_NONE = 0;			// 未移民状态
+	CORPS_IMMIGRATION_STATE_IMMIGRATION = 1;	// 团移民状态
+}
+
+message stAllyBaseInfo
+{
+	optional uint32	dwCountryID = 1;			// 国家ID
+	optional string strCountryName = 2;			// 国家名称
+	optional uint32	dwKingID = 3;				// 国王ID
+	optional uint32	dwPrestige = 4;				// 国家声望
+	optional uint32	byCountryState = 5;			// 国家状态
+	optional uint32 byIsAllyOrMe = 6;			// 是否盟国或自己国家
+	repeated uint32	ally = 7;					// 盟国
+	optional uint32	dwWarCountry = 8;			// 国战交战国家
+	optional uint32	dwWarTime = 9;				// 国战交战日期
+	optional uint32	dwWarMode = 10;				// 国战交战方式
+	optional uint32	immigration = 11;			// 今日移民人数
+}
+
+// 社会关系职务枚举 具体职务权限关系见 职务权限表.xls
+enum enumFunctionType
+{
+	FunctionType_Common			= 0;			// 百姓
+	FunctionType_Marshal		= 1;			// 国王
+	FunctionType_ViceMarshal	= 2;			// 元帅
+	FunctionType_Interior		= 3;			// 内务大臣
+	FunctionType_Treasury		= 4;			// 财务大臣
+	FunctionType_Defense		= 5;			// 军务大臣
+	FunctionType_Police			= 6;			// 警长
+	FunctionType_VicePolice		= 7;			// 代警长
+	FunctionType_RoseKnight		= 8;			// 玫瑰骑士
+	FunctionType_Commander		= 9;			// 指挥官
+
+	FunctionType_CLeader		= 51;			// 团长
+	FunctionType_CInterLeader	= 52;			// 内务副官
+	FunctionType_CExterLeader	= 53;			// 外务副官
+	FunctionType_CBeauty		= 54;			// 团花
+
+	FunctionType_ALeader		= 81;			// 军长
+	FunctionType_AViceLeader	= 82;			// 副军长
+	FunctionType_Max			= 83;
+}
+
+enum enumUserAttr
+{
+	UserAttr_CorpsOffer		= 1;				// 团勋章
+	UserAttr_CorpsDonate	= 2;				// 团捐献资金
+	UserAttr_ArmyDonate		= 3;				// 军捐献资金
+}
+
+// 召集对话框枚举
+enum MemberCallBackMsgBoxType
+{
+	MsgBoxType_Normal		= 0;
+}
+
+// 发送好友行为状态
+enum FriendBabyState
+{
+	FriendBabyState_None			= 0;		// 没有
+	FriendBabyState_Out				= 1;        // 寄养中
+	FriendBabyState_Adopted			= 2;        // 被自己领养
+	FriendBabyState_OtherAdopted	= 3;        // 被别人领养
+}
+
+// 返回排行榜
+enum OrderTrend
+{
+	OrderTrend_Down		= 0;					// 降
+	OrderTrend_Up		= 1;                    // 升
+	OrderTrend_Flat		= 2;                    // 不变
+}
+
+// 团及军信息刷新请求
+enum enumInfoRequest
+{
+	Corps_Property		= 1;					// 团属性
+	Corps_WorkerList	= 2;                    // 团出勤人员
+	Corps_DutyList		= 3;                    // 团职务列表
+	Corps_OccupyList	= 4;                    // 占领信息
+	Corps_GradeList		= 5;                    // 团战积分榜
+	Corps_CopyGradeList	= 6;                    // 团副本积分榜
+	Corps_GloryList		= 7;                    // 繁荣度榜单
+	Corps_HealthList	= 8;                    // 健康指数榜单
+	Corps_OfferList		= 9;                    // 贡献度榜单
+	Army_Property		= 101;                  // 军属性
+	Army_GradeList		= 102;                  // 军实力排行
+	Army_BattleList		= 103;                  // 军的团战情况列表
+	Army_OccupyList		= 104;                  // 军的团占领列表
+	Army_CorpsList		= 105;                  // 军的团列表
+	Army_Occupy			= 106;                  // 军占领
+}
+
+enum FlowerType
+{
+	FlowerType_Red		= 1;
+	FlowerType_White	= 2;
+}
+
+message tFriendBaseData
+{
+	optional RelationType type	= 1;
+	optional uint32 id			= 2;
+	optional uint32 online		= 3; 			// 在线状态
+	optional uint32 profession	= 4; 			// 职业
+	optional uint32 level		= 5; 			// 等级
+	optional uint32 countryid	= 6; 			// 国家id
+	optional uint32 face		= 7; 			// 成员脸形(性别)
+	optional uint32 title		= 8; 			// 称号
+	optional uint32 degree		= 9; 			// 友好度
+	optional uint32 active		= 10; 			// 最后活跃时间
+	optional uint32 addtime		= 11; 			// 原敌人数据
+	optional uint32 save		= 12; 			// 原敌人数据
+	optional uint32 currentcountryid = 13; 		// 当前所在国家，动态更新数据
+	optional uint32 mapid		= 14;  			// 当前国家，动态更新数据
+	optional string name		= 15;			// 名称
+	optional uint32 province	= 16;			// 省份
+	optional uint32 state		= 17;			// 状态,1:添加,2:已发送,3:已满员
+	optional int32 homeland= 18;				//地区
+ 	optional string iconurl= 19;				//头像
+	optional int32 isNpc= 20;				//是否是npc
+	optional uint32 onlinetime		= 21; 			// 最后上线时间
+	optional string clanname		= 22 ;			// 工会名称
+	optional int32 ismarriage= 23;				//是否结婚
+	optional int32 isdowedding= 24;				//是否举办过婚礼
+}
+
+message tCorpsBaseData
+{
+	optional uint32 id			= 1;
+	optional uint32 online		= 2;
+	optional uint32	contrib		= 4;	// 团勋章
+	optional uint32	money		= 5;	// 贡献团资金
+	optional uint32	prestige	= 6;	// 声望
+	optional uint32	active		= 7;	// 最后活跃时间
+	optional uint32	armymoney	= 8;	// 贡献军资金
+	optional uint32	point		= 9;	// 团积分
+	optional uint32	duty_corps	= 10;	// 职务
+	optional uint32	duty_army	= 11;	// 职务
+	optional uint32	duty_country= 12;	// 职务
+}
+
+// 军基本数据
+message tArmyBaseData
+{
+	optional uint32 id 			= 1;
+	optional uint32 online 		= 2;
+	optional uint32 duty 		= 3;	// 军职务
+}
+
+message RelationUserCmd
+{
+	enum Param
+	{
+//ProtoDefineBeing
+		stRequestCreateRelationUserCmd = 1;
+		stRequestDestroyRelationUserCmd = 2;
+		stRequestAddRelationUserCmd = 3;
+		stAnswerAddRelationUserCmd = 4;
+		stAddRelationUserCmd = 5;
+		stRequestRemoveRelationUserCmd = 6;
+		stRequestKickRelationUserCmd = 7;
+		stRemoveRelationUserCmd = 8;
+		stOnlineRelationUserCmd = 9;
+		stOfflineRelationUserCmd = 10;
+		stAddListRelationUserCmd = 11;
+		//stRequestSaveEnemyRelationUserCmd = 12;
+		//stRequestCancelSaveEnemyRelationUserCmd = 13;
+		stChangeLeaderRelationUserCmd = 14;
+		stBillboardRelationUserCmd = 15;
+		stNewsRelationUserCmd = 16;
+		stNewsListRelationUserCmd = 17;
+		stSetFunctionRelationUserCmd = 18;
+		stFreshUserPropertyRelationUserCmd = 19;
+		//stRequestJoinRelationUserCmd = 20;
+		//stMemberCallBackRelationUserCmd = 21;
+		//stAnswerMemberCallBackRelationUserCmd = 22;
+		stRequestDonationRelationUserCmd = 23;
+		stDonateMoneyRelationUserCmd = 24;
+		//stAnswerJoinRelationUserCmd = 25;
+		stAddEventStateRelationUserCmd = 26;
+		stRemoveEventStateRelationUserCmd = 27;
+		stRequestCreateCompanionRelationUserCmd = 28;
+		//stRequestCompanionNameRelationUserCmd = 29;
+		stRetCompanionNameRelationUserCmd = 30;
+		stSendCompanionListRelationUserCmd = 31;
+		stClearCompanionRelationUserCmd = 32;
+		//stRequestCompanionNameListRelationUserCmd = 34;
+		stSendCompanionNameListRelationUserCmd = 35;
+		stRequestTeamRelationUserCmd = 36;
+		stAnswerTeamRelationUserCmd = 37;
+		stAddTeamMemberRelationUserCmd = 38;
+		stRemoveTeamRelationUserCmd = 39;
+		stLeaveTeamRelationUserCmd = 40;
+		stKickTeamMemberRelationUserCmd = 41;
+		stRemoveTeamMemberRelationUserCmd = 42;
+		stSetModeTeamRelationUserCmd = 43;
+		stRefreshStateTeamRelationUserCmd = 44;
+		stChangeLeaderTeamRelationUserCmd = 45;
+		stRequestTeamMemberRelationUserCmd = 46;
+		stAddListTeamMemberRelationUserCmd = 47;
+		//stChangeTeamModeRelationUserCmd = 48;
+		//stGiveReciveMemberPrivilegeRelationUserCmd = 49;
+		//stCancelReciveMemberPrivilegeRelationUserCmd = 50;
+		stBatchGiveReciveMemberPrivilegeRelationUserCmd = 51;
+		stRefreshPickupItemMemberRelationUserCmd = 52;
+		stRfreshFriendDataRelationUserCmd = 53;
+		//stRfreshFriendDataListRelationUserCmd = 54;
+		//stRfreshEnemyDataRelationUserCmd = 55;
+		//stRequireFriendActionRelationUserCmd = 56;
+		stSendFriendActionRelationUserCmd = 57;
+		stSendFriendTemperRelationUserCmd = 58;
+		stNotifyFriendMedalRelationUserCmd = 59;
+		//stSendFriendMedalPresentRelationUserCmd = 60;
+		stNotifyFriendLevelUpRelationUserCmd = 62;
+		//stSendFriendLevelUpPresentRelationUserCmd = 63;
+		stSetEnemyCountryRelationUserCmd = 64;
+		stRequestExcusePlayerRelationUserCmd = 65;
+		stRequestArrestPlayerRelationUserCmd = 66;
+		stRequestQuietPlayerRelationUserCmd = 67;
+		//stAppointFunctionRelationUserCmd = 68;
+		//stCancelFunctionRelationUserCmd = 69;
+		//stChangeCountryNameRelationUserCmd = 70;
+		//stRequestCountryInfoRelationUserCmd = 71;
+		stAnswerCountryInfoRelationUserCmd = 72;
+		stRequestOrderListRelationUserCmd = 73;
+		stAnswerOrderListRelationUserCmd = 74;
+		//stRequestUnionCountryRelationUserCmd = 75;
+		//stAnswerUnionCountryRelationUserCmd = 76;
+		//stFreeFromCountryUnionRelationUserCmd = 77;
+		//stRequestCountryPowerRelationUserCmd = 78;
+		//stAnswerCountryPowerRelationUserCmd = 79;
+		//stRequestCountryInformationRelationUserCmd = 80;
+		//stAnswerCountryInformationRelationUserCmd = 81;
+		stNotifyHaveOneForHelpRelationUserCmd = 82;
+		stSendRescuePosRelationUserCmd = 84;
+		//stRequestCorpsArmyInfoRelationUserCmd = 86;
+		stRefreshCorpsPropertyRelationUserCmd = 87;
+		stRefreshArmyPropertyRelationUserCmd = 88;
+		//stAddRelationByNameRelationUserCmd = 89;
+		stAskAckCorpsFriendRelationUserCmd = 90;
+		//stSetOutWorkerRelationUserCmd = 91;
+		stSendWorkerListRelationUserCmd = 92;
+		stSendJoinCorpsListRelationUserCmd = 93;
+		//stSendCorpsRequestListRelationUserCmd = 94;
+		//stFeedBossRequestReltionRelationUserCmd = 95;
+		stSendCorpsOccupyListRelationUserCmd = 96;
+		//stRequestKillCorpsBossRelationUserCmd = 98;
+		//stSendPayInfoRelationUserCmd = 99;
+		stCorpsOrderListRelationUserCmd = 100;
+		//stRequestPackLogRelationUserCmd = 101;
+		stSendPackLogRelationUserCmd = 102;
+		//stSendCorpsWarningRelationUserCmd = 103;
+		stCorpsBuildLevelRelationUserCmd = 104;
+		stArmyLevelUpRelationUserCmd = 105;
+		stCorpsRemoveListRelationUserCmd = 106;
+		stArmyInfoListRelationUserCmd = 107;
+		stAutoTaskOperationRelationUserCmd = 108;
+		//stCorpsJoinListRelationUserCmd = 109;
+		stSendCorpsReqListRelationUserCmd = 110;
+		//stCancleJoinReqRelationUserCmd = 111;
+		stCorpsJunXunExpRelationUserCmd = 112;
+		stCorpsJunXunTipsRelationUserCmd = 113;
+		//stReqGetOfferAwardRelationUserCmd = 114;
+		//stReqDonateCorpsMoneyRelationUserCmd = 115;
+		//stSetAllyCorpsRelationUserCmd = 116;
+		//stRequestPersonPayInfoRelationUserCmd = 117;
+		stReturnPersonPayInfoRelationUserCmd = 118;
+		//stRequestPersonalInfoRelationUserCmd = 119;
+		stReturnPersonalInfoRelationUserCmd = 120;
+		//stChangePersonalInfoRelationUserCmd = 121;
+		//stRequestCorpsListRelationUserCmd = 122;
+		stOnlineJoinCorpsListRelationUserCmd = 123;
+		//stRequestCountryOccupyListRelationUserCmd = 125;
+		stReturnCountryOccupyListRelationUserCmd = 126;
+		stContributeMagicMaterialsRelationUserCmd = 127;
+		//stContributeMagicMaterialsConfirmRelationUserCmd = 128;
+		stRequestOrderMineRelationUserCmd = 129;
+		stReturnOrderMineRelationUserCmd = 130;
+		//stRequestCountrysRelationUserCmd = 131;
+		stNotifyCountryRelationUserCmd = 132;
+		stReturnCountryImmigrationRelationUserCmd = 134;
+		//stRequestCitySearchRelationUserCmd = 135;
+		stReturnCitySearchRelationUserCmd = 136;
+		//stNotifyCoprsHonorChangeToNineRelationUserCmd = 137;
+		//stRequestCountryCrystalRelationUserCmd = 138;
+		stAnswerCountryCrystalRelationUserCmd = 139;
+		stSendFriendFlowerRelationUserCmd = 140;
+		//stRequestSetCountryMedalRelationUserCmd = 141;
+		stMessageSendFriendFlowerRelationUserCmd = 142;
+		//stRequestBestKingCandidateRelationUserCmd = 143;
+		stReturnBestKingCandidateRelationUserCmd = 144;
+		//stRequestVoteKingRelationUserCmd = 145;
+		stMessageSendGuardDeadRelationUserCmd = 146;
+		//stRequestFallInLoveRelationUserCmd = 147;
+		stNotifyFriendFallInLoveRelationUserCmd = 148;
+		//stSendFriendFallInLoveRelationUserCmd = 149;
+		//stOnlineNoticeLoverRelationUserCmd = 150;
+		//stRequestCorpsInfoRelationUserCmd = 151;
+		stReturnCorpsInfoRelationUserCmd = 152;
+		//stRequestTeamInfoRelationUserCmd = 153;
+		stReturnTeamInfoRelationUserCmd = 154;
+		//stRequestFriendInfoRelationUserCmd = 155;
+		stReturnFriendInfoRelationUserCmd = 156;
+		//stRequestMarryMeRelationUserCmd = 157;
+		stNotifyMarryMeRelationUserCmd = 158;
+		stSendFriendMarryRelationUserCmd = 159;
+		//stOnlineNoticeSpouseRelationUserCmd = 160;
+		//stRequestMarryCardRelationUserCmd = 161;
+		stReturnMarryCardRelationUserCmd = 162;
+		//stRequestInheritanceCorpsArmyLeaderRelationUserCmd = 163;
+		//stRequestGetCountryWarInfoRelationUserCmd = 165;
+		stReturnGetCountryWarInfoRelationUserCmd = 166;
+		//stRequestCountryWarRecordRelationUserCmd = 167;
+		stReturnCountryWarRecordRelationUserCmd = 168;
+		//stRequestCountryWarNotepadRelationUserCmd = 169;
+		stReturnCountryWarNotepadRelationUserCmd = 170;
+		stNotifyCountryWarStopRelationUserCmd = 171;
+		//stRequestCountryWarRankRelationUserCmd = 172;
+		stReturnCountryWarRankRelationUserCmd = 173;
+		//stRequestCorpsImmigrationRelationUserCmd = 174;
+		//stCancelCorpsImmirationRelationUserCmd = 175;
+		//stRequestGetCorpsImmigrationRelationUserCmd = 176;
+		stReturnGetCorpsImmigrationRelationUserCmd = 177;
+		//stAgreeCorpsImmigrationRelationUserCmd = 178;
+		//stRefuseCorpsImmigrationRelationUserCmd = 179;
+		//stRequestExecCorpsImmigrationInfoRelationUserCmd = 181;
+		stReturnExecCorpsImmigrationInfoRelationUserCmd = 182;
+		//stRequestCorpsImmigrationStateRelationUserCmd = 183;
+		stReturnCorpsImmigrationStateRelationUserCmd = 184;
+		//stRequestSetAutoIntoCorpsRelationUserCmd = 185;
+		stReturnSetAutoIntoCorpsRelationUserCmd = 186;
+		//stRequestGetAutoIntoCorpsRelationUserCmd = 187;
+		stReturnGetAutoIntoCorpsRelationUserCmd = 188;
+		//stRequestGetMasterEvaluationRelationUserCmd = 189;
+		stReturnGetMasterEvaluationRelationUserCmd = 190;
+		//stRequestEvaluatMasterRelationUserCmd = 191;
+		//stRequestCountryActivityInfoRelationUserCmd = 192;
+		stReturnCountryActivityInfoRelationUserCmd = 193;
+		//stRequestArmyOccupyRelationUserCmd = 194;
+		stSendArmyOccupyListRelationUserCmd = 195;
+		//stSendArmyOccupyNineRelationUserCmd = 196;
+		//stRequestCorpsRankRelationUserCmd = 197;
+		stReturnCorpsRankRelationUserCmd = 198;
+		//stRequestCorpsAddressListRelationUserCmd = 199;
+		stReturnCorpsAddressListRelationUserCmd = 200;
+		//stSetOpenCorpsAddressListRelationUserCmd = 201;
+		//stRequestCorpsWageInfoRelationUserCmd = 202;
+		stReturnCorpsWageInfoRelationUserCmd = 203;
+		//stRequestCorpsWageTransferRelationUserCmd = 204;
+		stReturnCorpsWageTransferRelationUserCmd = 205;
+		stCorpsWageTransferRelationUserCmd = 206;
+		//stRequestCorpsWageGrantInfoRelationUserCmd = 207;
+		stReturnCorpsWageGrantInfoRelationUserCmd = 208;
+		//stCorpsWageActiveRelationUserCmd = 210;
+		//stRequestWageLogRelationUserCmd = 211;
+		stSendWageLogRelationUserCmd = 212;
+		//stRequestEscortInfoRelationUserCmd = 213;
+		stReturnEscortInfoRelationUserCmd = 214;
+		//stRequestBidEscortRelationUserCmd = 215;
+		//stRequestEscortInterfaceRelationUserCmd = 216;
+		stReturnEscortInterfaceRelationUserCmd = 217;
+		stNoticeCorpsGuardHurtRelationUserCmd = 219;
+		//stCorpsHelpGuardHurtRelationUserCmd = 220;
+		//stRequestFillOperateMoneyRelationUserCmd = 221;
+		//stInviteNationalEvaluationRelationUserCmd = 223;
+		//stRequestGoToTargetRelationUserCmd = 226; // 瞬移到目标当前所在位置
+		stRequestCallTargetRelationUserCmd = 227; // 召唤目标到当前所在位置
+		stRequestRecommendFriendsRelationUserCmd = 228; // 请求/返回推荐好友数据
+		stSyncCallTargetColdTimeRelationUserCmd = 229;
+		//stRequestSendCorpsImmigrationConfirmationRelationUserCmd = 231;
+		stRequestNearPlayerInfoRelationUserCmd = 232;
+		stRetNearPlayerInfoRelationUserCmd = 233;
+		//stSendFireWorksRelationUserCmd_CS = 234;
+		//stPutOnFullDressRelationUserCmd = 235;
+		stFriendReqListRelationUserCmd_CS = 209;//查申好友请列表
+		stRequestAddRelationUserCmd_SC = 220;//申请添加关系返回
+		stFriendReqListRelationUserCmd_SC = 221;//查看好友申请列表返回
+		stAnswerAddRelationUserCmd_SC = 222;//同意某种关系返回
+		stSendFriendGiftsRelationUserCmd_CS = 223;//送好友礼物
+		stSendFriendGiftsRelationUserCmd_SC = 224;//送好友礼物返回
+		stSendProposalRetRelationUserCmd_SC = 225;//求婚结果通知
+		stProposalReqListRelationUserCmd_CS = 234;//查看结婚申请列表
+		stProposalReqListRelationUserCmd_SC = 235;//查看结婚申请列表返回(通知也是这个)
+		//stCorpsWageGrantRelationUserCmd = 250; //原209
+		//ProtoDefineEnd
+	}
+}
+
+// 请求创建某个社会关系
+message stRequestCreateRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional string name = 2;			// 名称
+}
+
+// 请求销毁某个社会关系
+message stRequestDestroyRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+}
+
+// 邀请加入某个社会关系
+message stRequestAddRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+	optional string relationname = 3;	// 社会关系名称
+	optional string requestname = 4;	// 请求者的名字
+	optional uint32 relationlevel = 5;	// 社会关系等级
+	optional uint32 id = 6;				// 要加入的成员id,返回给被请求方时是请求人
+	optional uint32 userlevel = 7;
+}
+
+// 回答加入某个社会关系
+message stAnswerAddRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+	optional uint32 answer = 3;			// 回答结果,1表示同意,0表示不同意
+	optional uint32 isall = 4;			// 是否是一键
+}
+
+// 回答加入某个社会关系返回
+message stAnswerAddRelationUserCmd_SC
+{
+	optional int32 error_code = 1;
+	optional string error_msg = 2;
+}
+
+// 添加某个社会关系
+message stAddRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+	optional uint32 leaderid = 3;		// 关系领导id
+	optional tRelationBaseData data= 4;
+	optional tFriendBaseData frdata = 5;
+	optional tFriendBaseData bldata = 6;
+	optional tFriendBaseData endata = 7;
+	optional tCorpsBaseData cmdata = 8;
+	optional tArmyBaseData crdata = 9;
+	optional tFriendBaseData hndata = 10;
+}
+
+// 请求离开某个社会关系
+message stRequestRemoveRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+}
+
+// 请求踢出某个社会关系
+message stRequestKickRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+	optional uint32 id = 3;				// 要删除的成员id
+}
+
+// 删除某个社会关系
+message stRemoveRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 id = 2;				// 要删除的成员id
+}
+
+// 上线通知
+message stOnlineRelationUserCmd
+{
+	optional uint32 id = 1;				// 要上线的角色id
+	optional uint32 countryid = 2;
+	optional uint32 mapid = 3;
+}
+
+// 下线线通知
+message stOfflineRelationUserCmd
+{
+	optional uint32 id = 1;				// 要下线的角色id
+}
+
+// 批量添加某个社会关系
+message stAddListRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id
+	optional uint32 leaderid = 3;		// 关系领导id
+	repeated tRelationBaseData data= 4;
+	repeated tFriendBaseData frdata = 5;
+	repeated tFriendBaseData bldata = 6;
+	repeated tFriendBaseData endata = 7;
+	repeated tCorpsBaseData cmdata = 8;
+	repeated tArmyBaseData crdata = 9;
+	repeated tFriendBaseData hndata = 10;
+}
+
+// 保存仇人
+//message stRequestSaveEnemyRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//}
+
+// 取消保存仇人
+//message stRequestCancelSaveEnemyRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//}
+
+// 更换领导人
+message stChangeLeaderRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 relationid = 2;		// 社会关系id,上行不起作用,下行时有用
+	optional uint32 dwNewLeader = 3;	// 新的领导人id
+	optional uint32 dwOldLeader = 4;	// 旧的领导人id
+}
+
+// 发布公告
+message stBillboardRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional BillBoardData data = 2;
+}
+
+// 新闻
+message stNewsRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional NewsData data = 2;
+}
+
+// 批量新闻
+message stNewsListRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	repeated NewsData data = 2;
+}
+
+// 设置职务
+message stSetFunctionRelationUserCmd
+{
+	optional RelationType type = 1;		// 社会关系类型RelationType
+	optional uint32 id = 2;				// 成员id
+	optional uint32 function = 3;		// 职务 enumFunctionType
+}
+
+// 社会关系属性刷新
+message stFreshUserPropertyRelationUserCmd
+{
+	optional enumUserAttr type = 1;		// 属性类型 enumUserAttr
+	optional uint32 userid = 2;			// 成员ID
+	optional uint32 value = 3;			// 值
+}
+
+// 请求加入某个社会关系
+//message stRequestJoinRelationUserCmd
+//{
+//	optional RelationType type = 1;		// 社会关系类型RelationType
+//	optional uint32 userprofession = 2;	// 玩家职业
+//	optional uint32 id = 3;				// 目标id
+//	optional uint32 userid = 4;			// 玩家id
+//	optional string name = 5;			// 玩家名字
+//	optional uint32 userlevel = 6;		// 玩家等级
+//}
+
+// 关系成员召集
+//message stMemberCallBackRelationUserCmd
+//{
+//	optional uint32 byType = 1;			// enum RelationType
+//	optional uint32 byMsgBox = 2;		// 召集对话框类型
+//	optional uint32 byCallType = 3;		// 召集类型
+//	optional uint32 dwUserID = 4;		// 召集人ID
+//	optional string info = 6;			// 召集提示信息(有的召集没有)
+//}
+
+// 响应召集
+//message stAnswerMemberCallBackRelationUserCmd
+//{
+//	optional uint32 byType = 1;			// enum RelationType
+//}
+
+// 发起捐款
+message stRequestDonationRelationUserCmd
+{
+	optional uint32 byType = 1;			// enum RelationType
+}
+
+// 捐款
+message stDonateMoneyRelationUserCmd
+{
+	optional uint32 byType = 1;
+	optional uint32 dwMoney = 2;		// 个人资金
+	optional uint32 dwMoney2 = 3;		// 团资金
+}
+
+// 申请加入社会关系返回
+//message stAnswerJoinRelationUserCmd
+//{
+//	optional RelationType type = 1;		// 关系类型
+//	optional uint32 agree = 2;			// 是否同意
+//	optional uint32 id = 3;				// 申请者ID
+//}
+
+// 增加活动状态
+message stAddEventStateRelationUserCmd
+{
+	optional uint32 num = 1;
+	message EventStateData
+	{
+		optional uint32 id = 1;			// 活动编号
+		optional uint32 time = 2;		// 剩余时间
+	}
+	repeated EventStateData data = 2;
+}
+
+// 删除活动状态
+message stRemoveEventStateRelationUserCmd
+{
+	optional uint32 id = 1;				// 活动编号
+}
+
+// 请求创建战友
+message stRequestCreateCompanionRelationUserCmd
+{
+	optional string name = 1;
+}
+
+// 请求某个玩家战友组织名称
+//message stRequestCompanionNameRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//}
+
+// 回复玩家战友组织名称(也用于刷新修改后的名字)
+message stRetCompanionNameRelationUserCmd
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+}
+
+// 发送玩家战友列表
+message stSendCompanionListRelationUserCmd
+{
+	repeated uint32 data = 1;
+}
+
+// 解散战友组织，删除现有战友
+message stClearCompanionRelationUserCmd
+{
+}
+
+
+
+// 批量请求战友组织名称
+//message stRequestCompanionNameListRelationUserCmd
+//{
+//	optional uint32 num = 1;
+//	repeated uint32 data = 2;
+//}
+
+// 批量回复战友组织名称
+message stSendCompanionNameListRelationUserCmd
+{
+	optional uint32 num = 1;
+	message CompanionData
+	{
+		optional uint32 userid = 1;
+		optional string name = 2;
+	}
+	repeated CompanionData data = 2;
+}
+
+// 请求组队指令, 该指令需要发给被请求者
+message stRequestTeamRelationUserCmd
+{
+	optional uint32 dwAnswerUserID = 1;		// 回答者ID,返回给客户端是请求者ID
+	optional string byAnswerName = 2;		// 回答者名字,返回给客户端是请求者名字
+	optional uint32 byTeamMode = 3;			// 队伍模式
+}
+
+// 回答组队指令
+message stAnswerTeamRelationUserCmd
+{
+	optional uint32 dwRequestUserID = 1;	// 请求者ID
+	optional uint32 byAgree = 2;			// 是否同意
+	optional uint32 byTeamMode = 3;			// 队伍模式
+}
+
+// 添加队员
+message stAddTeamMemberRelationUserCmd
+{
+	optional uint32 dwTeamID = 1;			// 队伍ID
+	optional uint32 dwLeaderID = 2;			// 队长ID
+	optional uint32 dwUserID = 3;			// 成员tempid
+	optional uint32 byTeamMode = 4;			// 队伍模式
+	optional uint32 byExpMode = 5;			// 经验模式
+	optional uint32 byItemMode = 6;			// 经验模式
+	optional uint32 wdFace = 7;			    // 肖像
+	optional uint32 byOnline = 8;			// 是否在线
+	optional uint32 byLevel = 9;		    // 等级
+	optional uint32 byProfession = 10;		// 职业
+}
+
+// 解散队伍
+message stRemoveTeamRelationUserCmd
+{
+}
+
+// 离开队伍
+message stLeaveTeamRelationUserCmd
+{
+}
+
+// 踢人
+message stKickTeamMemberRelationUserCmd
+{
+	optional uint32 dwUserID = 1;			// 队员userid
+}
+
+// 通知客户端删除队员
+message stRemoveTeamMemberRelationUserCmd
+{
+	optional uint32 dwUserID = 1;			// 队员userid
+}
+
+// 设置队伍分配模式
+message stSetModeTeamRelationUserCmd
+{
+	optional uint32 byExpMode = 1;			// 经验分配模式 TeamExpMode
+	optional uint32 byItemMode = 2;			// 道具分配模式 TeamItemMode
+}
+
+// 刷新队伍成员状态
+message stRefreshStateTeamRelationUserCmd
+{
+	optional uint32 dwUserID = 1;
+	optional uint32 byState = 2;			// 成员状态 TeamMemberStatus
+	optional uint32 level = 3;				// 等级
+	optional string name = 4;				// 名字
+}
+
+// 更换队长  ( Client <==> Session 的! 不经过Scene!)
+message stChangeLeaderTeamRelationUserCmd
+{
+	optional uint32 dwNewLeader = 1;		// New leader user id
+}
+
+// 断线后上线请求队伍列表
+message stRequestTeamMemberRelationUserCmd
+{
+}
+
+// 批量添加队员
+message stAddListTeamMemberRelationUserCmd
+{
+	optional uint32 dwTeamID = 2;			// 队伍ID
+	optional uint32 dwLeaderID = 3;			// 队长ID
+	optional uint32 byTeamMode = 4;			// 队伍模式
+	optional uint32 byExpMode = 5;			// 经验模式
+	optional uint32 byItemMode = 6;         // 队伍模式
+	message Data
+	{
+		optional uint32 dwUserID = 1;		// 队伍ID
+		optional uint32 wdFace = 2;         // 队长ID
+		optional uint32 byOnline = 3;       // 队伍模式
+		optional uint32 byLevel = 4;        // 经验模式
+		optional uint32 byProfession = 5;   // 队伍模式
+	}
+	repeated Data data = 7;
+}
+
+// 改变组队模式
+//message stChangeTeamModeRelationUserCmd
+//{
+//	optional uint32 byTeamMode = 1;
+//}
+
+// 赋予组队中招人权限
+//message stGiveReciveMemberPrivilegeRelationUserCmd
+//{
+//	optional uint32 userid = 1;				// 被赋予权限的玩家id
+//}
+
+// 撤销组队中招人权限
+//message stCancelReciveMemberPrivilegeRelationUserCmd
+//{
+//	optional uint32 userid = 1;				// 被撤销权限的玩家id
+//}
+
+// 批量赋予组队中招人权限
+message stBatchGiveReciveMemberPrivilegeRelationUserCmd
+{
+	repeated uint32 data = 2;
+}
+
+// 刷新队友拾取道具
+message stRefreshPickupItemMemberRelationUserCmd
+{
+	optional uint32 userid = 1;				// 拾取者队友ID
+	optional uint32 itemid = 2;             // 拾取道具ID
+	optional uint32 quality = 3;            // 道具品质
+	optional string itemname = 4;			// 道具名称
+}
+
+// 刷新好友成员数据信息
+message stRfreshFriendDataRelationUserCmd
+{
+	optional FriendData data = 1;			// 队员userid
+}
+
+// 批量刷新好友成员数据信息
+//message stRfreshFriendDataListRelationUserCmd
+//{
+//	repeated FriendData data = 1;			// 队员userid
+//}
+
+// 刷新仇人成员数据信息
+//message stRfreshEnemyDataRelationUserCmd
+//{
+//	optional uint32 id = 1;
+//	optional uint32 time = 2;
+//}
+
+// 客户端请求发送好友行为状态
+//message stRequireFriendActionRelationUserCmd
+//{
+//	optional uint32 all = 1;				// 客户端请求发送好友行为状态
+//	optional uint32 id = 2;					// 单个的ID
+//}
+
+// 发送好友行为状态
+message stSendFriendActionRelationUserCmd
+{
+	message Data
+	{
+		optional uint32 id = 1;				// 对应ID
+		optional uint32 profession = 2;     // 职业
+		optional uint32 curcountry = 3;     // 当前国家
+		optional uint32 curmap = 4;         // 当前地图
+		optional uint32 curaction = 5;      // 当前行为
+		optional uint32 babystate = 6;      // 宝宝状态(BabyState)
+	}
+	repeated Data data = 2;
+}
+
+// 发送好友的心情
+message stSendFriendTemperRelationUserCmd
+{
+	optional uint32 number = 1;
+	message Data
+	{
+		optional uint32 id = 1;				// 好友ID
+		optional string temper = 2;			// 好友心情
+	}
+	repeated Data data = 2;
+}
+
+// 通知好友授勋
+message stNotifyFriendMedalRelationUserCmd
+{
+	optional uint32 userid = 1;				// 好友ID
+	optional uint32 milirank = 2;           // 好友的军衔
+	optional uint32 level = 3;              // 好友的等级
+}
+
+// 授勋好友送礼
+//message stSendFriendMedalPresentRelationUserCmd
+//{
+//	optional uint32 userid = 1;				// 授勋的好友ID
+//	optional uint32 index = 2;              // 见enumFriendMedalPresent
+//	optional string msg = 3;                // 祝福内容
+//}
+
+
+
+// 通知好友升级祝福
+message stNotifyFriendLevelUpRelationUserCmd
+{
+	optional uint32 userid = 1;				// 好友ID
+	optional uint32 level = 2;              // 好友的等级
+}
+
+// 升级好友送礼
+//message stSendFriendLevelUpPresentRelationUserCmd
+//{
+//	optional uint32 userid = 1;				// 授勋的好友ID
+//	optional uint32 index = 2;              // 见enumFriendLevelUpPresent
+//	optional string msg = 3;                // 祝福内容
+//}
+
+// 设置敌国
+message stSetEnemyCountryRelationUserCmd
+{
+	optional string name = 1;				// 敌国名字
+}
+
+// 请求释放某个玩家
+message stRequestExcusePlayerRelationUserCmd
+{
+	optional string name = 1;				// 玩家名字
+}
+
+// 请求逮捕某个玩家
+message stRequestArrestPlayerRelationUserCmd
+{
+	optional string name = 1;				// 玩家名字
+}
+
+// 请求禁言某个玩家
+message stRequestQuietPlayerRelationUserCmd
+{
+	optional string name = 1;				// 玩家名字
+}
+
+// 请求任命某个玩家
+//message stAppointFunctionRelationUserCmd
+//{
+//	optional uint32 fun = 1;
+//	optional string name = 2;				// 玩家名字
+//}
+
+// 请求撤销任命
+//message stCancelFunctionRelationUserCmd
+//{
+//	optional uint32 fun = 1;
+//}
+
+// 请求更改国家自定义名称
+//message stChangeCountryNameRelationUserCmd
+//{
+//	optional string name = 1;
+//}
+
+// 请求国家相关信息
+//message stRequestCountryInfoRelationUserCmd
+//{
+//}
+
+// 发送国家相关信息
+message stAnswerCountryInfoRelationUserCmd
+{
+	optional uint32 enemycountry = 2;		// 敌国
+	optional uint32 yychannel = 3;			// yy频道
+	optional uint32 money = 4;              // 国库
+	optional uint32 state = 5;              // 状态
+	repeated uint32 ally = 6;               // 盟国
+	optional uint32 winnum = 7;             // 国战胜利次数
+	optional uint32 losenum = 8;            // 国战失利次数
+	optional uint32 goodratio = 9;          // 国民好评率
+	optional string alias = 10;             // 国家自定义名称
+	message Data
+	{
+		optional uint32 id = 1;				// ID
+		optional uint32 sex = 2;            // 性别
+		optional uint32 emperor = 3;        // 帝皇国1是帝皇国，0不是
+		optional uint32 fun = 4;            // 职务
+		optional uint32 prestige = 5;       // 个人声望
+		optional uint32 support = 6;        // 支持度
+		optional uint32 countrymedal = 7;	// 国家勋章
+	}
+	repeated Data data = 11;
+}
+
+// 请求排行榜
+message stRequestOrderListRelationUserCmd
+{
+	optional OrderListType type = 1;
+	optional uint32 numBegin = 2;
+	optional uint32 numEnd = 3;
+}
+
+// 返回排行榜
+message stAnswerOrderListRelationUserCmd
+{
+	optional OrderListType type = 1;
+	optional uint32 size = 2;				// 请求者索引值
+	optional uint32 myNum = 3;				// 请求者的排行榜值
+	message Reward
+	{
+		optional uint32 id = 1;
+		optional uint32 num = 2;
+		optional uint32 strength = 3;
+		optional uint32 rank = 4;
+		optional bool bind = 5;
+	}
+	message Data
+	{
+		optional uint32 id = 1;				// 用户id或帮会id
+		optional uint32 num = 2;			// 对应用户的排行榜值
+		optional uint32 country = 3;		//
+		optional uint32 corp = 4;
+		optional uint32 army = 5;
+		optional uint32 trend = 6;			// 趋势(OrderTrend)
+		optional uint32 milirank = 7;       // 玩家军衔(声望榜使用)
+		optional uint32 profession = 8;     // 职业
+		optional uint32 online = 9;         // OnlineState,在线状态,0离线,1在线,2离开,3挂机...
+		optional uint32 value = 10;         // 万能变量，用来追加一下显示的值(帮会等级或用户等级在竞技榜时)
+		optional uint32 area  = 11;			// 省市
+		optional string name = 12;			// 用户名称或帮会名称
+		optional string clanname = 13;		// 当name为用户名称时，该值为帮会名称,其他情况为空
+		optional uint32 horseid = 14;       // 当前的坐骑id
+		optional uint32 loveid = 15;
+		optional string lovename = 16;
+		optional uint32 fashion = 17; 		// 主宰特效等级
+	}
+	repeated Data data = 4;
+	repeated Reward items = 5;				// 奖励（排行榜所有名次奖励列表）
+}
+
+// 请求结盟
+//message stRequestUnionCountryRelationUserCmd
+//{
+//	optional uint32 dstid = 1;				// 要结盟的国家
+//}
+
+// 答复结盟
+//message stAnswerUnionCountryRelationUserCmd
+//{
+//	optional bool agree = 1;
+//	optional uint32 dstid = 2;				// 要结盟的国家
+//}
+
+// 请求解盟
+//message stFreeFromCountryUnionRelationUserCmd
+//{
+//	optional uint32 dstid = 1;				// 要解盟的国家
+//}
+
+// 请求国家实力列表
+//message stRequestCountryPowerRelationUserCmd
+//{
+//}
+
+// 发送国家实力列表
+//message stAnswerCountryPowerRelationUserCmd
+//{
+//	optional uint32 num = 1;
+//	message Data
+//	{
+//		optional uint32 id = 1;
+//		optional uint32 power = 2;
+//	}
+//	repeated Data data = 2;
+//}
+
+// 请求国家内政信息
+//message stRequestCountryInformationRelationUserCmd
+//{
+//}
+
+// 发送国家内政信息
+//message stAnswerCountryInformationRelationUserCmd
+//{
+//	optional uint32 expedition = 1;			// 远征国家ID
+//	optional uint32 expeditionTime = 2;     // 远征国家ID
+//	optional uint32 collectTime = 3;        // 收集情报时间
+//	optional string aliedNation = 4;        // 盟国
+//	optional uint32 countryguild = 5;       // 国运时间
+//}
+
+// 通知警长有人求救
+message stNotifyHaveOneForHelpRelationUserCmd
+{
+}
+
+
+
+// 回复警长救援点
+message stSendRescuePosRelationUserCmd
+{
+	optional uint32 country = 2;			// 国家
+	message Data
+	{
+		optional uint32 id = 1;				// 坐标hashid 见 mappos_hash
+		optional uint32 attacker = 2;		// 攻击者
+	}
+	repeated Data data = 3;
+}
+
+
+// 团及军信息刷新请求
+//message stRequestCorpsArmyInfoRelationUserCmd
+//{
+//	optional enumInfoRequest byType = 1;
+//}
+
+// 通知客户端刷新团属性
+message stRefreshCorpsPropertyRelationUserCmd
+{
+	optional uint32 level = 1;				// 等级
+	optional uint32 size = 2;               // 可容纳人数
+	optional uint32 runcost = 3;            // 维护资金
+	optional uint32 leader = 4;             // 团领导
+	optional uint32 money = 5;              // 团资金
+	optional uint32 glory = 6;              // 繁荣度
+	optional uint32 health = 7;             // 营养指数
+	optional uint32 runglory = 8;           // 维护繁荣度
+	optional uint32 magicmaterials = 9;     // 魔甲材料
+	optional uint32 point = 10;             // 团战积分
+}
+
+// 通知客户端刷新军属性
+message stRefreshArmyPropertyRelationUserCmd
+{
+	optional uint32 level = 1;				// 等级
+	optional uint32 size = 2;               // 可容纳人数
+	optional uint32 leader = 3;             // 军领导
+	optional uint32 money = 4;              // 资金
+	optional uint32 grade = 5;              // 积分
+	optional uint32 corps = 6;              // 团个数
+	optional uint32 occupy = 7;             // 占领城市
+	optional uint32 order = 8;              // 排名
+}
+
+// 发布团突袭
+//message stAddRelationByNameRelationUserCmd
+//{
+//	optional string name = 1;				// 目标团名称
+//}
+
+// 团结盟请求与应答
+message stAskAckCorpsFriendRelationUserCmd
+{
+	optional uint32 answer = 1;				// 结果
+	optional uint32 ally = 2;               // 请求团
+	optional uint32 user = 3;               // 请求者
+	optional string name = 4;				// 团名称
+}
+
+// 团出勤人员设置
+//message stSetOutWorkerRelationUserCmd
+//{
+//	optional uint32 operate = 1;			// 操作 1 新增 0 移除
+//	optional uint32 userid = 2;             // 团成员ID
+//}
+
+// 团出勤信息
+message stSendWorkerListRelationUserCmd
+{
+	optional uint32 allnum = 2;             // 出勤总数
+	optional uint32 curnum = 3;             // 当前剩余数量
+	message Info
+	{
+		optional uint32 userid = 1;			// 人员ID
+		optional uint32 f1 = 2;				// 0未分配 1已分配 2已完成
+		optional uint32 f2 = 3;
+		optional uint32 f3 = 4;
+	}
+	repeated Info info = 4;
+}
+
+enum JoinCorpsListState
+{
+	ListState_None = 0;
+	ListState_Request = 1;
+	ListState_MyCorps = 2;
+	ListState_Friend = 3;
+	ListState_Enemy = 4;
+}
+
+// 发送团列表
+message stSendJoinCorpsListRelationUserCmd
+{
+	message Info
+	{
+		optional uint32 id = 1;				// 团ID
+		optional uint32 leader = 2;         // 团长ID
+		optional uint32 armyid = 3;         // 军ID
+		optional uint32 country = 4;        // 国家ID
+		optional uint32 level = 5;          // 团等级
+		optional uint32 members = 6;        // 成员数量
+		optional uint32 maxmember = 7;      // 最大成员数量
+		optional uint32 request = 8;        // 状态 0 无 1 已申请 2 本团 3 敌团 4友团
+	}
+	repeated Info info = 2;
+}
+
+// 发送团申请列表
+//message stSendCorpsRequestListRelationUserCmd
+//{
+//	message Info
+//	{
+//		optional uint32 id = 1;				// 玩家ID
+//		optional uint32 level = 2;          // 等级
+//		optional uint32 time = 3;           // 申请时间
+//	}
+//	repeated Info info = 2;
+//}
+
+enum CorpsBossOperateType
+{
+	CorpsBossOperateType_FreeRefresh = 0; // 免费刷新
+	CorpsBossOperateType_MoneyRefresh = 1; // 银币刷新
+	CorpsBossOperateType_NormalFeed = 2; // 普通喂养
+	CorpsBossOperateType_AutoFeed = 3; // 一键提升最高品质
+}
+// 团养殖喂养操作
+//message stFeedBossRequestReltionRelationUserCmd
+//{
+//	optional CorpsBossOperateType operate = 1;
+//}
+
+// 团占领信息发送
+message stSendCorpsOccupyListRelationUserCmd
+{
+	message Info
+	{
+		optional uint32 country = 1;		// 国家
+		optional uint32 npcid = 2;          // 占领NPC
+		optional uint32 corpsid = 3;        // 当前占领团
+		optional uint32 challenger = 4;     // 今日挑战团
+		optional uint32 curbid = 5;         // 当前竞标费用
+	}
+	repeated Info info = 2;
+}
+
+
+
+// 请求捕杀BOSS
+//message stRequestKillCorpsBossRelationUserCmd
+//{
+//}
+
+// 回复工资信息
+//message stSendPayInfoRelationUserCmd
+//{
+//	optional uint32 basepay = 1;			// 上周基本工资
+//	optional uint32 remainpay = 2;          // 上周剩余资金
+//	optional uint32 newpay = 3;             // 本周资金累计
+//	optional uint32 mypay = 4;              // 我的上周工资
+//	optional uint32 salerate = 5;           // 全区拍卖税率
+//	optional uint32 num = 6;                // 国家信息个数
+//	message Data
+//	{
+//		optional uint32 country = 1;		// 国家
+//		optional uint32 shoprate = 2;       // 国家摆摊税率
+//		optional uint32 kingincome = 3;		// 国王上周收益
+//		optional uint32 king = 4;           // 国王
+//	}
+//	repeated Data data = 7;
+//}
+
+// 团榜单数据
+message stCorpsOrderListRelationUserCmd
+{
+	optional enumInfoRequest type = 1;		// 见enumInfoRequest 中的团榜单枚举
+	message Data
+	{
+		optional uint32 id = 1;				// 成员
+		optional uint32 value1 = 2;         // 榜单数据1
+		optional uint32 value2 = 3;         // 榜单数据2
+	}
+	repeated Data data = 3;
+}
+
+// 团包裹记录
+//message stRequestPackLogRelationUserCmd
+//{
+//}
+
+// 发送包裹记录
+message stSendPackLogRelationUserCmd
+{
+	repeated NewsData data = 1;
+}
+
+// 团警告
+//message stSendCorpsWarningRelationUserCmd
+//{
+//	optional uint32 fmoney = 1;				// 资金 1 警告
+//	optional uint32 fglory = 2;             // 繁荣度 1 警告
+//}
+
+// 团建筑升级降级
+message stCorpsBuildLevelRelationUserCmd
+{
+	optional uint32 btype = 1;				// 建筑类型		buildingType
+	optional uint32 otype = 2;              // 操作类型		1 升级 0 降级
+}
+
+// 军升级
+message stArmyLevelUpRelationUserCmd
+{
+}
+
+// 团开除列表
+message stCorpsRemoveListRelationUserCmd
+{
+	message Data
+	{
+		optional uint32 id = 1;				// 团id
+		optional string name = 2;           // 团名称
+	}
+	repeated Data data = 2;
+}
+
+// 军情查看
+message stArmyInfoListRelationUserCmd
+{
+	optional enumInfoRequest type = 1;		// 见enumInfoRequest 中的团榜单枚举
+	optional uint32 colnum = 3;				// 每行信息的列数
+	repeated uint32 data = 4;               // 数据
+}
+
+// 通知客户端增加或删除某个任务 (系统自动完成)
+message stAutoTaskOperationRelationUserCmd
+{
+	optional uint32 taskid = 1;
+	optional uint32 taskop = 2;				// 0 删除 1 增加
+}
+
+// 入团申请列表 操作请求
+//message stCorpsJoinListRelationUserCmd
+//{
+//	optional uint32 todo = 1;				// 1 请求列表 2 清空列表
+//}
+
+// 返回申请列表
+message stSendCorpsReqListRelationUserCmd
+{
+	message Data
+	{
+		optional uint32 uid = 1;			// 用户ID
+		optional uint32 level = 2;          // 等级
+		optional uint32 profession = 3;     // 职业
+	}
+	repeated Data data = 2;
+}
+
+// 取消我的入团申请
+//message stCancleJoinReqRelationUserCmd
+//{
+//	optional uint32 corpsid = 1;
+//}
+
+// 团突袭发经验
+message stCorpsJunXunExpRelationUserCmd
+{
+	optional uint32 exp = 1;
+}
+
+// 刷团突袭任务提示
+message stCorpsJunXunTipsRelationUserCmd
+{
+	optional uint32 taskstate = 1;			// 任务状态 1已发布 2可开始 3准备 4 进行中
+	optional uint32 taskdst = 2;            // 团突袭任务目标建筑 1 指挥所 2 军营 3 后勤部
+	optional uint32 taskstep = 3;           // 团突袭任务阶段 0 1 2 3
+	optional uint32 dstcorps = 4;           // 目标团ID
+}
+
+// 请求领取贡献度奖励
+//message stReqGetOfferAwardRelationUserCmd
+//{
+//}
+
+// 请求捐献资金
+//message stReqDonateCorpsMoneyRelationUserCmd
+//{
+//}
+
+// 友方团设置
+//message stSetAllyCorpsRelationUserCmd
+//{
+//	optional uint32 operate = 1;			// 1设置 2取消
+//	optional uint32 corpsid = 2;            // 目标团ID 优先ID  不用ID的话 直接赋0
+//	optional string name = 3;				// 目标团名称
+//}
+
+// 请求个人工资信息
+//message stRequestPersonPayInfoRelationUserCmd
+//{
+//}
+
+// 返回个人工资信息
+message stReturnPersonPayInfoRelationUserCmd
+{
+	message Data
+	{
+		optional uint32 milirank = 1;		// 等级
+		optional uint32 ticket = 2;         // 绑银
+		optional uint32 money = 3;          // 银子
+	}
+	repeated Data data = 2;
+}
+
+// 请求个人资料
+//message stRequestPersonalInfoRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//}
+
+// 返回个人资料
+message stReturnPersonalInfoRelationUserCmd
+{
+	optional uint32 mycharid = 1;			// 跨区用
+	optional uint32 zoneid = 2;				// 跨区用
+	optional uint32 userid = 3;
+	optional PersonalInfo info = 4;
+	optional string selfdesc = 6;			// 自述
+}
+
+// 修改个人资料
+//message stChangePersonalInfoRelationUserCmd
+//{
+//	optional PersonalInfo info = 1;
+//	optional string selfdesc = 2;			// 自述
+//}
+
+// 请求团列表
+//message stRequestCorpsListRelationUserCmd
+//{
+//}
+
+// 上线申请加入团列表
+message stOnlineJoinCorpsListRelationUserCmd
+{
+}
+
+
+
+// 请求当前国王争夺信息
+//message stRequestCountryOccupyListRelationUserCmd
+//{
+//}
+
+// 返回当前国王争夺信息
+message stReturnCountryOccupyListRelationUserCmd
+{
+	message Data
+	{
+		optional uint32 country = 1;		// 国家
+		optional uint32 curbid = 2;         // 争夺费用
+		optional uint32 userid = 3;         // 玩家id
+		optional uint32 armyid = 4;         // 当前拥有军
+		optional uint32 challenger = 5;		// 当前挑战军
+	}
+	repeated Data data = 2;
+}
+
+// 发送魔甲材料捐献确认(s->c)
+message stContributeMagicMaterialsRelationUserCmd
+{
+	optional uint32 dwMaterialsNum = 1;		// 魔甲材料数
+	optional uint32 dwMedalNum = 2;			// 勋章增加值
+}
+
+// 确认捐献魔甲材料
+//message stContributeMagicMaterialsConfirmRelationUserCmd
+//{
+//}
+
+// 请求个人排名
+message stRequestOrderMineRelationUserCmd
+{
+	optional OrderListType type = 1;
+}
+
+// 返回个人排名
+message stReturnOrderMineRelationUserCmd
+{
+	optional OrderListType type = 1;
+	optional uint32 size = 2;
+	optional uint32 ordermine = 3;
+	message Data
+	{
+		optional uint32 id = 1;
+		optional uint32 rank = 2;			// 排名
+		optional uint32 country = 3;
+		optional uint32 num = 4;
+		optional uint32 corp = 5;
+		optional uint32 milirank = 6;		// 玩家军衔(声望榜使用)
+		optional uint32 profession = 7;     // 职业
+		optional uint32 value = 8;          // 万能变量，用来追加一下显示的值
+		optional uint32 online = 9;			// OnlineState,在线状态,0离线,1在线,2离开,3挂机...
+	}
+	repeated Data data = 4;
+}
+
+// 请求国与国关系
+//message stRequestCountrysRelationUserCmd
+//{
+//}
+
+// 发送国与国关系给客户端
+message stNotifyCountryRelationUserCmd
+{
+	repeated stAllyBaseInfo allybaseinfos = 1;
+	optional uint32 immigrationtime = 2; // 个人移民剩余冷却时间
+	optional uint32 corpsimmigrationtime = 3; // 团移民剩余冷却时间
+}
+
+
+
+// 移民返回
+message stReturnCountryImmigrationRelationUserCmd
+{
+	optional uint32 byResult = 1;
+	optional uint32 dstid = 2;
+}
+
+// 城市玩家查询
+//message stRequestCitySearchRelationUserCmd
+//{
+//	optional uint32 page = 1;				// 页码
+//	optional uint32 area = 2;				// 省市
+//	optional uint32 sex = 3;
+//}
+
+// 城市玩家查询返回
+message stReturnCitySearchRelationUserCmd
+{
+	optional uint32 page = 1;				// 页码
+	optional uint32 area = 2;				// 省市
+	optional uint32 sex = 3;
+	optional uint32 num = 4;
+	message CityUserData
+	{
+		optional uint32 id = 1;
+		optional string name = 2;			// 名称
+		optional uint32 country = 3;
+		optional uint32 profession = 4;
+		optional uint32 sex = 5;
+	}
+	repeated CityUserData cityuserdata = 5;
+}
+
+// 发送团称号九屏信息
+//message stNotifyCoprsHonorChangeToNineRelationUserCmd
+//{
+//	optional uint32 dwUserID = 1;
+//	optional uint32 wOccupy = 2;
+//}
+
+// 请求国家水晶信息
+//message stRequestCountryCrystalRelationUserCmd
+//{
+//}
+
+// 发送国家相关信息
+message stAnswerCountryCrystalRelationUserCmd
+{
+	optional uint32 num = 1;
+	message CountryCrystalData
+	{
+		optional uint32 countryid = 1;		// 国家ID
+		optional uint32 total_crystal = 2;	// 总水晶数
+	}
+	repeated CountryCrystalData data = 2;
+}
+
+// 送玫瑰花
+message stSendFriendFlowerRelationUserCmd
+{
+	optional FlowerType type = 1;
+	optional uint32 num = 2;				// 送的数量
+	optional uint32 userid = 3;             // 目标玩家ID
+	optional string username = 4;
+	optional uint32 hide = 5;
+}
+
+// 设置国家勋章
+//message stRequestSetCountryMedalRelationUserCmd
+//{
+//	optional uint32 dwUserID = 1;
+//	optional uint32 dwMedal = 2;
+//}
+
+// 送玫瑰花系统消息
+message stMessageSendFriendFlowerRelationUserCmd
+{
+	optional FlowerType type = 1;
+	optional uint32 num = 2;				// 送的数量
+	optional uint32 fromid = 3;             // 发送ID
+	optional uint32 toid = 4;               // 接收ID
+	optional uint32 hide = 5;
+	optional uint32 fromarea = 6;			// 省市
+	optional uint32 toarea = 7;				// 省市
+	optional string fromname = 8;
+	optional string toname = 9;
+}
+
+// 请求当前最佳国王候选人信息
+//message stRequestBestKingCandidateRelationUserCmd
+//{
+//}
+
+// 返回当前最佳国王信息
+message stReturnBestKingCandidateRelationUserCmd
+{
+	// 第一候选人
+	optional uint32 dwFirstArmyID = 1;		// 军团
+	optional uint32 dwFirstUserID = 2;      // 军长
+	optional uint32 dwFirstMoney = 3;       // 竞选资金
+	// 第二候选人
+	optional uint32 dwSecondArmyID = 4;     // 军团
+	optional uint32 dwSecondUserID = 5;     // 军长
+	optional uint32 dwSecondMoney = 6;      // 竞选资金
+}
+
+// 参与选举国王
+//message stRequestVoteKingRelationUserCmd
+//{
+//	optional uint32 money = 1;
+//}
+
+// 送玫瑰花系统消息
+message stMessageSendGuardDeadRelationUserCmd
+{
+	optional uint32 itemid = 1;
+	optional uint32 money = 2;				// 送的数量
+	optional uint32 fromid = 3;				// 发送ID
+	optional uint32 toid = 4;				// 接收ID
+	optional uint32 fromarea = 5;			// 省市
+	optional uint32 toarea = 6;				// 省市
+	optional string fromname = 7;
+	optional string toname = 8;
+	optional string fromcountry = 9;
+	optional string tocountry = 10;
+}
+
+// 求爱
+//message stRequestFallInLoveRelationUserCmd
+//{
+//	optional uint32 byMode = 1;
+//}
+
+// 通知好友恋爱祝福
+message stNotifyFriendFallInLoveRelationUserCmd
+{
+	optional uint32 userid = 1;				// 好友的ID
+	optional uint32 loverid = 2;            // 好友的情侣
+}
+
+// 好友恋爱送礼
+//message stSendFriendFallInLoveRelationUserCmd
+//{
+//	optional uint32 userid = 1;				// 恋爱的好友ID
+//	optional uint32 index = 2;              // 见enumFriendLevelUpPresent
+//	optional string msg = 3;                // 祝福内容
+//}
+
+// 结为情侣，或者情侣上线通知对方
+//message stOnlineNoticeLoverRelationUserCmd
+//{
+//	optional uint32 loverid = 1;			// 情侣ID
+//}
+
+// 请求团基本信息
+//message stRequestCorpsInfoRelationUserCmd
+//{
+//	optional uint32 leaderid = 1;
+//}
+
+// 请求团基本信息
+message stReturnCorpsInfoRelationUserCmd
+{
+	optional uint32 corpsid = 1;
+	optional uint32 leaderid = 2;
+	optional string corpsname = 3;
+	optional string leadername = 4;
+	optional uint32 corpslevel = 5;
+	optional uint32 corpsnum = 6;
+	optional uint32 corpsnummax = 7;
+}
+
+// 请求团基本信息
+//message stRequestTeamInfoRelationUserCmd
+//{
+//	optional uint32 requestid = 1;
+//}
+
+// 请求团基本信息
+message stReturnTeamInfoRelationUserCmd
+{
+	optional uint32 requestid = 1;
+	optional uint32 leaderid = 2;
+	optional uint32 leaderprofession = 3;
+	optional uint32 leaderlevel = 4;
+	optional uint32 viplevel = 5;
+	optional uint32 leaderreserved = 6;
+	optional uint32 leadermap = 7;
+	optional uint32 teammode = 8;			// TeamMode
+	optional uint32 expmode = 9;			// TeamExpMode
+	optional uint32 itemmode = 10;			// TeamItemMode
+	optional uint32 num = 11;
+	optional string leadername = 12;
+	message Data
+	{
+		optional uint32 memberid = 1;
+		optional uint32 profession = 2;
+		optional uint32 level = 3;
+		optional uint32 viplevel = 4;
+		optional uint32 reserved = 5;
+		optional string membername = 6;
+	}
+	repeated Data data = 13;
+}
+
+// 请求好友基本信息
+//message stRequestFriendInfoRelationUserCmd
+//{
+//	optional uint32 mycharid = 1;			// 跨区用
+//	optional uint32 zoneid = 2;				// 跨区用
+//	optional uint32 requestid = 3;
+//	optional RelationType type = 4;			// 0,好友;1,队友
+//}
+
+// 请求团基本信息
+message stReturnFriendInfoRelationUserCmd
+{
+	optional uint32 mycharid = 1;			// 跨区用
+	optional uint32 zoneid = 2;				// 跨区用
+	optional uint32 requestid = 3;
+	optional uint32 area = 4;				// 省市
+	optional uint32 sex = 5;
+	optional RelationType type = 6;			// 0,好友;1,队友
+	optional uint32 map = 7;
+	optional uint32 country = 8;
+	optional uint32 level = 9;
+	optional uint32 profession = 10;
+	optional string name = 11;
+	optional string corpsname = 12;
+	optional uint32 viplevel = 13;
+}
+
+// 结婚
+//message stRequestMarryMeRelationUserCmd
+//{
+//	optional uint32 itemid = 1;
+//}
+
+// 通知好友结婚祝福
+message stNotifyMarryMeRelationUserCmd
+{
+	optional uint32 userid = 1;				// 好友的ID
+	optional uint32 loverid = 2;            // 好友的情侣
+	optional uint32 mode = 3;
+}
+
+// 好友结婚送礼
+message stSendFriendMarryRelationUserCmd
+{
+	optional uint32 userid = 1;				// 结婚的好友ID
+	optional uint32 index = 2;              // 见enumFriendLevelUpPresent
+	optional uint32 mode = 3;               // 结婚方式　eMarryMode
+	optional string msg = 4;                // 祝福内容
+}
+
+// 结为夫妻，或者夫妻上线通知对方
+//message stOnlineNoticeSpouseRelationUserCmd
+//{
+//	optional uint32 loverid = 1;			// 情侣ID
+//}
+
+// 请求结婚证信息
+//message stRequestMarryCardRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//}
+
+// 返回结婚证信息
+message stReturnMarryCardRelationUserCmd
+{
+	optional string husbend = 1;
+	optional string wife = 2;
+	optional uint32 createtime = 3;
+	optional uint32 mode = 4;
+	optional uint32 nums = 5;
+}
+
+// 接任团长、军长
+//message stRequestInheritanceCorpsArmyLeaderRelationUserCmd
+//{
+//	optional RelationType type = 1;
+//}
+
+
+
+// 获取国战信息
+//message stRequestGetCountryWarInfoRelationUserCmd
+//{
+//}
+
+// 返回国战信息
+message stReturnGetCountryWarInfoRelationUserCmd
+{
+	optional stCountryWarBaseInfo info = 1;
+}
+
+// 获取国战风云录
+//message stRequestCountryWarRecordRelationUserCmd
+//{
+//}
+
+// 返回国战风云录
+message stReturnCountryWarRecordRelationUserCmd
+{
+	repeated stCountryWarRecord data = 1;
+	optional uint32  dwAttackSize = 2;
+	optional uint32  dwDefenseSize = 3;
+}
+
+// 获取国战记事
+//message stRequestCountryWarNotepadRelationUserCmd
+//{
+//}
+
+// 返回国战记事
+message stReturnCountryWarNotepadRelationUserCmd
+{
+	repeated stCountryWarNotepadInfo data = 1;
+}
+
+// 通知客户端国战结束
+message stNotifyCountryWarStopRelationUserCmd
+{
+}
+
+// 获取国战排行数据 C==>>S
+//message stRequestCountryWarRankRelationUserCmd
+//{
+//}
+
+// 获得国战排行数据 S==>>C
+message stReturnCountryWarRankRelationUserCmd
+{
+	repeated stCountryWarRank data = 1;
+}
+
+// 请求团移民
+//message stRequestCorpsImmigrationRelationUserCmd
+//{
+//	optional uint32 dstid = 1;				// 要移民的国家
+//}
+
+// 取消团移民
+//message stCancelCorpsImmirationRelationUserCmd
+//{
+//}
+
+// 移民状态查询
+//message stRequestGetCorpsImmigrationRelationUserCmd
+//{
+//}
+
+// 移民状态查询返回
+message stReturnGetCorpsImmigrationRelationUserCmd
+{
+	optional uint32 dwLeftTime = 1;
+	optional uint32 dwDstCountry = 2;
+	optional uint32 dwSize = 3;
+	message Data
+	{
+		optional uint32 dwUserID = 1;
+		optional uint32 dwAttitude = 2;		// 针对移民的态度，详情请见enumCorpsImmigrationAttitude
+	}
+	repeated Data data = 4;
+}
+
+// 同意团移民
+//message stAgreeCorpsImmigrationRelationUserCmd
+//{
+//}
+
+// 拒绝团移民
+//message stRefuseCorpsImmigrationRelationUserCmd
+//{
+//}
+
+
+
+// 执行团移民之前获取团移民信息
+//message stRequestExecCorpsImmigrationInfoRelationUserCmd
+//{
+//}
+
+message stReturnExecCorpsImmigrationInfoRelationUserCmd
+{
+	optional uint32 dwDstCountry = 1;		// 团移民目标国
+	optional uint32 dwNum = 2;              // 同意团移民的人数
+	optional uint32 dwMoney = 3;            // 执行团移民需要的金额
+}
+
+// 查看团当前是否处于移民状态
+//message stRequestCorpsImmigrationStateRelationUserCmd
+//{
+//}
+
+message stReturnCorpsImmigrationStateRelationUserCmd
+{
+	optional enumCorpsImmigrationState dwState = 1;
+}
+
+// 设置自动入团筛选选项
+//message stRequestSetAutoIntoCorpsRelationUserCmd
+//{
+//	optional uint32 byOperation = 1;		// 操作，1设置，2取消
+//	optional uint32 dwLevel = 2;            // 玩家等级
+//	optional uint32 dwFighting = 3;         // 玩家战斗力
+//}
+
+enum SetAutoIntoCorpsRet
+{
+	SetAutoIntoCorpsRet_Yes = 1;
+	SetAutoIntoCorpsRet_No = 2;
+}
+
+// 设置自动入团反馈
+message stReturnSetAutoIntoCorpsRelationUserCmd
+{
+	optional uint32 byOperation = 1;
+	optional uint32 byRet = 2;
+}
+
+// 获取自动入团筛选设置
+//message stRequestGetAutoIntoCorpsRelationUserCmd
+//{
+//}
+
+// 返回自动入团筛选设置
+message stReturnGetAutoIntoCorpsRelationUserCmd
+{
+	optional uint32 byState = 1;			// 0取消、1设置
+	optional uint32 dwLevel = 2;
+	optional uint32 dwFighting = 3;
+}
+
+// 请求获取官员评价
+//message stRequestGetMasterEvaluationRelationUserCmd
+//{
+//}
+
+// 返回官员评价
+message stReturnGetMasterEvaluationRelationUserCmd
+{
+	optional uint32 dwSize = 1;
+	message Data
+	{
+		optional uint32 right = 1;			// 权限
+		optional string name = 2;           // 官员名称
+		optional uint32 lastratio = 3;      // 昨日好评率
+		optional uint32 nowratio = 4;       // 当日好评率
+	}
+	repeated Data data = 2;
+}
+
+// 请求评价官员
+//message stRequestEvaluatMasterRelationUserCmd
+//{
+//	optional uint32 dwSize = 1;
+//	message Data
+//	{
+//		optional uint32 right = 1;			// 权限
+//		optional uint32 evaluation = 2;     // 评价,1是好评,2是差评
+//	}
+//	repeated Data data = 2;
+//}
+
+// 获取国家活动信息
+//message stRequestCountryActivityInfoRelationUserCmd
+//{
+//}
+
+// 返回国家活动信息
+message stReturnCountryActivityInfoRelationUserCmd
+{
+	optional uint32 byQingBao = 1;
+	optional uint32 byYuanzheng = 2;
+	optional uint32 byWuhui = 3;
+	optional uint32 bySudi = 4;
+	optional uint32 byWeishe = 5;
+	repeated stCountryActivityInfo activityinfos = 6;
+}
+
+// 军占领申请与放弃
+//message stRequestArmyOccupyRelationUserCmd
+//{
+//	optional uint32 option = 1;				// 发起 1  放弃 0
+//	optional uint32 npcid = 2;              // 申请占领
+//	optional uint32 money = 3;              // 竞战费用
+//}
+
+// 军占领信息发送
+message stSendArmyOccupyListRelationUserCmd
+{
+	optional uint32 num = 1;
+	message Info
+	{
+		optional uint32 npcid = 1;			// 占领NPC
+		optional uint32 country = 2;        // 当前占领军所属国家
+		optional uint32 armyid = 3;         // 当前占领军
+		optional uint32 chalcountry = 4;    // 今日挑战军所属国家
+		optional uint32 challenger = 5;     // 今日挑战军
+		optional uint32 curbid = 6;         // 当前竞标费用
+	}
+	repeated Info info = 2;
+}
+
+// 发送军占领九屏消息
+//message stSendArmyOccupyNineRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//	optional uint32 occupy = 2;
+//}
+
+// 请求团内排名
+//message stRequestCorpsRankRelationUserCmd
+//{
+//}
+
+// 发送团内排名
+message stReturnCorpsRankRelationUserCmd
+{
+	optional uint32 maxgirlgiftid = 1;
+	optional uint32 maxgirlgift = 2;
+	optional uint32 maxboygiftid = 3;
+	optional uint32 maxboygift = 4;
+	optional uint32 maxquestionid = 5;
+	optional uint32 maxquestion = 6;
+	optional uint32 maxmoneyid = 7;
+	optional uint32 maxmoney = 8;
+	optional uint32 maxpowerid = 11;
+	optional uint32 maxpower = 12;
+	optional uint32 maxkillerid = 13;
+	optional uint32 maxkiller = 14;
+	optional uint32 maxshortkillid = 15;
+	optional uint32 maxshortkill = 16;
+	optional uint32 maxpointid = 17;
+	optional uint32 maxpoint = 18;
+	optional uint32 maxlevelid = 19;
+	optional uint32 maxlevel = 20;
+}
+
+// 请求团通信录
+//message stRequestCorpsAddressListRelationUserCmd
+//{
+//}
+
+// 返回申请列表
+message stReturnCorpsAddressListRelationUserCmd
+{
+	optional uint32 isopen = 1;
+	optional uint32 num = 2;
+	message Data
+	{
+		optional uint32 charid = 1;			// 用户ID
+		optional uint64 qq = 2;             // QQ
+		optional uint64 mobile = 3;         // 手机
+	}
+	repeated Data data = 3;
+}
+
+// 是否公开地址
+//message stSetOpenCorpsAddressListRelationUserCmd
+//{
+//	optional uint32 set = 1;
+//}
+
+// 请求团奖金界面信息
+//message stRequestCorpsWageInfoRelationUserCmd
+//{
+//}
+
+// 返回团奖金界面信息
+message stReturnCorpsWageInfoRelationUserCmd
+{
+	optional uint32 corpswage = 1;			// 基本团奖金
+	optional uint32 moneywage = 2;          // 团资金兑换
+	optional uint32 userwage = 3;           // 玩家银币兑换
+	optional uint32 paywage = 4;            // 已发奖金
+	message Data
+	{
+		optional uint32 userid = 1;			// 用户ID
+		optional uint32 lastwage = 2;       // 上周工资
+		optional uint32 lastmedal = 3;      // 上周勋章
+		optional uint32 standardwage = 4;   // 标准奖金
+		optional uint32 wage = 5;           // 实发奖金
+		optional uint32 appraisal = 6;      // 考评
+		optional uint32 vigorpoint = 7;     // 活力点
+	}
+	repeated Data data = 6;
+}
+
+// 请求兑换团工资界面
+//message stRequestCorpsWageTransferRelationUserCmd
+//{
+//	optional eWageTransferType type = 1;
+//}
+
+// 返回兑换团工资界面
+message stReturnCorpsWageTransferRelationUserCmd
+{
+	optional eWageTransferType type = 1;
+	optional uint32 limit = 2;
+}
+
+// 团工资兑换
+message stCorpsWageTransferRelationUserCmd
+{
+	optional eWageTransferType type = 1;
+	optional uint32 money = 2;
+}
+
+// 请求团工资颁发界面信息
+//message stRequestCorpsWageGrantInfoRelationUserCmd
+//{
+//}
+
+// 返回团工资颁发界面信息
+message stReturnCorpsWageGrantInfoRelationUserCmd
+{
+	optional uint32 num = 1;
+	message Data
+	{
+		optional uint32 uid = 1;				// 角色
+		optional uint32 medal = 2;              // 上周勋章
+		optional uint32 money = 3;              // 标准奖金
+		optional uint32 state = 4;              // 颁发状态
+		optional uint32 appraisal = 5;          // 评价
+		optional uint32 vigorpoint = 6;         // 活力点
+	}
+	repeated Data data = 2;
+}
+
+// 团长颁发团工资
+//message stCorpsWageGrantRelationUserCmd
+//{
+//	optional uint32 uid = 1;
+//	optional uint32 appraisal = 2;
+//}
+
+// 强制领取工资
+//message stCorpsWageActiveRelationUserCmd
+//{
+//}
+
+// 获取团工资捐献记录
+//message stRequestWageLogRelationUserCmd
+//{
+//}
+
+// 发送团工资捐献记录
+message stSendWageLogRelationUserCmd
+{
+	repeated stCorpsWageTransfer data = 1;
+}
+
+// 请求镖局竞标信息
+//message stRequestEscortInfoRelationUserCmd
+//{
+//}
+
+// 返回镖局竞标信息
+message stReturnEscortInfoRelationUserCmd
+{
+	optional uint32 corpsid1 = 1;
+	optional uint32 money1 = 2;
+	optional uint32 corpsid2 = 3;
+	optional uint32 money2 = 4;
+}
+
+// 开始竞标
+//message stRequestBidEscortRelationUserCmd
+//{
+//	optional uint32 money = 1;
+//}
+
+// 请求镖局界面
+//message stRequestEscortInterfaceRelationUserCmd
+//{
+//}
+
+// 返回镖局界面
+message stReturnEscortInterfaceRelationUserCmd
+{
+	optional uint32 corpsid1 = 1;
+	optional uint32 successnum1 = 2;
+	optional uint32 failnum1 = 3;
+	optional uint32 money1 = 4;
+	optional uint32 corpsid2 = 5;
+	optional uint32 successnum2 = 6;
+	optional uint32 failnum2 = 7;
+	optional uint32 money2 = 8;
+}
+
+
+
+// 镖车被攻击
+message stNoticeCorpsGuardHurtRelationUserCmd
+{
+	optional uint32 userid = 1;
+	optional uint32 color = 2;
+	optional uint32 map = 3;
+	optional uint32 posx = 4;
+	optional uint32 posy = 5;
+}
+
+// 救车
+//message stCorpsHelpGuardHurtRelationUserCmd
+//{
+//	optional uint32 userid = 1;
+//	optional uint32 map = 2;
+//	optional uint32 posx = 3;
+//	optional uint32 posy = 4;
+//}
+
+// 充入运营资金
+//message stRequestFillOperateMoneyRelationUserCmd
+//{
+//	optional uint32 money = 1;
+//}
+
+
+
+// 国王或元帅邀请国民评价
+//message stInviteNationalEvaluationRelationUserCmd
+//{
+//}
+
+
+
+
+
+//message stRequestGoToTargetRelationUserCmd
+//{
+//	optional RelationType type = 1;
+//	optional uint32 userid = 2;
+//}
+
+message stRequestCallTargetRelationUserCmd
+{
+	optional RelationType type = 1;
+	optional uint32 userid = 2; 			// 召唤所有成员不填写
+    optional uint32 sceneid = 3;
+    optional uint32 posx = 4;
+    optional uint32 posy = 5;
+    optional string info = 6;
+}
+
+message stRequestRecommendFriendsRelationUserCmd
+{
+	optional uint32 ftype = 1; //0:打开界面,1:刷新,2:单个添加,3:一键添加
+	optional uint32 userid = 2; //单个添加用户id
+	repeated tFriendBaseData fdata = 3;	//上行不填充
+}
+
+// 请求/返回成员召唤冷却时间
+message stSyncCallTargetColdTimeRelationUserCmd
+{
+	optional RelationType type = 1;
+	optional uint32 residualtime = 2;
+}
+
+// 情缘活动匹配规则
+enum EventLoveTaskMatchType
+{
+	EventLoveTaskMatchType_None = 0; // 自动匹配
+	EventLoveTaskMatchType_Sex = 1; // 性别匹配
+}
+
+
+
+// 请求发送团移民确认弹窗给团成员
+//message stRequestSendCorpsImmigrationConfirmationRelationUserCmd
+//{
+//	optional uint32 userid = 1; // 团成员id PS:全体成员这里不填充
+//}
+
+// 请求附近玩家信息
+message stRequestNearPlayerInfoRelationUserCmd
+{
+}
+
+// 请求附近玩家信息(服务器返回)
+message stRetNearPlayerInfoRelationUserCmd
+{
+	message NearPlayerInfo
+	{
+		optional uint32 userid = 1;			// 用户id
+		optional string name = 2;			// 用户名称
+		optional uint32 profession = 3;		// 用户职业
+		optional uint32 level = 4;			// 用户等级
+		optional uint32 face = 5;			// 用户肖像
+	}
+
+	repeated NearPlayerInfo data = 1;
+}
+
+//好友申请列表
+message stFriendReqListRelationUserCmd_CS
+{
+	optional uint32 rtype = 1; //0:界面,1:单个,2:全部
+}
+
+//好友申请列表返回
+message stFriendReqListRelationUserCmd_SC
+{
+	optional uint32 rtype = 1; //0:界面,1:单个,2:全部
+	optional uint32 userid = 2;
+	repeated tFriendBaseData fdata = 3; //上行不填充
+}
+
+//message stSendFireWorksRelationUserCmd_CS
+//{
+//	optional uint32 type = 1;//1.礼花界面 2.红包界面
+//	optional uint32 open = 2;// 1.打开 2.关闭
+//}
+
+//message stPutOnFullDressRelationUserCmd
+//{
+//	optional uint32 id = 1;
+//	optional uint32 isput = 2; // 是否已穿上(1.y 2.n)
+//	optional uint32 isaput = 3; //都穿上 (1.y 2.n)
+//	optional uint32 isphoto = 4; 
+//}
+
+message stRequestAddRelationUserCmd_SC
+{
+	optional int32 error_code = 1;
+	optional string error_msg = 2;	
+	optional RelationType type = 3;		// 社会关系类型RelationType	
+}
+
+//送好友礼物
+message stSendFriendGiftsRelationUserCmd_CS
+{
+    optional uint32 dstid = 1;          //目标玩家
+    optional uint32 gift = 2;           //礼品
+    optional uint32 num = 3;            //礼品数量
+    optional string name = 4;           //礼品名
+    optional uint32 addval = 5;            //添加的友好度
+}
+
+message stSendFriendGiftsRelationUserCmd_SC
+{
+    optional int32 error_code = 1;
+    optional string error_msg = 2;
+}
+
+//求婚结果通知
+message stSendProposalRetRelationUserCmd_SC
+{
+	optional uint32 targetid = 1;			//目标用户id
+	optional string targetname = 2;			//目标用户名称
+	optional int32 bagree = 3;//			//结果（1标识同意）
+}
+
+
+//查看结婚申请列表
+message stProposalReqListRelationUserCmd_CS
+{
+	optional uint32 rtype = 1; //0:界面,1:单个,2:全部
+}
+
+//查看结婚申请列表返回(通知也是这个)
+message stProposalReqListRelationUserCmd_SC
+{
+	optional uint32 rtype = 1; //0:刷新界面,1:删除单个,2:删除全部
+	optional uint32 userid = 2;	//删除单个的时候用
+	repeated tFriendBaseData fdata = 3; //上行不填充
+}

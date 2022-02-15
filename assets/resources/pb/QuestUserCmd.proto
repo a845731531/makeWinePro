@@ -1,0 +1,535 @@
+package GameCmd;
+import "DemonUserCmd.proto";
+
+message QuestUserCmd
+{
+	enum Param
+	{
+//ProtoDefineBeing
+		//stRetValidQuestUserCmd = 8;
+		stFindFriendInfoQuestUserCmd_CS = 9;
+		stFindAvgRebirthLevelInfoQuestUserCmd_CS = 10;
+		stSendPosInfoQuestUserCmd = 11;
+		stReturnLotusRemainTimeQuestUserCmd = 12;
+		stSyncUserPowerWithClientQuestUserCmd_CS = 13;
+		//stAddBroQuestUserCmd = 14;
+		stRequestBroChoiceQuestUserCmd = 15;
+		stShowPositionChoiceQuestUserCmd = 16;
+		stRequestPositionChoiceQuestUserCmd = 17;
+		stReturnBroFailQuestUserCmd = 18;
+		//stRequestCreateBroQuestUserCmd = 19;
+		stRequestNameVoteQuestUserCmd = 20;
+		stReturnVoteQuestUserCmd = 21;
+		stAcceptNameVoteQuestUserCmd = 22;
+		stPositionNameQuestUserCmd = 24;
+		stCheckVoteQuestUserCmd = 26;
+		stRequestFinishBroQuestUserCmd = 27;
+		stSyncTitleRemainTimeQuestUserCmd_CS = 30;
+		stAutoDelMineLotteryEquipsQuestUserCmd_CS	= 33;
+		stSendLuckyChanceInfoQuestUserCmd_CS = 34;
+		stRequestIntoHLSYCopyQuestUserCmd_CS = 35;
+		stRequestDisMissQuestUserCmd = 40;
+		stCheckSelfBroQuestUserCmd = 41;
+		stReturnHLSYBossInfoQuestUserCmd =42;//混乱深渊副本信息
+		stUpdateHLSYBossPosInfoQuestUserCmd_CS =43;//混乱深渊boss信息
+		stChangeBroSelfNameQuestUserCmd = 44;
+		stChangeBroNameQuestUserCmd = 45;
+		stOneKeyFinishTowerCopyQuestUserCmd_CS = 46;//爬塔副本一键扫荡
+		stRequestOfflineinfoQuestUserCmd_CS = 47;//离线找回
+		stReturnOfflineInfoQuestUserCmd_S = 48;
+		stAddCheckSelfBroQuestUserCmd = 50;
+		stSendBroFailInfoQuestUserCmd = 51;
+		stRetHLSYCopyReliveQuestUserCmd =52;//混乱深渊复活状态 
+		stSyncHLSYCopyReliveQuestUserCmd_CS =53;//混乱深渊复活状态 
+		stRequsetUserAtkShopInfoQuestUserCmd_CS = 54; //个人攻城商店
+		stReturnUserAtkShopInfoQuestUserCmd_S = 55;//个人攻城商店
+		stSyncDailyShareAwardQuestUserCmd_CS = 56;////每日分享
+		stRequestActiveChuanShiQuestUserCmd  = 57;//传世装备
+		stReturnOneInfoChuanShiQuestUserCmd_S  = 58;
+		stReturnAllInfoChuanShiQuestUserCmd_S  = 59;//传世装备
+		stCheckSuperWeaponQuestUserCmd = 64;//z主宰
+		stBreakSuperWeaponQuestUserCmd = 65;//主宰
+                stReturnInfoRingStatusQuestUserCmd_S = 70;  //特戒主界面
+                stReqHolyRingQuestUserCmd = 71;
+                stReqUpgradeHolyRingQuestUserCmd = 72;              
+		stReqClickRingQuestUserCmd = 73;
+		stFindFriendInfoQuestUserCmd_SC = 109;//返回stFindFriendInfoQuestUserCmd_CS
+//ProtoDefineEnd
+	}
+}
+
+// 委托任务类型
+enum eDeputeTaskType
+{
+	DEPUTE_TASK_ONE = 1;			// 魔物清剿
+	DEPUTE_TASK_TWO = 2;			// 魔核收集
+	DEPUTE_TASK_THREE = 3;			// 异国远征
+	DEPUTE_TASK_FOUR = 4;			// 杀场血战
+	DEPUTE_TASK_MAX = 5;
+}
+
+
+// 附加类型
+// 任务存档(data除了变量后面是附加数据列表,<BYTE(type),WORD(num),data>)
+enum SaveTaskAddType
+{
+	SaveTaskAddType_Material	= 1;	// 动态材料
+}
+
+// 任务类型
+enum TaskType
+{
+	TaskType_None = 0;			// 不识别类型
+	TaskType_Normal = 1;		// 普通主线任务
+	TaskType_Sub = 2;			// 普通支线任务
+	TaskType_Loop = 3;			// 日常环任务
+	TaskType_Army = 4;			// 军团任务
+	TaskType_Achieve = 5;		// 成就任务
+}
+
+// 任务颜色
+enum TaskColor
+{
+	TaskColor_White = 0;
+	TaskColor_Blue = 1;
+	TaskColor_Yellow = 2;
+	TaskColor_Green = 3;
+	TaskColor_Purple = 4;
+	TaskColor_Max = 5;
+}
+
+// 任务状态
+enum TaskProcess
+{
+	TaskProcess_None = 0;		// 未接任务
+	TaskProcess_Doing = 1;		// 正在做
+	TaskProcess_CanDone = 2;	// 可以交付
+	TaskProcess_Done = 3;		// 已经完成
+	TaskProcess_Max = 4;		// 最大值
+}
+
+// 任务变量
+enum TaskVariable
+{
+	MvarIndex_Parent = 100;		// 随机子任务对应的父任务ID
+	MvarIndex_Child = 108;		// 随机任务选中的子任务ID
+	MvarIndex_EndNpcID = 202;	// 当前步骤的完成NPCID
+	MvarIndex_SubTask = 109;	// 子任务索引
+	MvarIndex_SubTaskNum = 203;	// 任务的总步骤数
+}
+
+
+// 返回可以接的任务列表
+//message stRetValidQuestUserCmd
+//{
+//	repeated uint32 data = 1;
+//}
+//搜索好友功能
+message	stFindFriendInfoQuestUserCmd_CS
+{
+	optional uint32 findid=1;
+	optional string findname=2;
+}
+
+//搜索好友功能返回
+message	stFindFriendInfoQuestUserCmd_SC
+{
+	optional int32 error_code= 1;
+	optional string error_msg= 2;
+	optional uint32 findid=3;
+	optional uint32 profession=4;
+	optional uint32 level=5;
+	optional string findname=6;
+	optional uint32 result=7;
+	optional uint32 usersex=8;
+	optional int32 homeland= 9;
+        optional string iconurl= 10;
+}
+
+//获得前十名平均转生等级
+message	stFindAvgRebirthLevelInfoQuestUserCmd_CS
+{
+	optional uint32 etype=1;
+	optional uint32 avglevel=2;
+}
+message stSendPosInfoQuestUserCmd
+{
+	optional uint32 posx = 1;
+	optional uint32 posy = 2;
+	optional bool flag = 3;
+}
+
+message stReturnLotusRemainTimeQuestUserCmd
+{
+	optional uint32 remain = 1;
+	optional uint32 uid = 2;
+}
+message	stSyncUserPowerWithClientQuestUserCmd_CS
+{
+	optional uint32 userid= 1;
+	optional uint32 power = 2;
+	optional uint32 etype= 3;
+}
+message broInfo
+{
+	optional uint32 uid = 1;
+	optional string name = 2;
+	optional int32 order = 3;
+}
+//message stRequestCreateBroQuestUserCmd
+//{
+//	optional string broname = 1;
+//	repeated broInfo data = 2;
+//}
+//message stAddBroQuestUserCmd
+//{
+//	optional uint32 uid = 1;
+//	optional uint32 position = 2;
+//}
+message stRequestBroChoiceQuestUserCmd
+{
+	optional uint32 btype = 1;	//1 我要结拜 2支付
+	optional bool bfind = 2;
+}
+message stShowPositionChoiceQuestUserCmd
+{
+	message tempdata
+	{
+		optional uint32 userid = 1;
+		optional uint32 position = 2;
+	}
+	repeated tempdata data = 1;
+}
+message stRequestPositionChoiceQuestUserCmd
+{
+	optional uint32 userid = 1;
+	optional uint32 order = 2;
+}
+message stReturnBroFailQuestUserCmd
+{
+	optional bool bfail = 1;
+}
+message stRequestNameVoteQuestUserCmd
+{
+	optional string broname = 1;
+	optional bool bfind = 2;
+}
+message stReturnVoteQuestUserCmd
+{
+	message voteResult
+	{
+		optional uint32 bsupport = 1;
+		optional uint32 uid = 2;
+		optional string broname = 3;
+	}
+	repeated voteResult data = 1;
+	optional uint32 userid = 2;
+	optional uint32 choice = 3;
+	optional string name = 4;
+}
+message stAcceptNameVoteQuestUserCmd
+{
+	optional string broname = 1;
+}
+message stPositionNameQuestUserCmd
+{
+	message positionName
+	{
+		optional string posname = 1;
+		optional uint32 position = 2;
+		optional string broname = 3;
+		optional uint32 uid = 4;
+	}
+	repeated positionName data = 1;
+	optional uint32 userid = 2;
+	optional string name = 3;
+	optional string revbroname = 4;
+}
+message stCheckVoteQuestUserCmd
+{
+	optional uint32 userid = 1;
+	optional string broname = 2;
+	optional bool isPass = 3;
+}
+message stRequestFinishBroQuestUserCmd
+{
+	message broFinish
+	{
+		optional string rolename = 1;
+		optional uint32 uid = 2;
+		optional string broname = 3;
+		optional uint32 position = 4;
+		optional string positionname = 5;
+	}
+	repeated broFinish data = 1;
+}
+message stSyncTitleRemainTimeQuestUserCmd_CS
+{
+	optional uint32 etype= 1;
+	optional uint32 dwtime = 2;
+}
+//message	stReturnRechargeCodeQuestUserCmd_CS
+//{
+//	optional uint32 etype= 1;
+//	optional uint32 num = 2;
+//	optional uint32 remaintime = 3;
+//}
+message stAutoDelMineLotteryEquipsQuestUserCmd_CS
+{
+	optional uint32 etype = 1;
+	optional uint32 status = 2;
+}
+message	stSendLuckyChanceInfoQuestUserCmd_CS
+{
+	optional uint32 id = 1;
+	optional uint32 deadline = 2;
+	optional uint32 etype = 3;
+}
+message stRequestIntoHLSYCopyQuestUserCmd_CS
+{
+	optional uint32 type = 1;
+	optional uint32 userid = 2;
+	optional uint32 sceneid = 3;
+	optional uint32 npcid = 4;
+}
+message stRequestDisMissQuestUserCmd
+{
+	optional uint32 btype = 1;
+}
+message stCheckSelfBroQuestUserCmd
+{
+	message broBaseInfo
+	{
+		optional uint32 userid = 1;
+		optional uint32 userlevel = 2;
+		optional string clanname = 3;
+	}
+	optional uint32 btype = 1;
+	optional string broname = 2;
+	repeated GameCmd.BroMember data = 3;
+	optional uint32 moneys = 4;
+	optional uint32 level = 5;
+	optional uint32 weekMoneys = 6;
+	repeated broBaseInfo baseinfo = 7;
+}
+message	stReturnHLSYBossInfoQuestUserCmd
+{
+	optional uint32 mapid = 1;
+	optional uint32 remain = 2;//当前副本剩余
+	optional uint32 total = 3;//整个活动剩余boss数量
+	optional uint32 time = 4;
+	optional uint32 bossid = 5;
+	optional uint32 ctype = 6;
+}
+message	stUpdateHLSYBossPosInfoQuestUserCmd_CS
+{
+	optional uint32 ctype = 1;
+	optional uint32 bossid = 2;
+	optional uint32 posx = 3;
+	optional uint32 posy = 4;
+	optional uint32 mapid = 5;
+}
+message stChangeBroSelfNameQuestUserCmd
+{
+	optional uint32 broid = 1;
+	optional uint32 userid = 2;
+	optional string newselfname = 3;
+}
+message stChangeBroNameQuestUserCmd
+{
+	optional uint32 broid = 1;
+	optional uint32 leaderid = 2;
+	optional string newbroname = 3;
+	optional uint32 btype = 4;
+}
+message	stOneKeyFinishTowerCopyQuestUserCmd_CS
+{
+	optional uint32 ctype = 1;
+	optional uint32 highlevel = 2;
+	optional uint32 result = 3;
+	optional uint32 needgold = 4;
+}
+message YesterDayOfflineinfo
+{
+	message backitem{
+		optional uint32 itemid = 1;
+		optional uint32 num = 2;
+	}
+	optional uint32 openstatus= 1;
+	optional uint32 revstatus = 2;
+	optional uint32 activityid = 3;
+	repeated backitem iteminfo = 4;
+	optional uint32 halfrev = 5;
+	optional uint32 fullrev = 6;
+}
+message stRequestOfflineinfoQuestUserCmd_CS
+{
+	optional uint32 rtype = 1;
+	optional uint32 buyid = 2;
+	optional uint32 buytype = 3;
+	optional uint32 result = 4;
+}
+message stReturnOfflineInfoQuestUserCmd_S
+{
+	repeated YesterDayOfflineinfo info = 1;
+}
+message stAddCheckSelfBroQuestUserCmd
+{
+	message broBaseInfo
+	{
+		optional uint32 userid = 1;
+		optional uint32 userlevel = 2;
+		optional string clanname = 3;
+	}
+	repeated broBaseInfo data = 1;
+}
+
+message stSendBroFailInfoQuestUserCmd
+{
+	optional uint32 btype = 1;
+}
+message stRetHLSYCopyReliveQuestUserCmd
+{
+	optional uint32 userid = 1;
+	optional uint32 canrelive = 2;
+}
+message	stSyncHLSYCopyReliveQuestUserCmd_CS
+{
+	optional uint32 rtype = 1;
+	optional uint32 remain = 2;
+}
+message stRequsetUserAtkShopInfoQuestUserCmd_CS
+{
+	optional uint32 userid = 1;
+	optional uint32 rtype = 2;
+	optional uint32 baseid = 3;
+	optional uint32 id = 4;
+}
+message stSyncDailyShareAwardQuestUserCmd_CS 
+{
+	optional uint32 userid = 1;
+	optional uint32 ctype = 2;
+	optional uint32 result = 3;
+	optional uint32 status = 4;
+}
+message	stRequestActiveChuanShiQuestUserCmd
+{
+	optional uint32 userid = 1;
+	optional uint32 rtype = 2;
+	optional uint32 index = 3;
+}
+
+message	stReturnOneInfoChuanShiQuestUserCmd_S
+{
+	optional uint32 baseid = 1;
+	optional uint32 level = 2;			//阶
+	optional uint32 sublevel = 3;		//等级
+	optional uint32 power = 4;
+	optional uint32 index = 5;
+}
+
+message	stReturnAllInfoChuanShiQuestUserCmd_S
+{
+	message chuanshiinfo
+	{
+		optional uint32 baseid = 1;
+		optional uint32 level = 2;			//阶
+		optional uint32 sublevel = 3;		//等级
+		optional uint32 power = 4;
+		optional uint32 index = 5;
+	}
+	repeated chuanshiinfo data = 1;
+	optional uint32 allpower = 2;
+}
+message	stReturnUserAtkShopInfoQuestUserCmd_S  //个人攻城商店
+{
+	message useratkshopinfo
+	{
+		optional uint32 baseid = 1;
+		optional uint32 buystatus = 2;
+		optional uint32 goldnum = 3;
+		optional uint32 costpoints = 4;//积分
+		optional uint32 moneytickets = 5;
+		optional uint32 discount = 6;
+		optional uint32 id = 7;
+		optional uint32 num = 8;
+	}
+	repeated useratkshopinfo data = 1;
+	optional uint32 totalpoints = 2; //积分
+	optional uint32 refreshtime = 3;
+	optional uint32 times = 4;
+	optional uint32 number = 5;
+}
+//message stSyncShenQiRewardInfoQuestUserCmd_CS
+//{
+//	message rewardinfo
+//	{
+//		optional uint32 index = 1;
+//		optional uint32 status = 2;
+//		optional uint32 itemid = 3;
+//	}
+//	repeated rewardinfo data = 1;
+//	optional uint32 rtype = 2;
+//	optional uint32 index  = 3;
+//	optional uint32 eid = 4;
+//	optional uint32 power = 5;
+//	optional uint32 showicon = 6;
+//}
+message stCheckSuperWeaponQuestUserCmd
+{
+	message SuperWeaponInfo
+	{
+		optional uint32 bpart = 1;
+		optional uint32 rebirthlevel = 2;
+		optional uint32 level = 3;
+		optional bool isActive = 4;
+	}
+	optional uint32 part = 1;
+//	optional uint32 rebirthlevel = 2;
+//	optional uint32 level = 3;
+//	optional bool isActive = 4;
+	optional uint32 btype = 2;	//1为升级或者激活 2查看当前
+	repeated SuperWeaponInfo data = 3;
+	optional uint32 power = 4;
+}
+message stBreakSuperWeaponQuestUserCmd
+{
+	repeated uint32 itemid = 1;
+}
+
+message stReturnInfoRingStatusQuestUserCmd_S
+{
+        optional uint32 itemid = 1;
+        optional uint32 state = 2;		
+        optional uint32 lefttime=3;
+	optional uint32 activeall=4;
+}
+
+
+//神戒请求界面
+message stReqHolyRingQuestUserCmd
+{
+        message  HolyInfo
+	{
+              optional uint32 itemid=1;
+              optional uint32 value=2;     //精华值
+              optional uint32 level=3;     //神戒当前级别
+              optional uint32 state=4;     //1:没激活  2:已经激活
+	}
+        optional uint32 type=1;
+        repeated  HolyInfo data=2;
+}
+
+message stReqUpgradeHolyRingQuestUserCmd
+{
+        optional uint32 itemid=1;    
+        optional uint32 errcode=2;     //进阶是否成功 0:成功  1:失败
+        optional uint32 level=3;       //进阶成功后的等级
+        optional uint32 value=4;       //进阶后还有多少精华值
+}
+
+message stReqClickRingQuestUserCmd
+{
+	optional uint32 reqtype=1;     //点击事件
+	optional uint32 retcode=2;     //0 不弹出界面   1弹出界面
+}

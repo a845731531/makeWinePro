@@ -1,0 +1,18 @@
+package PmdProtobuf;
+
+// 平台登录一级消息
+enum PlatCommand
+{
+	PlatCommand_Null 		= 0;
+	PlatCommand_Logger 		= 245;	// 日志服务器
+	PlatCommand_Lobby 		= 246;	// 大厅服务器
+	PlatCommand_Push 		= 247;	// 推送服务器
+	PlatCommand_Gm 			= 248;	// GM服务器
+	PlatCommand_Monitor		= 249;	// 监控消息
+	PlatCommand_Login 		= 250;	// 登录消息
+	PlatCommand_Forward		= 251;	// 登录转发消息
+	PlatCommand_Sdk 		= 252;	// 第三方对接服务器间消息
+	PlatCommand_Chat 		= 253;	// 聊天消息
+	PlatCommand_Image       = 254;	// 图片服务器
+}
+

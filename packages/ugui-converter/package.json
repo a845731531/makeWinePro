@@ -1,0 +1,25 @@
+{
+  "name": "ugui-converter",
+  "scene-script": "scene-script.js",
+  "version": "0.0.1",
+  "description": "UGUI导入导出",
+  "author": "lyzz0612",
+  "main": "main.js",
+  "main-menu": {
+    "i18n:MAIN_MENU.package.title/ugui-converter/导出预制体": {
+      "message": "ugui-converter:export"
+    },
+    "i18n:MAIN_MENU.package.title/ugui-converter/导入UI": {
+      "message": "ugui-converter:import"
+    }
+  },
+  "panel": {
+      "main": "panel/index.js",
+      "type": "dockable",
+      "title": "导入UI",
+      "width": 900,
+      "height": 900,
+      "min-height": 400,
+      "min-width": 550
+  }
+}

@@ -1,0 +1,13 @@
+
+yangguang.png
+size: 599,720
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+yangguang
+  rotate: false
+  xy: 2, 2
+  size: 595, 716
+  orig: 595, 716
+  offset: 0, 0
+  index: -1

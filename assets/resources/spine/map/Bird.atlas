@@ -1,0 +1,62 @@
+
+Bird.png
+size: 84,416
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+1
+  rotate: false
+  xy: 2, 316
+  size: 71, 48
+  orig: 73, 50
+  offset: 1, 1
+  index: -1
+2
+  rotate: true
+  xy: 2, 111
+  size: 88, 43
+  orig: 90, 45
+  offset: 1, 1
+  index: -1
+3
+  rotate: true
+  xy: 47, 102
+  size: 97, 30
+  orig: 99, 32
+  offset: 1, 1
+  index: -1
+4
+  rotate: false
+  xy: 2, 201
+  size: 72, 56
+  orig: 74, 58
+  offset: 1, 1
+  index: -1
+5
+  rotate: true
+  xy: 2, 11
+  size: 89, 46
+  orig: 91, 48
+  offset: 1, 1
+  index: -1
+6
+  rotate: true
+  xy: 50, 2
+  size: 98, 30
+  orig: 100, 32
+  offset: 1, 1
+  index: -1
+7
+  rotate: false
+  xy: 2, 366
+  size: 75, 46
+  orig: 78, 48
+  offset: 2, 1
+  index: -1
+8
+  rotate: false
+  xy: 2, 259
+  size: 71, 55
+  orig: 73, 57
+  offset: 1, 1
+  index: -1

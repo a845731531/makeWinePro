@@ -1,0 +1,41 @@
+
+xiaxue.png
+size: 92,57
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+huaban_a1
+  rotate: false
+  xy: 58, 18
+  size: 32, 37
+  orig: 64, 64
+  offset: 15, 14
+  index: -1
+huaban_a2
+  rotate: false
+  xy: 58, 18
+  size: 32, 37
+  orig: 64, 64
+  offset: 15, 14
+  index: -1
+huaban_a3
+  rotate: false
+  xy: 2, 2
+  size: 54, 53
+  orig: 64, 64
+  offset: 5, 5
+  index: -1
+huaban_a5
+  rotate: false
+  xy: 2, 2
+  size: 54, 53
+  orig: 64, 64
+  offset: 5, 5
+  index: -1
+huaban_a6
+  rotate: false
+  xy: 2, 2
+  size: 54, 53
+  orig: 64, 64
+  offset: 5, 5
+  index: -1

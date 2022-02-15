@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "5570855f-5af0-4f21-829e-ea7d992d48af",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 346,
+  "height": 391,
+  "platformSettings": {},
+  "subMetas": {
+    "smallgame_basewine_icon": {
+      "ver": "1.0.6",
+      "uuid": "ef7f4723-090a-48ac-90ee-ee27e7220a85",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "5570855f-5af0-4f21-829e-ea7d992d48af",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 346,
+      "height": 391,
+      "rawWidth": 346,
+      "rawHeight": 391,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

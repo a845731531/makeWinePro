@@ -1,0 +1,7 @@
+{
+  "name": "autopac_preview",
+  "version": "1.0.0",
+  "description": "自动图集预览时获取不到spriteFrame问题",
+  "author": "lyzz0612",
+  "main": "main.js"
+}

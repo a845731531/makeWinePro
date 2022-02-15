@@ -1,0 +1,173 @@
+package GameCmd;
+import "Cmd.proto";
+
+message MailUserCmd
+{
+	enum Param
+	{
+		//ProtoDefineBeing
+		stSendMailUserCmd = 1;
+		stRequetListMailUserCmd = 2;
+		stAddListListMailUserCmd = 3;
+		stReadTollMailUserCmd = 4;
+		stGetItemMailUserCmd = 5;
+		stRemoveItemMailUserCmd = 6;
+		stDelMailUserCmd = 7;
+		stTurnBackMailUserCmd = 8;
+		//stDeleteAllMailUserCmd = 9;
+		stRefreshNewMailcountMailUserCmd = 10;
+		stNotifyNewMailUserCmd = 11;
+		stEmptyUselessMailMailUserCmd = 12;
+		stGetItemPageMailUserCmd = 13;
+		stRetMailPageMailUserCmd = 14;
+		stCreateMailUserCmd = 22;
+		stAddItemMailUserCmd = 23;
+		//ProtoDefineEnd
+	}
+}
+
+//邮件常量
+enum enumMailConst
+{
+	option allow_alias = true;
+	MAIL_ITEM_COUNT = 10;
+}
+
+// 请求发送邮件
+message stSendMailUserCmd
+{
+	optional ImageCheckData check = 1;
+	optional uint32 toID = 2;
+	optional uint32 sendMoney = 3;
+	optional uint32 recvMoney = 4;
+	optional uint32 qwThisID = 5;
+	optional string text = 6;
+	optional string toname = 7;
+	optional string subject = 8; // 主题
+}
+
+// 请求邮件列表
+message stRequetListMailUserCmd
+{
+}
+
+// 邮件列表
+message ListMailInfo
+{
+	optional uint32 mailid = 1;
+	optional uint32 fromID = 2;
+	optional uint32 toID = 3;
+	optional uint32 sendMoney = 4;
+	optional uint32 recvMoney = 5;
+	optional uint32 leftTime = 6;
+	optional MailType type = 7;
+	optional uint32 state = 8;
+	optional string text = 9;
+	repeated ItemSerialize item = 10;
+	optional string fromname = 11;	//来源
+	optional string subject = 12;	//主题
+	optional int32 createtime = 13; //创建时间
+}
+
+// 添加邮件列表
+message stAddListListMailUserCmd
+{
+	repeated ListMailInfo data = 1;
+}
+
+// 请求阅读邮件(请求及已读返回)
+message stReadTollMailUserCmd
+{
+	optional uint32 mailid = 1;
+	optional uint32 money = 2;			// 收费邮件费用
+}
+
+// 提取附件(钱和道具)
+message stGetItemMailUserCmd
+{
+	optional uint32 mailid = 1;			// 邮件id
+	repeated ItemSerialize item = 2;		// 道具唯一id
+}
+
+// 删除邮件附件
+message stRemoveItemMailUserCmd
+{
+	optional uint32 mailid = 1;
+}
+
+// 请求(应答)删除邮件
+message stDelMailUserCmd
+{
+	optional uint32 userid = 1;
+	repeated uint32 mailid = 2;
+}
+
+// 请求退回邮件
+message stTurnBackMailUserCmd
+{
+	optional uint32 mailid = 1;
+}
+
+// 删除所有邮件
+//message stDeleteAllMailUserCmd
+//{
+//}
+
+// 玩家上线，请求新邮件信息
+message stRefreshNewMailcountMailUserCmd
+{
+}
+
+// 新邮件提示 目前只要知道有无即可
+message stNotifyNewMailUserCmd
+{
+	optional uint32 num = 1;
+}
+
+// 清除空邮件
+message stEmptyUselessMailMailUserCmd
+{
+	optional MailType type = 1;
+}
+
+// 整页提取附件(钱和道具)
+message stGetItemPageMailUserCmd
+{
+	message ItemList
+	{
+		optional uint32 mailid = 1;
+		repeated ItemSerialize item = 2;
+	}
+	repeated ItemList data = 1;
+}
+
+// 创建一个邮件,由服务器内部使用,与客户端无关
+message stCreateMailUserCmd
+{
+	optional uint32 toID = 1;
+	optional uint32 fromID = 2;
+	optional MailType type = 3;
+	optional string text = 4;
+	optional uint32 sendMoney = 5;		//邮件推送中的ID
+	optional uint32 recvMoney = 6;
+	repeated ItemSerialize item = 7;			// 道具数据
+	optional string fromname = 8;	// 来源
+	optional string subject = 9;	// 主题
+}
+
+// 删除邮件附件,并且添加到用户包裹,与客户端无关
+message stAddItemMailUserCmd
+{
+	optional MailType type = 1;
+	optional uint32 mailid = 2;
+	optional uint32 fromID = 3;					// 发件人id
+	optional uint32 sendMoney = 4;				// 邮件推送中的ID
+	optional uint32 recvMoney = 5;				// 表示需要给对方付费(删除邮件时,其值为10000)
+	optional string desc = 6;
+	repeated ItemSerialize item = 7;			// 道具数据
+	optional string subject = 8;				//主题
+}
+message stRetMailPageMailUserCmd
+{
+	repeated uint32 mailid = 1;
+}

@@ -1,0 +1,205 @@
+package PmdProtobuf;
+
+
+
+message Login
+{
+	enum Param
+	{
+		AccountTokenVerifyLoginUserPmd_CS 		= 1;
+		AccountTokenVerifyReturnLoginUserPmd_S	= 2;
+		ZoneInfoListLoginUserPmd_S				= 3;
+		UserLoginRequestLoginUserPmd_C 			= 4;
+		UserLoginReturnFailLoginUserPmd_S 		= 5;
+		UserLoginReturnOkLoginUserPmd_S 		= 6;
+		UserLoginTokenLoginUserPmd_C 			= 7;
+		ClientLogUrlLoginUserPmd_S 				= 8;
+		MessageBoxLoginUserPmd_S				= 9;
+		RequestAccountRegisterLoginUserPmd_C	= 10;
+		ReturnAccountRegisterLoginUserPmd_S		= 11;
+		UserLogoutTokenLoginUserPmd_C 			= 12;
+		UserLoginReconnectLoginUserPmd_C 		= 13;
+		ReconnectKickoutLoginUserPmd_S 			= 14;
+		ServerKickoutLoginUserPmd_S 			= 15;
+		RequestZoneInfoListLoginUserPmd_C		= 16;
+		SetServerLangLoginUserPmd_C				= 17;
+		RequestClientIPLoginUserPmd_C			= 18;
+		ReturnClientIPLoginUserPmd_S			= 19;
+		ReconnectErrorLoginUserPmd_S 			= 20;
+		CheckVersionLoginUserPmd_C 				= 21;
+		PushAccountVerifyLoginUserPmd_C 		= 22;
+		BehaviorClientVerifyLoginUserPmd_C 		= 23;
+		RequestUserZoneInfoLoginUserPmd_C       = 24;
+		RequestUserZoneInfoLoginUserPmd_S       = 25;
+
+		MobileRegistRequestRandCodeLoginUserPmd_C	= 26;
+		MobileRegistReturnRandCodeLoginUserPmd_S	= 27;
+		MobileRegistRequestCreateAccountLoginUserPmd_C= 28;
+		MobileRegistReturnCreateAccountFailLoginUserPmd_S	= 29;
+
+		RequestSupoortGameListLoginUserPmd_C		= 30;
+		ReturnSupoortGameListLoginUserPmd_S		= 31;
+
+        UserRequestPlatTokenByPasswordLoginUserPmd_C = 32;
+        UserRequestPlatTokenByThirdLoginUserPmd_C = 33;
+        UserRequestPlatTokenLoginOkLoginUserPmd_S = 34;
+        UserRequestPlatTokenLoginFailLoginUserPmd_S = 35;
+		EmailRegistRequestCreateAccountLoginUserPmd_C= 36;
+        EmailRegistReturnCreateAccountLoginUserPmd_S= 37;
+		UserLoginReconnectOkLoginUserPmd_S		= 38;
+		GameServerShutDownLoginUserPmd_S		= 39;
+		OnlineNumWaitingLoginUserPmd_S			= 40;	// 本网关实时在线人数,用来排队,目前MMO项目用
+		OnlineStateLoginUserPmd_CS				= 41;	// 玩家在线状态
+		ServerDebugLevelLoginUserPmd_S			= 42;	// 当前服务器的调试等级,0表示发布状态
+		ServerShutDownLoginUserPmd_S			= 43;	// 工具停机
+		RequestZoneStateLoginUserPmd_CS			= 44;	// 获取某个区的状态信息
+		ClientConfigUpdateLoginUserPmd_S		= 45;	// 客户端配置
+
+		EmailRegistRequestRandCodeLoginUserPmd_C= 46;   // 邮箱注册获取验证码
+        EmailRegistRequestRandCodeLoginUserPmd_S= 47;
+        stRequestChangezoneLoginUserPmd_CS      = 48;   //请求跨服
+        stWriteUserCharBaseChangeLoginUserPmd_S = 49;  //跨区写存档
+        stReturnWriteUserCharBaseChangeChangeLoginUserPmd_S = 50; //跨区写存档返回
+        stOpenServerStateLoginUserPmd_CS = 51;          //打开服务器标志
+    }
+}
+
+// 客户端发给登录服务器的登录验证消息
+message AccountTokenVerifyLoginUserPmd_CS
+{
+	required string account 	 	= 1;	// 平台账号
+	required string token 		 	= 2;	// token 可以是第三方认证
+	required uint32 version 		= 3;	// 当前客户端login版本号Version_Login
+	optional uint32 gameid			= 4;	// if filled, will send ZoneInfoListLoginUserPmd_S for select, else auto select zone
+	optional string mid				= 5;	// 机器码
+	optional uint32 platid 			= 6;	// 平台编号
+	optional uint32 zoneid			= 7;	// if filled, will auto login UserLoginRequestLoginUserPmd_C, UserLoginTokenLoginSmd_SC
+	optional uint32 gameversion 	= 8;	// 当前客户端game版本号Version_Login
+	optional string compress		= 9;	// 压缩算法
+    optional string encrypt			= 10;	// 加密算法
+	optional string encryptkey		= 11;	// 加密key
+	optional string password        = 12;   // 密码
+}
+
+
+// 区服务器状态
+enum ZoneState
+{
+	Shutdown 	= 0;						// 关闭状态ZoneState_Shutdown
+	Normal 		= 1;						// 正常运行ZoneState_Normal
+	Fullly 		= 2;						// 爆满ZoneState_Fullly
+	Starting	= 3;						// 正在启动ZoneState_Starting
+}
+enum ZoneInfoBitMask
+{
+	ZoneInfoBitMask_None 		= 0;		//
+	ZoneInfoBitMask_Normal 		= 1;		// 正常运营
+	ZoneInfoBitMask_SandBox 	= 2;		// 支持沙箱模式
+	ZoneInfoBitMask_NoOpen 		= 4;		// 暂未开放
+}
+
+// 区服务器信息
+message ZoneInfo
+{
+	optional uint32 zoneid	 	= 1;		// 区编号
+	optional string zonename 	= 2;		// 区名称
+	optional ZoneState state 	= 3;
+	optional string opentime    = 4;
+	optional uint32 gameid		= 5;		// 大厅服务器使用，MMO无视,为了兼容，不能修改尖
+	optional string iconurl    	= 6;    	// 大厅服务器使用，MMO无视,为了兼容，不能修改尖
+	optional uint32 bitmask		= 7;		// 掩码模式,ZoneInfoBitMask
+	optional string gamename	= 8;		// 大厅服务器使用，MMO无视,为了兼容，不能修改尖
+	optional uint32 newzoneid 	= 9;		// 合区使用
+	optional uint32 onlinenum   = 10;		// 在线人数
+	optional string nextopentime = 11;		// 在线人数
+}
+
+// 区服务器信息列表,选区列表
+message ZoneInfoListLoginUserPmd_S
+{
+	optional string gamename		= 1;	// 游戏名称,(区别与区名)
+	optional uint32 gameid	 		= 2;	// 游戏编号
+	repeated ZoneInfo zonelist 		= 3;
+	optional uint32 zoneid	 		= 4;	// 大厅服务器使用，MMO无视,为了兼容，不能修改尖
+	optional uint32  bestzoneid     = 5;	// 人数最少的，而且是在线的区
+}
+
+
+// 请求区服务器信息列表,选区列表
+message RequestZoneInfoListLoginUserPmd_C
+{
+	required uint32 gameid	 		= 1;	// 游戏编号
+}
+
+
+
+enum LoginReturnFailReason
+{
+	Password 			= 1;				// 密码错误
+	ServerShutdown 		= 2;				// 区服务器已关闭
+	VersionTooLow 		= 3;				// 客户端游戏版本号太低
+	UserTokenFind 		= 4;				// 没有找到登录token,需要重新平台验证
+	UserTokenTempId		= 5;				// token错误
+	UserTokenTimeOut	= 6;				// token已过期
+	LoginDulicate		= 7;				// 重复登录
+	NoGatewaytDown 		= 8;				// 没有可用网关
+	AccountUsing 		= 9;				// 账号正在使用中
+	GatewayUserMax 		= 10;				// 网关人数满
+	WaiGuaPunish        = 11;				// 外挂惩罚
+	ServerStartTime     = 12;				// 未到开服时间
+}
+
+// 登录某个区的错误返回,LoginServer返回
+message UserLoginReturnFailLoginUserPmd_S
+{
+	required LoginReturnFailReason retcode 	= 1;
+	optional string desc	 				= 2; // 错误描述
+}
+
+// 登录某个区正确时的返回,LoginServer返回
+message UserLoginReturnOkLoginUserPmd_S
+{
+	required uint64 accountid 		= 1;	// 账号
+	optional uint64 logintempid 	= 2;	// 生成一个临时编号,用于校验,登录网关时传上去
+	optional uint64 tokenid			= 3;	// 随机token
+	optional string gatewayurl		= 4;	// 登录的网关地址,接下来断开连接后马上登录这个地址
+	optional uint32 gameid	 		= 5;	// 游戏编号
+	optional uint32 zoneid	 		= 6;	// 区编号
+	optional bool   separatezoneuid = 7;
+	optional string zoneuid         = 8;
+	optional string gatewayurltcp	= 9;	// 登录的网关地址tcp,
+	optional string gatewayurlws    = 10;	// 登录的网关ws,
+	optional string configmd5    	= 11;	// config.json的md5
+	optional string configurl    	= 12;	// config.json的url
+	optional string minversion    	= 13;	// 能支持的最小版本号,低于这个客户端就必须更新
+}
+
+
+// 发给网关的登录消息,这个消息也可以指定是否尝试断线重连
+// 只有在游戏中断开时
+message UserLoginTokenLoginUserPmd_C
+{
+	optional uint32 gameid	 		= 1;
+	optional uint32 zoneid	 		= 2;
+	optional uint64 accountid		= 3;
+	optional uint64 logintempid 	= 4;
+	optional uint32 timestamp	 	= 5;	// 客户端时间戳
+	optional string tokenmd5		= 6;	// md5(string(accountid) + string(logintempid) + string(timestamp) + string(PlatTokenLoginReturn.unigame_plat_key))
+	optional string compress		= 8;	// 压缩算法
+	optional string encrypt			= 9;	// 加密算法
+	optional string encryptkey		= 10;	// 加密key
+	optional uint32 version			= 11;	// 客户端版本号
+	optional uint32 compressmin		= 12;	//最小压缩字节数,低于这个数的不压缩
+	optional uint32 lastseq			= 13;	//0表示不支持断线重连登录,非0表示支持断线重连,并且指定最后一个收到并且确定处理的消息序列号,服务器会尝试从这个消息号后全部重发一遍,失败的话还是走登录流程
+	optional uint32 charid			= 14;	//断线重连时可以直接指定用哪个角色登录
+	optional uint32 bundleid		= 15;	//当前的客户端包id
+	optional string zipmd5			= 16;	//客户端代码zip包md5
+	optional string configmd5		= 17;	//config.josn的md5
+	optional string bundlename		= 18;	//当前的客户端包名bundleid_version mj_1.0.1
+	optional string url             	= 19; //gameGatewayUrl,尽量让玩家跟房主一个url,防止被攻击
+}
+
+
+
+
+

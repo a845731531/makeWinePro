@@ -1,0 +1,60 @@
+{
+  "title": "BrewMaster",
+  "packageName": "org.cocos2d.demo",
+  "startScene": "32976da7-ad90-4e00-89f7-3330855c9c10",
+  "excludeScenes": [
+    "e3b28d63-a9d7-4c7f-8b2b-1b032bc64c3a",
+    "b28763ee-cc4f-41ff-a833-295b7894cafc",
+    "0cc6d2cd-4226-48fe-ab49-69d3e5214ced"
+  ],
+  "orientation": {
+    "landscapeRight": false,
+    "landscapeLeft": false,
+    "portrait": true,
+    "upsideDown": true
+  },
+  "webOrientation": "auto",
+  "inlineSpriteFrames": true,
+  "inlineSpriteFrames_native": false,
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "optimizeHotUpdate": false,
+  "md5Cache": true,
+  "nativeMd5Cache": false,
+  "encryptJs": false,
+  "xxteaKey": "b936795b-8260-45",
+  "zipCompressJs": false,
+  "fb-instant-games": {},
+  "android": {
+    "packageName": "org.zagame.brewmaster",
+    "REMOTE_SERVER_ROOT": ""
+  },
+  "ios": {
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": "",
+    "ios_enable_jit": true
+  },
+  "mac": {
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": "",
+    "width": 1280,
+    "height": 720
+  },
+  "win32": {
+    "REMOTE_SERVER_ROOT": "",
+    "width": 450,
+    "height": 800
+  },
+  "android-instant": {
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": "",
+    "pathPattern": "",
+    "scheme": "https",
+    "host": "",
+    "skipRecord": false,
+    "recordPath": ""
+  },
+  "appBundle": false,
+  "agreements": {},
+  "includeAnySDK": false
+}

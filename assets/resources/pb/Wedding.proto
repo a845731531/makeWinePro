@@ -1,0 +1,180 @@
+package GameCmd;
+
+//
+message WeddingCmd
+{
+	enum Param
+	{
+        stApplyWeddingCmd_CS = 101;//申请婚礼
+        stApplyWeddingCmd_SC = 102;//申请婚礼返回
+
+        stDataWeddingCmd_NT = 103;//婚礼数据 通知
+
+        stLookDayWeddingCmd_CS = 104;//查看某一天婚礼列表
+        stLookDayWeddingCmd_SC = 105;//查看某一天婚礼列表 返回
+
+        stSendInvitationWeddingCmd_CS = 106;//发送请帖
+        stSendInvitationWeddingCmd_SC = 107;//发送请帖 返回
+
+        stInvitationWeddingCmd_NT = 108;//婚礼请帖通知
+		
+		stAgreeWeddingCmd_CS = 109;//婚礼同意消息
+		stAgreeWeddingCmd_SC = 110;//婚礼同意消息 返回
+		stRefreshWeddingCmd_NT = 111;//婚礼更新
+		
+		stFriendInWeddingCmd_CS = 112;//好友观礼消息
+		stFriendInWeddingCmd_SC = 113;//好友观礼消息 返回
+		
+		stFriendGiftWeddingCmd_CS = 114;//好友婚礼送礼消息
+		stFriendGiftWeddingCmd_SC = 115;//好友婚礼送礼消息 返回
+		stFriendGiftWeddingCmd_NT = 116;//好友婚礼送礼信息推送
+
+		stLookNearWeddingCmd_CS = 117;//查看最近婚礼列表
+        stLookNearWeddingCmd_SC = 118;//查看最近婚礼列表 返回
+    }
+}
+
+//婚礼数据
+message tWeddingData
+{
+    optional uint32 husbandId = 1; //丈夫id
+    optional string husbandName = 2;//丈夫名字
+    optional uint32 wifeId = 3; //妻子id
+    optional string  wifeName = 4;//妻子名字
+    optional uint32 applyId = 5; //申请人id(丈夫或者妻子中的一个)
+    optional uint32 curState = 6; //(当前状态:1申请中、2等待举办、3举办中)
+    optional uint32 startTime = 7; //开始时间
+    optional uint32 endTime = 8; //结束时间
+    optional uint32 weddingType = 9; //婚礼类型
+    optional uint32 peopleCount = 10; //观礼人数
+}
+
+
+//申请婚礼
+message stApplyWeddingCmd_CS
+{
+	optional uint32 startTime = 1;		// 婚礼开始时间
+	optional uint32 type = 2;		// 婚礼开始时间
+}
+
+//申请婚礼返回
+message stApplyWeddingCmd_SC
+{
+    optional uint32 errCode = 1;		// 
+    optional string errMsg = 2;		    // 
+   
+}
+
+//婚礼数据 通知
+message stDataWeddingCmd_NT
+{
+    optional tWeddingData weddingData = 1;		// 婚礼数据
+}
+
+
+//查看某一天婚礼列表
+message stLookDayWeddingCmd_CS
+{
+    optional uint32 lookTime = 1; //
+}
+
+//查看某一天婚礼列表 返回
+message stLookDayWeddingCmd_SC
+{
+    optional uint32 errCode = 1;		        // 
+    optional string errMsg = 2;		            // 
+    repeated tWeddingData weddingData = 3;		// 婚礼数据
+}
+
+//发送请帖
+message stSendInvitationWeddingCmd_CS
+{
+	
+}
+
+//发送请帖 返回
+message stSendInvitationWeddingCmd_SC
+{
+	optional uint32 errCode = 1;		        // 
+	optional string errMsg = 2;		            //
+}
+
+//婚礼请帖通知
+message stInvitationWeddingCmd_NT
+{
+	 optional tWeddingData weddingData = 1;		// 婚礼数据
+}
+
+//婚礼同意消息
+message stAgreeWeddingCmd_CS
+{
+	optional uint32 answer = 1;//0拒绝 1同意
+}
+
+//婚礼同意消息 返回
+message stAgreeWeddingCmd_SC
+{
+	optional uint32 errCode = 1;		        // 
+	optional string errMsg = 2;		            //
+}
+
+//婚礼数据更新
+message stRefreshWeddingCmd_NT
+{
+	optional uint32 rtype = 1;					//0刷新 1删除 
+	optional uint32 reason = 2;					//0拒绝刷新 1同意刷新 2时间刷新
+	optional tWeddingData weddingData = 3;		// 婚礼数据
+}
+
+//好友观礼消息
+message stFriendInWeddingCmd_CS
+{
+	
+}
+
+//好友观礼消息返回
+message stFriendInWeddingCmd_SC
+{
+	optional uint32 errCode = 1;		        //
+	optional string errMsg = 2;		            //
+}
+
+//好友婚礼送礼消息
+message stFriendGiftWeddingCmd_CS
+{
+	optional uint32 acceptId = 1;		     // 新娘或者新郎id
+	optional uint32 giftId = 2;		        // 礼物id
+	optional uint32 giftNum = 3;		    // 礼物数量
+}
+
+//好友婚礼送礼消息 返回
+message stFriendGiftWeddingCmd_SC
+{
+	optional uint32 errCode = 1;		        //
+	optional string errMsg = 2;		            //
+}
+
+//好友婚礼送礼信息推送
+message stFriendGiftWeddingCmd_NT
+{
+	optional uint32 acceptId = 1;		     //新娘或者新郎id
+	optional uint32 giftId = 2;		        // 礼物id
+	optional uint32 giftNum = 3;		    // 礼物数量
+	optional string giftName = 4;		    //礼物名字
+	optional string friendName = 5;		    //好友名字
+}
+
+
+//查看最近婚礼列表
+message stLookNearWeddingCmd_CS
+{
+
+}
+
+//查看最近婚礼列表 返回
+message stLookNearWeddingCmd_SC
+{
+    optional uint32 errCode = 1;		        // 
+    optional string errMsg = 2;		            // 
+    repeated tWeddingData weddingData = 3;		// 婚礼数据
+}

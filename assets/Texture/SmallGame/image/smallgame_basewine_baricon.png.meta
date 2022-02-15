@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "05eafca8-b7d4-498e-afc6-d7813c3570c4",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 76,
+  "height": 99,
+  "platformSettings": {},
+  "subMetas": {
+    "smallgame_basewine_baricon": {
+      "ver": "1.0.6",
+      "uuid": "86632606-e6dd-43c8-9300-2aeec79e3058",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "05eafca8-b7d4-498e-afc6-d7813c3570c4",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 76,
+      "height": 99,
+      "rawWidth": 76,
+      "rawHeight": 99,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

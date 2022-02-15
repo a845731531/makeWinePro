@@ -1,0 +1,76 @@
+
+TianQi.png
+size: 186,28
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+pic0
+  rotate: false
+  xy: 176, 18
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+pic1
+  rotate: false
+  xy: 176, 8
+  size: 5, 8
+  orig: 5, 8
+  offset: 0, 0
+  index: -1
+pic2
+  rotate: true
+  xy: 2, 2
+  size: 2, 33
+  orig: 2, 33
+  offset: 0, 0
+  index: -1
+pic3
+  rotate: false
+  xy: 66, 6
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+pic4
+  rotate: false
+  xy: 88, 6
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+pic5
+  rotate: false
+  xy: 110, 6
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+pic6
+  rotate: false
+  xy: 2, 6
+  size: 30, 20
+  orig: 30, 20
+  offset: 0, 0
+  index: -1
+pic7
+  rotate: false
+  xy: 132, 6
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+pic8
+  rotate: false
+  xy: 154, 6
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+pic9
+  rotate: false
+  xy: 34, 6
+  size: 30, 20
+  orig: 30, 20
+  offset: 0, 0
+  index: -1

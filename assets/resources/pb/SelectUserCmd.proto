@@ -1,0 +1,222 @@
+package GameCmd;
+import "Cmd.proto";
+
+message SelectUserCmd
+{
+	enum Param
+	{
+//ProtoDefineBeing
+		stUserInfoSelectUserCmd = 1;
+		stCreateSelectUserCmd = 2;
+		stLoginSelectUserCmd = 3;
+		stDeleteSelectUserCmd = 5;
+		stCheckNameSelectUserCmd = 6;
+		//stBackSelectUserCmd = 10;
+		//stCountryInfoSelectUserCmd = 12;
+		stLoginStepSelectUserCmd = 15;
+		//stSendClientIpSelectUserCmd = 17;
+		//stSendPhysicalAddressSelectUserCmd = 18;
+		stNewMapListSelectUserCmd = 19;
+		//stMaxCountryRegSelectUserCmd = 20;
+		//stClientMachineInfoSelectUserCmd = 25;
+		//stSetChannelAndAccidSelectUserCmd = 26;
+		//stSetPreCreateRoleTimeSelectUserCmd = 35;
+		//stGetPreCreateRolePresentSelectUserCmd = 36;
+		//stRequestAutoLoginSelectUserCmd = 37;
+		stCurrentLoginSelectUserCmd = 46;
+//ProtoDefineEnd
+	}
+}
+
+
+// 角色信息,这个结构也要整理
+message SelectUserInfo
+{
+	optional uint32 id = 1;					// 角色编号
+	optional string name = 2;				// 角色名称
+	optional enumProfession type = 3;		// 角色职业
+	optional uint32 level = 4;				// 角色等级
+	optional uint32 homeland = 5;			// 国家ID
+	optional uint32 mapid = 6;				// 角色所在地图编号
+	optional string countryName = 7;		// 国家名称
+	optional uint32 face = 8;				// 脸型
+	optional uint32 hair = 9;				// 发型
+	optional uint32 weapon = 10;			// 武器
+	optional uint32 suite = 11;				// 套装
+	optional uint32 equipsfx = 12;			// 特效
+	optional uint32 haircolor = 13;			// 发色
+	optional uint32 area = 14;				// 省市
+	optional uint32 lastloginip = 15;		// 最近登录IP
+	optional uint32 viplevel = 16;			// vip等级
+	optional uint32 safecity = 17;			// 安全交易城市
+	optional uint32 safearea1 = 18;			// 安全交易城市
+	optional uint32 safearea2 = 19;			// 安全交易城市
+	optional uint32 lastcity = 20;			// 上次登陆城市
+	optional uint32 lastcitytime = 21;		// 最早登陆相同城市时间
+	optional uint64 lastloginmac = 22;		// 上次登陆得MAC地址
+	optional uint32 lastofftime = 23;		// 最后一次登陆时间
+	optional uint32 bitmask = 24;			// 角色掩码
+	optional uint32 gmlevel = 25;			// gm权限
+	optional uint32 weaponlevel = 26;		// 武器等级
+	optional uint32 suitelevel = 27;		// 衣服等级
+	optional uint32 wing = 28;				// 翅膀
+	optional uint32 winglevel = 29;			// 翅膀等级
+	optional uint32 precreatetimeall = 30;	// 预创建角色积分
+	optional uint32 oldzoneid = 31;			// 原区zoneid
+    optional uint32 createtime = 32;        // 角色创建时间
+}
+
+message stUserInfoSelectUserCmd
+{
+	optional uint32 area = 1;				// 省市
+	repeated SelectUserInfo charInfo = 2;
+}
+
+// 请求创建用户档案
+message stCreateSelectUserCmd
+{
+	optional string strUserName = 1;		// 用户名字
+	optional uint32 type = 2;				// 职业
+	optional uint32 country = 3;			// 国家ID
+	optional uint32 wdFace = 4;				// 角色脸形
+	optional uint32 wdHair = 5;				// 角色发型
+	optional uint32 wdSuite = 6;			// 衣服
+	optional uint32 dwHairColor = 7;		// 角色发色
+	optional uint64 mac = 8;				// MAC地址
+	optional uint32 area = 9;				// 省市
+	optional string dwMarket = 10;			// 推广号
+    optional uint32 packageId = 11;         // 包id
+}
+
+// 请求登陆
+message stLoginSelectUserCmd
+{
+	optional ImageCheckData data = 1;
+	optional uint32 mapid = 3;
+	optional uint32 charid = 4;				// 新流程
+}
+
+enum eImageCheckType
+{
+	eImageCheckType_SelCharState = 0;
+	eImageCheckType_ShellState = 1;
+	eImageCheckType_FishState = 2;
+	eImageCheckType_TradeState = 3;
+	eImageCheckType_BeTradeState = 4;		// 被交易状态
+	eImageCheckType_BikeRaceState = 5;		// 骑自行车
+}
+
+// 请求删除帐号
+message stDeleteSelectUserCmd
+{
+	optional string numPassword = 2;		// 已经作废
+	optional uint32 charid = 3;				// 新流程
+}
+
+// 请求检查角色名
+message stCheckNameSelectUserCmd
+{
+	optional string name = 1;				// 用户名字
+	optional uint32 err_code = 2;			// 返回时的信息 0 没有错误 1 名字重复 2 名字包含不合法的内容
+}
+
+// 请求返回选择人物界面
+//message stBackSelectUserCmd
+//{
+//}
+
+message Country_Info
+{
+	optional uint32 id = 1;					// 国家id
+	optional uint32 function = 2;
+	optional uint32 count = 3;
+	optional uint32 provincenum = 4;		// 国旗模型名称
+	optional string pstrName = 5;			// 国家名称
+	optional string pstrShortName = 6;		// 国家简称
+}
+
+// 发送国家信息
+//message stCountryInfoSelectUserCmd
+//{
+//	repeated Country_Info countryinfo = 1;
+//}
+// 服务器发送用户登录过程
+message stLoginStepSelectUserCmd
+{
+	optional LoginStep step = 1;			// 登陆过程
+}
+
+//message stSendClientIpSelectUserCmd
+//{
+//	optional uint32 ip = 1;					// 客户端ip地址
+//}
+
+// 发送物理地址和版本号
+//message stSendPhysicalAddressSelectUserCmd
+//{
+//	optional uint64 mac = 1;				// 客户端的MAC地址
+//}
+
+// 发送物理地址和版本号
+message stNewMapListSelectUserCmd
+{
+	optional uint32 num = 1;				// 占领列表数量
+	message Item
+	{
+		optional uint32 mapid = 1;
+		optional string mapname = 2;
+		optional uint32 onlinenum = 3;
+	}
+	optional Item data = 2;
+}
+
+//message stMaxCountryRegSelectUserCmd
+//{
+//	optional uint32 num = 1;
+//}
+
+// 收集客户端机器配置信息
+//message stClientMachineInfoSelectUserCmd
+//{
+//	optional string adapterinfo64 = 1;
+//	optional string meminfo64 = 2;
+//	optional string cpuinfo128 = 3;
+//}
+
+// 设置用户accid和媒体类型
+//message stSetChannelAndAccidSelectUserCmd
+//{
+//	optional uint32 channel = 1;
+//	optional uint32 accid = 2;
+//	optional uint32 bitmask = 3;
+//	optional string account = 4;
+//	optional uint32 oldaccid = 5;
+//}
+
+// 设置预创建角色积分
+//message stSetPreCreateRoleTimeSelectUserCmd
+//{
+//	optional uint32 precreatetime = 1;
+//	optional uint32 leftstartime = 2;
+//}
+
+// 设置预创建角色积分
+//message stGetPreCreateRolePresentSelectUserCmd
+//{
+//	optional uint32 baseid = 1;			// 兑换道具id
+//	optional uint32 num = 2;			// 兑换道具数量
+//}
+
+// 自动登录游戏
+//message stRequestAutoLoginSelectUserCmd
+//{
+//	optional uint32 newmaplist = 1;		// 预创建时决定是否启用多线
+//}
+
+
+// 当前登陆的角色
+message stCurrentLoginSelectUserCmd
+{
+	optional uint32 charid = 1;			// 选中的角色ID
+}
+

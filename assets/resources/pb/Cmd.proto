@@ -1,0 +1,983 @@
+package GameCmd;
+
+enum ClientCommand
+{
+
+	ClientCommand_TimerUserCmd		= 2;
+	ClientCommand_PropertyUserCmd	= 3;
+	ClientCommand_DataUserCmd		= 4;
+	ClientCommand_MapScreenUserCmd	= 5;
+	ClientCommand_MoveUserCmd		= 6;
+	ClientCommand_ReliveUserCmd		= 12;
+	ClientCommand_ChatUserCmd		= 14;
+	ClientCommand_TradeUserCmd		= 17;
+	ClientCommand_MagicUserCmd		= 18;
+	ClientCommand_RelationUserCmd	= 21;
+	ClientCommand_CountryUserCmd	= 22;
+	ClientCommand_SelectUserCmd		= 23;
+	ClientCommand_QuestUserCmd		= 24;
+	ClientCommand_SkillUserCmd		= 26;
+	ClientCommand_GoldUserCmd		= 31;
+	ClientCommand_MailUserCmd		= 35;
+	ClientCommand_AuctionUserCmd	= 36;
+	ClientCommand_ScriptUserCmd		= 48;
+	ClientCommand_SysSettingUserCmd	= 49;
+	ClientCommand_EquipUserCmd		= 50;
+	ClientCommand_CopyUserCmd		= 55;
+	ClientCommand_RequestUserCmd	= 58;
+	ClientCommand_ArmyEquipUserCmd	= 59;
+	ClientCommand_MsgBoxUserCmd		= 64;
+	ClientCommand_ControlUserCmd	= 66;
+	ClientCommand_LotteryUserCmd	= 74;
+	ClientCommand_CorpsUserCmd		= 75;
+	ClientCommand_BuyCommissionUserCmd	= 87;
+	ClientCommand_RoleUserCmd			= 88;
+	ClientCommand_SocialActionUserCmd	= 90;
+	ClientCommand_InviteComposeUserCmd	= 95;
+	ClientCommand_AirShipUserCmd		= 96;
+	ClientCommand_DemonUserCmd		= 86;
+	ClientCommand_AwardUserCmd		= 98;
+	ClientCommand_LogonUserCmd		= 104;
+
+	ClientCommand_BrewBuildingCmd       = 110; //酿酒建筑
+	ClientCommand_BrewUserCmd           = 111;
+	ClientCommand_WeddingCmd       = 112; //婚礼相关
+	ClientCommand_ChildCmd       = 113; //孩子相关
+	ClientCommand_BrewNpcCmd       = 114; //npc相关
+}
+
+// 物件类型
+enum SceneEntryType
+{
+	SceneEntry_Player = 0;		// 玩家角色
+	SceneEntry_NPC = 1;			// NPC
+	SceneEntry_Object = 2;		// 地上道具
+	SceneEntry_AIEntity = 3;	// ainpc
+	SceneEntry_MAX = 4;
+	SceneEntry_MAP = 5;
+}
+
+// 商店类型
+enum StoreType
+{
+	StoreType_Player = 0;	// 玩家角色
+	StoreType_NPC = 1;		// NPC
+}
+
+// 物件状态,总共32位，大家省着点用哈
+enum SceneEntryState
+{
+	SceneEntry_Normal	= 0x0000;	// 普通状态
+	SceneEntry_Death	= 0x0001;	// 死亡状态
+	SceneEntry_Hide		= 0x0002;	// 隐藏状态
+	SceneEntry_NotShow	= 0x0004;	// 场景中不显示状态
+	SceneEntry_God		= 0x0008;	// 无敌状态
+	SceneEntry_PreDeath	= 0x0010;	// 装死状态
+	SceneEntry_Benumb   = 0x0020;   // 麻痹状态
+}
+
+// 攻击类型
+enum AttackType
+{
+	ATTACK_TYPE_PH = 0x0001;	// 物攻
+	ATTACK_TYPE_CH = 0x0002;	// 化攻
+	ATTACK_TYPE_FO = 0x0004;	// 重击
+	ATTACK_TYPE_LU = 0x0008;	// 致命一击
+	ATTACK_TYPE_IG = 0x0010;	// 忽视防御
+	ATTACK_TYPE_LH = 0x0020;	// 闪电攻击
+	ATTACK_TYPE_HH = 0x0040;	// 火焰攻击
+	ATTACK_TYPE_BH = 0x0080;	// 冰霜攻击
+	ATTACK_TYPE_WH = 0x0100;	// 自然攻击
+	ATTACK_TYPE_HD = 0x0200;	// 闪避
+	ATTACK_TYPE_FD = 0x0400;	// 抗冰冻
+	ATTACK_TYPE_SD = 0x0800;	// 抗静默
+	ATTACK_TYPE_CD = 0x1000;	// 抗变形
+	ATTACK_TYPE_TD = 0x2000;	// 抗眩晕
+	ATTACK_TYPE_SS = 0x4000;	// 抗减速
+    ATTACK_TYPE_PP = 0x8000;    // 麻痹
+    ATTACK_TYPE_MF = 0x10000;   // 冰冻
+    ATTACK_TYPE_AD = 0x20000;   // 抵挡
+    ATTACK_TYPE_QG = 0x40000;   // 切割
+    ATTACK_TYPE_ZS = 0x80000;   // 斩杀
+}
+
+// 邮件状态
+enum MailState
+{
+	MailState_New = 0;			// 新邮件
+	MailState_Read = 1;			// 已经阅读
+	MailState_Get = 2;			// 已经提取
+}
+
+enum NearNpc
+{
+	NearNpcOperate_Store = 1;
+	NearNpcOperate_Auction = 2;
+	NearNpcOperate_Porpose = 3;
+}
+
+// 称号类型
+enum TitleType
+{
+	TitleType_Profession = 1;			// 职业称号,境界称号 (不可自定义穿戴)
+	TitleType_Custom     = 2;			// 极品称号
+	TitleType_Task       = 3;			// 任务称号,活动称号 (不可自定义穿戴)
+	TitleType_Role		 = 4;			// 角色
+	TitleType_Equipment	 = 5;			// 装备
+	TitleType_Social	 = 6;			// 社交
+	TitleType_Hidden	 = 7;			// 隐藏
+}
+
+// 邮件类型
+enum MailType
+{
+	MailType_Sys = 0;			// 系统邮件
+	MailType_Normal = 1;		// 普通邮件
+	MailType_Return = 2;		// 退信
+}
+// 职业枚举
+enum enumProfession
+{
+	Profession_None = 0;
+	Profession_Soldier = 1;		// 战士
+	//Profession_Spy = 2;		// 刺客
+	Profession_Gunman = 3;		// 法师
+	//Profession_Blast = 4;		// 魔炮
+	Profession_Freeman = 5;		// 道士
+	Profession_Doctor = 6;		// 牧师
+	Profession_Max = 7;
+}
+
+enum CountryName
+{
+	unknow = 1;
+	Sky = 2;					// 天之国
+	Fire = 3;					// 火之国
+	Water = 4;					// 水之国
+	Land = 5;					// 沙之国
+}
+
+// 性别枚举
+enum enmCharSex
+{
+	None = 0;
+	MALE = 1;					// 男人
+	FEMALE = 2;					// 女人
+}
+
+enum LoginStep
+{
+	LOGIN_NONE = 0;
+	LOGIN_GATEWAY = 1;
+	LOGIN_SESSION = 2;
+	LOGIN_SUPER = 3;
+	LOGIN_RECORD = 4;
+	LOGIN_SCENE = 5;
+	LOGIN_DONE = 6;
+}
+
+// 货币类型
+enum MoneyType
+{
+	MoneyType_Invalid 			= 0x0000;	// 无效类型
+	MoneyType_MoneyTicket 		= 0x0001;	// 金币
+	MoneyType_Money 			= 0x0002;	// 绑定元宝
+	MoneyType_MoneyorTicket 	= 0x0003;	// MoneyType_Money | MoneyType_MoneyTicket
+	MoneyType_GoldTicket 		= 0x0004;	// 金票（绑钻）
+	MoneyType_Gold 				= 0x0008;	// 元宝
+	MoneyType_XunZhang_CZ 		= 0x0010;	// 成长勋章
+	MoneyType_XunZhang_LL 		= 0x0020;	// 历练勋章
+	MoneyType_XunZhang_ZZ 		= 0x0040;	// 战争勋章
+	MoneyType_Aura 				= 0x0080;	// 灵韵 or 灵戒碎片 or 玉石碎片
+	MoneyType_Corp_XZ 			= 0x0100;	// 团勋章
+	MoneyType_Corp_ZJ 			= 0x0200;	// 团资金
+	MoneyType_Clan_GX 			= 0x0400;	// 宗派贡献
+}
+
+// 宝石的颜色
+enum EnumHoleColor
+{
+	HoleColor_Null = 0;				// 无
+	HoleColor_Red = 1;		  		// 红
+	HoleColor_Blue = 2;				// 蓝
+	HoleColor_Yellow = 3;			// 黄
+	HoleColor_Green = 4;			// 绿
+	HoleColor_Purple = 5;	   		// 紫
+	HoleColor_Tizhi = 6;			// 体质
+	HoleColor_Minjie = 7;	   		// 敏捷
+	HoleColor_Liliang = 8;	  		// 力量
+	HoleColor_Jingshen = 9;	 		// 精神
+	HoleColor_Zhili = 10;	   		// 智力
+	HoleColor_Max = 11;
+}
+
+// 道具位置
+message tItemLocation
+{
+	optional uint32 loc = 1;	// 位置
+}
+
+message PairNumber
+{
+	optional uint32 id = 1;
+	optional uint32 value = 2;
+}
+
+message PairString
+{
+	optional uint32 id = 1;
+	optional string value = 2;
+	optional string clan = 3;
+}
+
+// 序列化后的一个道具(客户端服务器通用)
+message ItemSerialize
+{
+	repeated PairNumber numbers = 1;
+	repeated PairString strings = 2;
+	optional uint32 qwThisID = 3;		// 道具唯一id
+	optional uint32 dwObjectID = 4;		// 道具baseid
+	optional uint64 createid = 5;		// 道具创建ID
+	optional tItemLocation pos = 6;		// 位置
+	optional uint32 dwNum = 7;			// 数量
+}
+
+// 序列化后的一条帮会仓库日志(客户端服务器通用)
+message DepotLogSerialize
+{
+	optional uint32 userid = 1;			// 用户ID
+	optional string username = 2;
+    optional uint32 qwThisID = 3;
+	optional uint32 dwObjectID = 4;
+    optional string equipname = 5;
+	optional uint32 num = 6;
+	optional uint32 type = 7;			// 类型
+	optional uint32 flag = 8;
+	optional uint32 value = 9;
+	optional string time = 10;			// 时间
+}
+
+message ImageCheckData
+{
+	optional uint32 x1 = 1;
+	optional uint32 y1 = 2;
+	optional uint32 x2 = 3;
+	optional uint32 y2 = 4;
+}
+
+// BUFF状态数值结构
+message stStateValue
+{
+	optional uint32 baseid = 1;			// 状态表格编号
+	optional uint32 thisid = 2;			// 状态临时编号
+	optional uint32 ltime = 3;			// 持续时间(单位:秒)
+	optional uint32 level = 4;			// Buff 等级
+    optional uint32 value = 5;          // buff 值
+}
+// 这里由于c结构本身不能传list,只能山寨下
+message stStateValueList
+{
+	repeated stStateValue data = 2;		// 状态
+}
+
+// 场景坐标, zPos
+message Coordinate
+{
+	optional uint32 integral = 1;		// 整数部分
+	optional uint32 mydecimal = 2;		// 小数部分
+}
+
+// 场景坐标, Pos
+message Pos
+{
+	optional uint32 x = 1;		// 米
+	optional uint32 y = 2;		// 米
+}
+
+// 场景小坐标, SmallPos
+message SmallPos
+{
+	optional uint32 x = 1;		// 乘100
+	optional uint32 y = 2;		// 乘100
+}
+
+// 矢量Vector2
+message Vector2
+{
+	optional int32 x = 1;		// 两位小数,乘100
+	optional int32 y = 2;		// 两位小数,乘100
+}
+
+// 关系枚举
+enum RelationType
+{
+	Relation_Friend = 0;				// 好友
+	Relation_Honey = 1;					// 恋人
+	Relation_Spouse = 2;				// 夫妻
+	Relation_Enemy = 3;		  			// 仇人成员
+	Relation_Black = 4;		  			// 黑名单成员
+	Relation_Soldier = 5;				// 战士
+	Relation_Team = 6;					// 组队
+	Relation_Corps = 7;		   			// 团
+	Relation_Army = 8;		   			// 军
+	Relation_Country = 9;				// 国
+	Relation_World = 10;				// 世界
+	Relation_FightTeam = 11;			// 战队
+	Relation_Companion = 12;			// 战友
+	Relation_Clan	= 13;				// 帮会
+	Relation_FriendReq = 14;			// 好友申请列表
+	Relation_Bro	= 15;				// 结拜
+	Relation_SpouseReq	= 16;				// 结婚申请列表
+	Relation_MAX = 17;					// 最大数值
+
+}
+
+
+// 这个结构对网络流量影响很大，修改请慎重
+message t_UserData
+{
+	optional uint32 dwUserID = 1;		// 用户ID
+	optional uint32 level = 2;			// 等级
+	optional enumProfession type = 3;	// 职业
+	optional uint32 movespeed = 4;		// 移动速度
+	optional uint32 curhp = 5;			// 当前hp
+	optional uint32 maxhp = 6;			// 最大hp
+	optional uint32 homeland = 7;		// 国家
+	optional uint32 weapon = 8;			// 武器
+	optional uint32 back = 9;			// 背部
+	optional uint32 weaponlevel = 10;	// 武器等级
+	optional uint32 suite = 11;			// 套装
+	optional uint32 suitelevel = 12;	// 装备等级
+	optional uint32 equipsfx = 13;		// 装备特效
+	optional uint32 face = 14;			// 头像
+	optional uint32 hair = 15;			// 头发
+	optional uint32 goodstate = 16;		// 善恶状态
+	optional uint32 traffictype = 17;	// 交通方式
+	optional uint32 trafficid = 18;		// 交通参数
+	optional uint32 milirank = 19;		// 军衔
+	optional uint32 demoncolor = 20;	// 奇异兽颜色
+	optional uint32 demonbaseid = 21;	// 奇异兽baseid
+	optional uint32 corps = 22;			// 团
+	optional uint32 army = 23;			// 军
+	optional uint32 occupy = 24;		// 占领
+	optional uint32 countryfun = 25;	// 国家职务
+	optional uint32 title = 26;			// 头衔
+	optional uint32 pkmode = 27;		// pk模式
+	optional uint32 haircolor = 28;		// 头发颜色
+	optional uint32 compnum = 29;		// 战友序列号，区分战友名字是否过期
+	optional uint32 flags = 30;			// 主角一些状态标志位MainUserStateBit
+	optional uint32 actiontype = 31;	// 进度条动作
+	optional uint32 actiontime = 32;	// 进度条剩余时间
+	optional uint32 trafficid1 = 33;	// 交通参数1
+	optional uint32 emperor = 34;		// 是否帝皇国1是0不是
+	optional uint32 reserved1 = 35;
+	optional uint32 reserved2 = 36;
+	optional uint32 oldzoneid = 37;		// 老区id
+	optional uint32 armyoccupy = 38;	// 军占领
+	optional uint32 backlevel = 39;		// 背部等级
+	optional uint32 demonstate = 40;	// 宠物状态
+	optional uint32 fightteam = 41;		// 战队ID
+	optional string shopname = 42;		// 商店名称
+    optional uint32 inclevel = 43;      // 内功等级
+    optional uint64 incexp   = 44;      // 内功经验
+    optional uint32 inchp    = 45;      // 内功生命
+    optional uint32 incmaxhp = 46;      // 内功生命最大
+    optional string clanname = 47;      // 帮派名称
+    optional uint32 clanposition = 48;  //帮派职位
+	optional uint32 team	= 49;		// 队伍ID
+	optional uint32 viplevel = 50;		// vip等级
+    optional uint32 rebirthlev = 51;    // 飞升等级
+	optional uint32 wingid	= 52;		// 翅膀id
+    optional uint32 bloodnum = 53;      //血珠数量
+    optional uint32 compreScore = 54;   //综合评分
+    optional uint32 trainstate = 55;    //打坐状态
+    optional string broname = 56;		//结拜名字
+    optional string personbroname = 57; //结拜字号
+    optional string lovername = 58;	//伴侣名字
+    optional uint32 isparade = 59;	//是否在游行
+    optional uint32 usehl = 60;
+	optional uint32 haloid  = 61;           // 魂印id
+	optional uint32 halouseid  = 62;           // 魂印屏蔽标志
+	optional uint32 superweapon = 63;       // 主宰称号
+}
+
+message t_NpcData
+{
+	optional uint32 dwTempID = 1;		// npc的临时ID
+	optional uint32 dwBaseID = 2;		// npc的数据表ID
+	optional uint32 movespeed = 3;		// 移动速度
+	optional uint32 byDirect = 4;		// Npc的方向
+	optional uint32 level = 5;			// 等级
+	optional uint32 curhp = 6;			// 当前hp
+	optional uint32 maxhp = 7;			// 最大hp
+	optional uint32 masterid= 8;        // 主人id
+    optional uint32 enemyid = 9;        // 敌人id
+	optional string clanname = 10;		// 所属宗门
+	optional string name = 11;
+	optional uint32 loverid = 12;	//		伴侣id
+	optional uint32 masterrefreshtime = 13;   //              复活时间
+	optional uint32 dwSkinID = 14;   //              皮肤id
+    optional uint32 weapon = 15;        // 武器id
+    optional uint32 suite  = 16;        // 外观id
+}
+
+// 复活类型
+enum SceneUserReliveType
+{
+	ReliveHome = 0;						// 回城复活
+	ReliveHealth = 1;					// 原地复活
+	ReliveNature = 2;					// 自然复活
+	ReliveCopy = 3;						// 副本阵营复活
+	ReliveCopyNear = 4;					// 副本就近复活点重生
+	ReliveBorderGuard = 5;				// 边境复活
+	ReliveOutCity = 6;					// 外城复活
+	ReliveRandom = 7;					// 随机复活(血战到底副本使用)
+	ReliveWeak = 8;						// 虚弱复活
+	ReliveMiddle = 9;					// 中立复活
+	ReliveQiLaiZaiZhan = 10;			// 起来再战
+	ReliveShangBuQi = 11;				// 伤不起
+	ReliveZhenShangBuQi = 12;			// 真伤不起
+	ReliveXinChunGe = 13;				// 信春哥
+	ReliveRandom1 = 14;					// 随机复活(无双擂台赛)
+	RelivePalace1 = 15;					// 宫殿战守方复活
+	RelivePalace2 = 16;					// 宫殿战攻方复活
+	ReliveTemple = 17;					// 神殿复活
+	ReliveQunxiong = 18;				//群雄夺宝
+	ReliveType_Max = 19;				// 上面是客户端复活类型
+	ReliveSystem = 100; 				// 系统复活
+}
+
+// 死亡后，可召唤对应关系的玩家。
+enum SceneUserReliveSummonType
+{
+	ReliveSummonCompanion = 0;			// 召唤战友
+	ReliveSummonCountry = 1;			// 召唤国民
+	ReliveSummonCoprs = 2;				// 召唤团员
+	ReliveSummonMax = 3;
+}
+
+//	财产操作类型枚举
+enum MoneySafeType
+{
+	MoneySafeType_Auction			= 0;	// 时间安全拍卖
+	MoneySafeType_Buy				= 1;	// 时间安全求购
+	MoneySafeType_MailSend			= 2;	// 时间安全发送邮件
+	MoneySafeType_MailRecive		= 3;	// 时间安全收付费邮件
+	MoneySafeType_Trade				= 4;	// 时间安全交易
+	MoneySafeType_Stall				= 5;	// 时间安全摆摊
+	MoneySafeType_CorpsStore		= 6;	// 时间安全团仓库
+	MoneySafeType_ItemDelete		= 7;	// 时间安全删除重要道具
+	MoneySafeType_EquipMake			= 8;	// 时间安全装备改造
+	MoneySafeType_Stock				= 9;	// 时间安全股票
+	MoneySafeType_GoldMoney			= 10;	// 时间安全金币和银币
+	MoneySafeType_Max				= 11;	// 最大值
+}
+
+enum enumSysSetting
+{
+	USER_SETTING_CHAT_NINE					= 1;	// 轻聊
+	USER_SETTING_CHAT_TEAM					= 2;	// 队伍
+	USER_SETTING_CHAT_MAP					= 3;	// 区聊
+	USER_SETTING_CHAT_FRIEND				= 4;	// 好友
+	USER_SETTING_CHAT_CORPS					= 5;	// 团
+	USER_SETTING_CHAT_CLAN					= 6;	// 军(皇图帮会)
+	USER_SETTING_CHAT_COUNTRY				= 7;	// 国家
+	USER_SETTING_CHAT_WORLD					= 8;	// 世界
+	USER_SETTING_CHAT_UNION					= 9;	// 盟国
+	USER_SETTING_CHAT_CITY_CHANGEZONE		= 10;	// 市跨
+	USER_SETTING_CHAT_PROVINCE_CHANGEZONE	= 11;	// 省跨
+	USER_SETTING_CHAT_SILENT				= 12;	// 密聊
+	USER_SETTING_CHAT_SYSTEM				= 13;	// 系统
+	//-20 聊天预留
+	USER_SETTING_FUNC_INVITEBREED			= 14;	// 允许邀请繁殖
+	USER_SETTING_GOLDCHILD_SHENQING			= 15;	// 允许理财邀请
+	USER_SETTING_ZUDUI_SHENQING				= 16;	// 自动接受组队申请
+	USER_SETTING_FUNC_SOCIALACTION			= 17;	// 允许交互动作
+	USER_SETTING_FUNC_INVITECOMPOSE			= 18;	// 允许邀请合并
+	USER_SETTING_FUNC_WING					= 19;	// 显示羽翼
+	USER_SETTING_HORSE_SUITE				= 20;	// 坐骑时装优先
+	USER_SETTING_FUNC_TRADE					= 21;	// 交易
+	USER_SETTING_FUNC_FRIEND				= 22;	// 加为好友
+	USER_SETTING_FUNC_TEAM					= 23;	// 组队
+	USER_SETTING_FUNC_CORPS					= 24;	// 团
+	USER_SETTING_FUNC_ARMY					= 25;	// 军
+	USER_SETTING_FUNC_CHATGROUP				= 26;	// 加入聊天群功能
+	USER_SETTING_FUNC_SUITE					= 27;	// 时装优先
+	USER_SETTING_FUNC_FIGHT					= 28;	// 允许发起挑战
+	USER_SETTING_FUNC_HEAD					= 29;	// 头盔优先显示
+	USER_SETTING_CHANGE_PROVINCE			= 30;	// 是否已经更改过户籍
+	USER_SETTING_SAFE_CITY					= 31;	// 安全城市
+	// WHJ-32-64是服务器安全，客户端不能自己修改 安全预留
+	USER_SETTING_SAFE_SETED					= 32;	// 是否已经设置过安全界面
+	USER_SETTING_SAFE_PWD_ROLE				= 33;	// 密码安全角色
+	USER_SETTING_SAFE_PWD_GOLD_MONEY		= 34;	// 密码安全金币和银币
+	USER_SETTING_SAFE_PWD_EQUIP_MAKE		= 35;	// 密码安全装备改造
+	USER_SETTING_SAFE_PWD_ITEM_DELETE		= 36;	// 密码安全删除重要道具
+	USER_SETTING_SAFE_PWD_STORE				= 37;	// 密码安全仓库
+	USER_SETTING_SAFE_PWD_STOCK				= 38;	// 密码安全股票
+	USER_SETTING_SAFE_PWD_POINT				= 39;	// 密码安全兑换宝币
+	USER_SETTING_SAFE_PWD_TRADE				= 40;	// 密码安全交易邮件等
+	USER_SETTING_SAFE_PWD_PET				= 41;	// 密码安全宠物
+	USER_SETTING_SAFE_PWD_CORPS_STROE		= 42;	// 密码安全团仓库
+	USER_SETTING_ORDERLIST_MONEY			= 43;	// 是否加入银币排行榜
+	USER_SETTING_HISTORY_MONEY_TICKET	   	= 44;	// 保存绑银历史
+	USER_SETTING_HISTORY_MONEY			  	= 45;	// 保存银币历史
+	USER_SETTING_HISTORY_GOLD_TICKET		= 46;	// 保存增点历史
+	USER_SETTING_HISTORY_GOLD			   	= 47;	// 保存金币历史
+	USER_SETTING_ORDERLIST_GOLD_WEEK		= 48;	// 周充值榜
+	// WHJ-32-64是服务器安全，客户端不能自己修改 安全预留
+	USER_SETTING_SAFE_TIME_AUCTION			= 50;	// 时间安全拍卖
+	USER_SETTING_SAFE_TIME_BUY				= 51;	// 时间安全求购
+	USER_SETTING_SAFE_TIME_MAIL_SEND		= 52;	// 时间安全发送邮件
+	USER_SETTING_SAFE_TIME_MAIL_RECIVE		= 53;	// 时间安全收付费邮件
+	USER_SETTING_SAFE_TIME_TRADE			= 54;	// 时间安全交易
+	USER_SETTING_SAFE_TIME_STALL			= 55;	// 时间安全摆摊
+	USER_SETTING_SAFE_TIME_CORPS_STORE		= 56;	// 时间安全团仓库
+	USER_SETTING_SAFE_TIME_ITEM_DELETE		= 57;	// 时间安全删除重要道具
+	USER_SETTING_SAFE_TIME_EQUIP_MAKE		= 58;	// 时间安全装备改造
+	USER_SETTING_SAFE_TIME_STOCK			= 59;	// 时间安全股票
+	USER_SETTING_SAFE_TIME_GOLD_MONEY		= 60;	// 时间安全金币和银币
+	//皇图设置
+	USER_SETTING_PROHIBIT_TRADE				= 61;	// 禁止向我发起交易
+	USER_SETTING_PROHIBIT_TEAM				= 62;	// 禁止邀我加入队伍
+	USER_SETTING_PROHIBIT_CLAN				= 63;	// 禁止邀我加入帮会
+	USER_SETTING_PROHIBIT_PK				= 64;	// 禁止邀我切磋
+	USER_SETTING_Hide_ShenWu				= 65;	// 禁止查看我的神武
+	USER_SETTING_Hide_ShenJia				= 66;	// 禁止查看我的神甲
+	USER_SETTING_Hide_Huanwu				= 67;	// 禁止显示我的幻武
+	USER_SETTING_Hide_Huanjia				= 68;	// 禁止显示我的纪甲
+	USER_SETTING_Hide_Wing					= 69;	// 禁止显示我的翅膀
+	USER_SETTING_Hide_Fetterring	      	= 70;	// 禁止显示我的情义戒指
+	USER_SETTING_Hide_Fettersuite	       	= 71;	// 禁止显示我的情义礼服
+	USER_SETTING_Hide_Fashion	       	= 72;	// 禁止时装
+	USER_SETTING_Hide_FashionWeapon	       	= 73;	// 禁止时装
+	USER_SETTING_Hide_FashionHL	       	= 74;	// 禁止时装
+	USER_SETTING_Hide_BroName	       	= 75;	// 禁止结拜名字
+	USER_SETTING_Hide_SelfTitle	       	= 76;	// 禁止称号
+}
+
+
+// 装备操作类型
+enum EnumMakeType
+{
+	MakeType_Bind		 			= 0;	// 装备绑定
+	MakeType_EquipStarUp  			= 1;	// 装备升星
+	MakeType_Compose	  			= 2;	// 材料合成
+	MakeType_Hole		 			= 5;	// 装备打孔
+	MakeType_Inlay					= 6;	// 装备镶嵌
+	MakeType_HoleColor				= 7;	// 改孔颜色
+	MakeType_ActiveAttr	  			= 8;	// 改孔激活
+	MakeType_ArmyEquip	  			= 9;	// 团魔甲打造
+	MakeType_Converter	  			= 10;	// 道具转换
+	MakeType_Judge		  			= 11;	// 装备鉴定
+	MakeType_DemonUpgrade 			= 12;	// 奇异兽强化
+	MakeType_LifeEquip	  			= 13;	// 生命储存仪
+	MakeType_Inlay_Suit	  			= 14;	// 卡片镶嵌
+	MakeType_ColorEquip	  			= 16;	// 装备染色
+	MakeType_EquipCompose 			= 17;	// 装备合成
+	MakeType_FIVE		  			= 18;	// 修改五行
+	MakeType_BaseAttr	  			= 19;	// 属性精炼
+	MakeType_BindAttr	  			= 20;	// 装备重绑
+	MakeType_EquipLevelUp 			= 21;	// 装备强化
+	MakeType_ClearStone				= 22;	// 宝石摘除
+	MakeType_Drawing				= 23;	// 图纸合成
+	MakeType_EquipSoul				= 24;	// 装备灵魂
+	MakeType_HorseCompse			= 25;	// 坐骑装备合成
+	MakeType_SuiteEquip				= 26;	// 时装精炼
+	MakeType_HorseRefine			= 27;	// 坐骑装备炼化
+	MakeType_HorseUpGrade			= 28;	// 坐骑装备强化
+	MakeType_EquipFeed				= 29;	// 装备养成
+	MakeType_EquipSoulChange		= 30;	// 修改灵魂
+	MakeType_EquipModelChange		= 31;	// 装备幻化
+	MakeType_ClearStone_Suit		= 33;	// 卡片摘除
+	MakeType_LeachStar				= 34;	// 星星萃取
+	MakeType_MakeName				= 35;	// 修改签名
+	MakeType_HorseSoulCompose		= 36;	// 骑魂合成
+	MakeType_HorseCompose			= 37;	// 坐骑融合
+	MakeType_WingRefine				= 38;	// 羽翼注灵
+	MakeType_WingUpGrade			= 39;	// 羽翼强化
+	MakeType_WingSpirit  			= 40;	// 羽翼入魂
+	MakeType_WingRecast  			= 41;	// 羽翼重铸
+	MakeType_WingInlay  			= 42;	// 羽翼神佑
+	MakeType_WingClear  			= 43;	// 神佑解除
+	MakeType_WingChangeModel		= 44;	// 羽翼幻化
+	MakeType_EquipBrand				= 45;	// 传奇烙印
+	MakeType_EquipStarUpWish		= 46;	// 升星祝福
+	MakeType_EquipCancelModel		= 47;	// 取消幻化
+	MakeType_DemonExpBall			= 48;	// 宠物奇幻球
+	MakeType_DemonZ					= 49;	// 宠物修改潜质
+	MakeType_DemonSeal				= 50;	// 宠物潜力之印
+	MakeType_DemonSkillLeach		= 51;	// 宠物技能提取
+	MakeType_DemonSkillCardCompose	= 52;	// 宠物技能卡合成
+	MakeType_DemonSkillForget		= 53;	// 宠物技能遗忘
+	MakeType_DemonSkillStudy		= 54;	// 宠物技能学习
+	MakeType_DemonRelive			= 55;	// 宠物重生
+	MakeType_DemonSingleBreed		= 56;	// 宠物单人繁殖
+	MakeType_DemonModelChange		= 57;	// 宠物幻化外形
+	MakeType_DemonCancelModel		= 58;	// 宠物取消幻化
+	MakeType_DemonInviteBreed		= 59;	// 宠物邀请繁殖
+	MakeType_SacredStoneCreate		= 60;	// 生成圣石
+	MakeType_SacredStoneLevelup		= 61;	// 圣石升级
+	MakeType_UnsealingSoul			= 62;	// 解封神魂
+	MakeType_CancelUnsealing		= 63;	// 重置当阶神魂
+	MakeType_UpgradeUnsealing		= 64;	// 进阶神魂
+	MakeType_HorseSmelting			= 65;	// 纹章熔炼
+	MakeType_EquipSmelting			= 66;	// 装备熔炼
+	MakeType_HorseFeed				= 67;	// 坐骑喂养
+	MakeType_HorseLevelup			= 68;	// 坐骑进阶
+	MakeType_WeaponLevelup			= 69;	// 装备升级
+	MakeType_SuiteRepair			= 70;	// 时装修理
+	MakeType_WingSoulUpgrade		= 71;	// 羽翼通灵
+	MakeType_HorseEquipInlay		= 72;	// 坐骑纹章玉髓镶嵌
+	MakeType_HorseEquipClear		= 73;	// 坐骑纹章玉髓摘除
+	MakeType_Awake_Soul				= 74;	// 装备神魂觉醒
+	MakeType_Swallow_Soul			= 75;	// 装备幻魔吞噬
+	MakeType_Demon_Devour			= 76;	// 宠物吞噬
+	MakeType_Swallow_Soul_Clear		= 77;	// 装备幻魔吞噬清除
+	MakeType_Swallow_Soul_Cancel	= 78;	// 装备幻魔吞噬清除取消
+	MakeType_Property_Judge			= 79;	// 装备属性鉴定
+	MakeType_Shenbing_Build			= 80;	// 神兵魔武打造
+	MakeType_Equip_Strengthen		= 81;	// 装备强化
+	MakeType_Horse_Upgrade			= 82;	// 坐骑升级
+	MakeType_Horse_Inherit	  		= 83;	// 坐骑继承
+	MakeType_Horse_SkinInherit  	= 84;	// 坐骑外观继承
+	MakeType_Horse_KingDisplay	  	= 85;	// 国王坐骑外观操作成功
+	MakeType_StoneAdvanced			= 86;	// 宝石进阶
+    MakeType_Equip_Inherit		    = 87;	// 装备继承
+    MakeType_Equip_Clear		    = 88;	// 装备继承
+    MakeType_Treasure               = 89;   // 合成藏宝图
+	MakeType_Polished 				= 90;	// 装备洗练
+	MakeType_HorsePolished			= 91;	// 坐骑洗练
+	MakeType_FashionBuy		= 92;
+	MakeType_FashionCompose		= 93;
+	MakeType_FashionResolve		= 94;
+	MakeType_Upgrade		= 95;
+	MakeType_Equip_HaloRefine       = 96;   //魂印
+	MakeType_Equip_Max				= 97;
+
+}
+
+// 团魔甲运行时数据(需存档)
+message t_ArmyEquipRunData
+{
+	optional uint32 state		 = 1;		// 装备状态 enumArmyEquipState
+	optional uint32 hp			 = 2;		// 当前血量
+	optional uint32 cold		 = 3;		// 冷却结束时间
+	optional uint32 driver		 = 4;		// 驾驶员/领用人
+}
+
+message t_ArmyEquipData
+{
+	optional uint32 baseid		 = 1;		// 基础数据编号 同场景中NPC编号
+	optional uint32 quality		 = 2;		// 品质
+	optional string name		 = 3;		// 名称
+}
+
+message BabyData
+{
+	optional uint32 id = 1;
+	optional uint32 demonid = 2;
+	optional uint32 state = 3;
+	optional uint32 adoptid = 4;
+}
+
+message BabySerialize
+{
+
+	optional BabyData base = 1;
+	optional uint32 scholar = 2;
+	optional uint32 masterexp = 3;
+	optional uint32 level = 4;
+	optional string name = 5;
+}
+message BillBoardData
+{
+	optional uint32 time = 1;
+	optional string billboard = 2;
+}
+
+
+message NewsData
+{
+	optional uint32 time = 1;
+	optional string news = 2;
+}
+
+message FriendData
+{
+	optional uint32 id = 1;
+	optional uint32 degree = 2;		//好感度
+	optional RelationType type = 3;	//关系类型
+	optional uint32 proposal = 4;	//是否对他求婚（1代表是，其他否）
+}
+
+message PersonalInfo
+{
+	optional uint32 isopen 		= 1;	// 是否公开
+	optional uint32 country 	= 2;	// 国家
+	optional uint32 sex			= 3;	// 性别
+	optional uint32 gameage 	= 4;	// 游戏年龄
+	optional uint32 profression = 5;	// 游戏职业
+	optional uint32 level 		= 6;	// 等级
+	optional uint32 birthday 	= 7;	// 生日
+	optional uint32 star 		= 8;	// 星座
+	optional uint32 qq 			= 9;	// QQ
+	optional uint32 area 		= 10;	// 省市
+	optional uint32 business 	= 11;	// 行业
+	optional uint32 work 		= 12;	// 职业
+	optional uint32 age 		= 13;	// 年龄
+	optional uint32 interest 	= 14;	// 爱好
+
+}
+
+// 团任务怪物
+message stBaseTaskNpc
+{
+	optional uint32 id = 1;
+	optional uint32 hp = 2;
+	optional uint32  x = 3;
+	optional uint32  y = 4;
+}
+
+// 每周金砖账目明细
+message stWeekGoldBoxInfo
+{
+	optional uint32 buytime = 1;		// 购买时间
+	optional uint32 buynum = 2;			// 购买数
+	optional uint32 buyweek = 3;		// 购买周
+	optional uint32 getweek = 4;		// 返还周
+	optional uint32 type = 5;			// 1购买 2赠送
+}
+
+// 头衔数据
+message stTitleData
+{
+	optional uint32 wdID = 1;			// 头衔编号
+	optional uint32 dwTime = 2;			// 头衔剩余时间
+}
+
+// 地图区域类型定义
+enum ZONE_TYPE
+{
+	ZONE_NONE				= 0x0000000;	// 一般区
+	ZONE_HOME_SAFE			= 0x0000001;	// 本国人安全区(本国人在此区域受PK保护;但可以攻击外国人)
+	ZONE_FOREIGN_SAFE		= 0x0000002;	// 外国人安全区(外国人在此区域受PK保护;但可以攻击本国人)
+	ZONE_RELIVE				= 0x0000004;	// 死亡重生区
+	ZONE_NEWBIE				= 0x0000008;	// 新手出生区
+	ZONE_SPORTS				= 0x0000010;	// 竞技区
+	ZONE_FOREIGN_RELIVE		= 0x0000020;	// 国外死亡重生区(目前仅用于边境复活)
+	ZONE_TEAM_EXP			= 0x0000040;	// 好友聚义区
+	ZONE_PRIVATE_STORE 		= 0x0000080;	// 摆摊区
+	ZONE_METAL_MINING		= 0x0000100;	// 金属采矿区
+	ZONE_QUESTANSW			= 0x0000200;	// 答题区
+	ZONE_FISH				= 0x0000400;	// 钓鱼区
+	ZONE_DANCE				= 0x0000800;	// 跳舞区
+	ZONE_ABSOLUTE			= 0x0001000;	// 绝对安全区
+	ZONE_THREE_REWARD		= 0x0002000;	// 三倍经验奖励区
+	ZONE_POINT_FIVE			= 0x0004000;	// 0.5倍经验奖励区
+	ZONE_RED_BATTLE		 	= 0x0008000;	// 红方安全区
+	ZONE_BLUE_BATTLE		= 0x0010000;	// 蓝方安全区
+	ZONE_SAFE			   	= 0x0020000;	// 安全区(本国人不能相互打)
+	ZONE_NONE_LEVEL			= 0x0040000;	// 等级保护区
+	ZONE_FARMING_MINING		= 0x0080000;	// 农业采矿区
+	ZONE_TRAFFICTYPE_BRIDGE = 0x0100000;	// 交通限制区:桥
+	ZONE_FISH_CORP 			= 0x0200000;	// 团钓鱼区
+	ZONE_CORP_TREASURY		= 0x0400000;	// 团藏宝库
+	ZONE_SUNBATHE			= 0x0800000;	// 休闲区
+	ZONE_BATH				= 0x1000000;	// 澡堂子
+	ZONE_YELLOW_BATTLE		= 0x2000000;	// 黄方安全区
+}
+
+
+// 地图功能类型(二进制类型)
+enum MapFunction
+{
+	MapFunction_Dive 			= 0x0000001;	// 潜水
+	MapFunction_NoRide 			= 0x0000002;	// 不能骑马
+	MapFunction_NoScroll	 	= 0x0000004;	// 不能使用卷轴
+	MapFunction_NoGuard			= 0x0000008;	// 不允许携带镖车
+	MapFunction_City			= 0x0000010;	// 城市
+	MapFunction_NoArmyEquip		= 0x0000020;	// 不能驾驶军装备进入
+	MapFunction_NoCorpsEquip	= 0x0000040;	// 不能驾驶团魔甲进入
+	MapFunction_NoTeamCancel	= 0x0000080;	// 不允许退队
+	MapFunction_NoPull			= 0x0000100;	// 不能拉人
+	MapFunction_NoCountryName	= 0x0000200;	// 不显示国家
+	MapFunction_NoPeace			= 0x0000400;	// 不受世界和平影响
+
+}
+
+// 功能NPC类型定义
+enum ClickNpcType
+{
+	ClickNpcType_None			=	0x00000;	// 非功能NPC
+	ClickNpcType_Trade			=	0x00001;	// 商人来性
+	ClickNpcType_Func			=	0x00002;	// 功能专用
+	ClickNpcType_Task			=	0x00004;	// 任务专用
+	ClickNpcType_City			=	0x00008;	// 不需显示的可访问NPC
+	ClickNpcType_Homeland		=	0x00010;	// 本国人可以访问
+	ClickNpcType_Foreign		=	0x00020;	// 外国人可用访问
+	//ClickNpcType_War			=	0x00040;	// 国战时可以访问
+	ClickNpcType_Neutral		=	0x00080;	// 中立区可访问
+	ClickNpcType_Occupy			=	0x00100;	// 占领国及盟国可访问
+	ClickNpcType_WarAttacker	=	0x00200;	// 国战进攻方可访问
+}
+
+enum CountryID
+{
+	CountryID_Middle	= 13; 	// 中立区id
+	CountryID_Copy		= 14; 	// 副本国家id
+	CountryID_Self		= 15; 	// 每个人自己所在国，一般为群发消息用
+}
+
+enum CountryType
+{
+	CountryType_Scene 	= 0; 	// 所在场景所属国家
+	CountryType_Home 	= 1; 	// 国内(出生国)
+	CountryType_Middle 	= 2; 	// 中立区
+	CountryType_Copy 	= 3; 	// 副本
+	CountryType_Max 	= 4; 	// 最大值
+}
+
+// 移动方向的定义
+enum MoveDir
+{
+	option allow_alias 	= true;
+
+	_DIR_RIGHT			= 0;	// 向右
+	_DIR_UPRIGHT		= 1;	// 右上
+	_DIR_RIGHTUP		= 1;	// 右上
+	_DIR_UP				= 2;	// 向上
+	_DIR_LEFTUP			= 3;	// 左上
+	_DIR_UPLEFT			= 3;	// 左上
+	_DIR_LEFT			= 4;	// 向左
+	_DIR_DOWNLEFT		= 5;	// 左下
+	_DIR_LEFTDOWN		= 5;	// 左下
+	_DIR_DOWN			= 6;	// 向下
+	_DIR_RIGHTDOWN		= 7;	// 右下
+	_DIR_DOWNRIGHT		= 7;	// 右下
+	_DIR_WRONG			= 8;	// 错误方向
+}
+
+enum enumArmyFlag
+{
+	FLAG_CORP = 1;
+	FLAG_ARMY = 2;
+	FLAG_COUNTRY = 3;
+	FLAG_NETBAR = 4;
+	FLAG_FRIEND = 5;
+	FLAG_SPOUSE = 6;
+}
+
+enum GameCmdConst
+{
+	option allow_alias = true;
+
+	MAX_CHARINFO 		= 6;		// 最大角色信息个数
+	DEFAULT_MAC 		= 139161;
+	MAX_TEAMMEMBERSIZE 	= 5;		// 最大组队人数
+	SCREEN_GRID_WIDTH 	= 12;		// 屏宽
+	SCREEN_GRID_HEIGHT 	= 8;		// 屏高
+	SMALL_POS_OFFSET 	= 60;		// 小坐标偏移精度,这个是移动速度计算的基值(客户端地图格子的大小)
+	MAX_MOVE_STEP 		= 16;		// 最大步伐
+	MAX_MONEY_NUM 		= 2100000000;// 定义银币的最大数量
+	DEFAULT_MAX_RADIUS 	= 16;		// 默认寻路半径
+	ENABLE_PATH_REUSE 	= 1;		// 开启路径重用
+	TILE_SOLID_BLOCK 	= 0x01;		// 固体阻挡点，服务器使用
+	TILE_FLY_BLOCK 		= 0x02;		// 飞行阻挡点，服务器使用
+	TILE_ENTRY_BLOCK 	= 0x04;		// 人物或者Npc阻挡，服务器使用
+	TILE_OBJECT_BLOCK 	= 0x08;		// 道具阻挡，服务器使用
+	TITE_FIRE_BLOCK     = 0x10;     // 技能火墙阻挡,服务器用
+	MAX_COPYTEAMMEMSIZE = 5;		// 副本队伍成员上限
+	MAIL_COUNT			= 500;		// 邮件上限
+}
+
+//宝藏积分兑换显示物品
+message MineExchange
+{
+	optional uint32 id = 1;		//编号
+	optional uint32 type = 2;	//类别
+	optional uint32 dstitemid = 3; //兑换物品
+	repeated uint32 srcitemid = 4; //所需物品
+	repeated uint32 srcnum = 5; //所需物品数量
+	optional uint32 pointid = 6; //积分显示ID
+	optional uint32 pointnum = 7; //所需积分值
+	optional uint32 etype = 8; //兑换类型,1:积分兑换,2:装备兑换
+	optional uint32 rebirthlv = 9; //飞升等级
+}
+//红包
+message RedPkgMoney
+{
+	optional uint32 type = 1;	//类型,8:元宝,2:绑定元宝,1:金币,同MoneyType
+	optional uint32 money = 2;
+}
+
+//地图属性
+enum MapProperty
+{
+	MapProperty_Cross        = 1;       //穿人穿怪
+	MapProperty_ReliveHealth = 2;       //原地复活
+	MapProperty_RandTransfer = 4;       //随机传送
+	MapProperty_DieLost      = 8;       //死亡掉落
+	MapProperty_AddPkValue   = 16;      //pk值变化
+	MapProperty_AllowPk      = 32;      //允许PK
+
+}
+//瞻仰城主信息
+message MasterInfo
+{
+	optional uint32 userid = 1; //用户ID
+	optional string name = 2;	//用户名称
+	optional uint32 sex = 3;	//性别
+	optional uint32 suite = 4;	//套装
+	optional uint32 weapon = 5;	//武器
+	optional uint32 wingid = 6;	//翅膀
+}
+
+//副本队伍信息
+message CopyTeamMemberInfo
+{
+	optional uint32 userid = 1;		//用户ID
+	optional string name = 2;		//名称
+	optional uint32 face = 3;		//性别
+	optional uint32 profession = 4;	//职业
+	optional uint32 level = 5;		//等级
+	optional uint32 power = 6;		//战力
+	optional uint32 rebirth = 7;	//飞升等级
+	optional uint32 times = 8;		//进入副本次数
+}
+
+message ComradeShipInfo
+{
+    optional RelationType cstype = 1;     //情义类型(Relation_Sworn/Relation_Spouse)
+    optional uint32 id = 2;         //用户id
+    optional string name = 3;       //用户名字
+    optional uint32 face = 4;		//用户性别
+    optional uint32 level = 5;      //用户等级
+    optional uint32 profession = 6; //用户职业
+    optional uint32 createtime = 7; //创建时间
+    optional uint32 suite = 8;      //套装
+    optional uint32 weapon = 9;     //武器
+}
+
+enum LuaDataPart
+{
+	AllPlayer = 0;
+	PetPart = 1;
+	RidePart = 2;
+}
+
+enum ItemType {
+    ItemType_Exp      = -1;  //经验
+    ItemType_Money    = 0;  //货币
+    ItemType_Material = 1;   //原材料
+    ItemType_Basewine = 2;   //基酒
+    ItemType_Formula  = 3; //配方
+    ItemType_Wine     = 4;  //成品酒
+    ItemType_OldWine = 5;   //老酒
+    ItemType_Staff    = 6;   //员工
+    ItemType_Gift     = 8;   //好友赠送礼物的道具
+    ItemType_Prop     = 9;   //普通道具
+    ItemType_Tool     = 10;  //工具
+    ItemType_Skin     = 11;  //时装
+    ItemType_Furniture     = 12;  //家具
+}

@@ -1,0 +1,34 @@
+
+Water0.png
+size: 452,288
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Wave1
+  rotate: false
+  xy: 2, 2
+  size: 291, 281
+  orig: 296, 285
+  offset: 2, 2
+  index: -1
+Wave2
+  rotate: true
+  xy: 295, 66
+  size: 217, 72
+  orig: 223, 77
+  offset: 3, 3
+  index: -1
+Wave3
+  rotate: false
+  xy: 295, 27
+  size: 153, 37
+  orig: 169, 41
+  offset: 2, 2
+  index: -1
+poor1
+  rotate: false
+  xy: 369, 106
+  size: 59, 177
+  orig: 68, 190
+  offset: 6, 11
+  index: -1

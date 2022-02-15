@@ -1,0 +1,21 @@
+{
+  "ver": "1.1.3",
+  "uuid": "7f986a83-8bdf-4ba7-85c7-e5e00dd963dc",
+  "importer": "folder",
+  "isBundle": true,
+  "bundleName": "map",
+  "priority": 1,
+  "compressionType": {
+    "web-mobile": "none"
+  },
+  "optimizeHotUpdate": {
+    "web-mobile": false
+  },
+  "inlineSpriteFrames": {
+    "web-mobile": false
+  },
+  "isRemoteBundle": {
+    "web-mobile": false
+  },
+  "subMetas": {}
+}

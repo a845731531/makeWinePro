@@ -1,0 +1,193 @@
+syntax = "proto2";
+package PmdProtobuf;
+
+message Null
+{
+	enum Param
+	{
+		ForwardNullUserPmd_CS 		= 0;
+		TickRequestNullUserPmd_CS	= 1;
+		TickReturnNullUserPmd_CS	= 2;
+		RequestCloseNullUserPmd_CS	= 3;
+		FrameHeaderNullUserPmd_CS	= 4;
+		CheckVersionUserPmd_CS		= 5;
+		ForwardBwNullUserPmd_CS		= 6;
+		SetTickTimeoutNullUserPmd_CS= 7;
+		SetPingTimeNullUserPmd_CS	= 8;
+		ForwardToZoneNullUserPmd_CS	= 9;	// 直接根据区信息转发
+		MaxDefualtNullUserPmd		= 15;	// 这里为了节省流量,特殊处理系,15以下为系统用,以上也可以被应用层使用
+		StartFrameSyncNullUserPmd_CS		= 16;
+		BroadListFrameSyncNullUserPmd_S		= 17;
+		RequestUpFrameSyncNullUserPmd_C		= 18;
+		HistoryListFrameSyncNullUserPmd_S	= 19;
+		StopFrameSyncNullUserPmd_SC		= 20;
+		ForwardNullUserListPmd_CS= 21;
+
+		//尝试消息
+		JsonCompressNullUserPmd_CS	= 101;	// json压缩约定消息
+	}
+}
+
+enum FrameHeader
+{
+	Bitmask_None 				= 0x00;
+	Bitmask_Compress			= 0x01;	// 压缩
+	Bitmask_Encrypt				= 0x02;	// 加密
+	Bitmask_Header				= 0x04;	// 嵌套消息头
+	Bitmask_NoHeadLen			= 0x08;	// data结构里不包含,data长度的描述,新版协议支持,只需要在第一个消息里设置
+	Bitmask_Reconnect			= 0x10;	// 本次连接支持断线重连标志,只需要在第一个消息里设置
+}
+message ForwardNullUserPmd_CS
+{
+	optional uint32 byCmd		= 1;
+	optional uint32 byParam		= 2;
+	optional uint32 seq			= 3;	// 发送序列号,断线重连用 
+	optional uint64 fid			= 4;	// server used for forward
+	optional bytes data			= 5;	// data
+	optional uint64 prototype	= 6;	// 0:proto,1:json,2:http
+	optional uint32 bitmask		= 7;	// FrameHeader位枚举
+	optional uint32 time		= 8;	// client use0
+}
+
+message ForwardNullUserListPmd_CS
+{
+	optional uint32 byCmd		= 1;
+	optional uint32 byParam		= 2;
+	optional uint32 seq			= 3;	// 发送序列号,断线重连用 
+	optional uint64 userlist    = 4;	// server userlist for forward
+	optional bytes data			= 5;	// data
+	optional uint64 prototype	= 6;	// 0:proto,1:json,2:http
+	optional uint32 bitmask		= 7;	// FrameHeader位枚举
+	optional uint32 time		= 8;	// client use
+}
+
+message TickRequestNullUserPmd_CS
+{
+	optional uint32 requesttime	= 1; // 当前请求消息的本地时间,秒
+}
+message TickReturnNullUserPmd_CS
+{
+	optional uint32 requesttime	= 1; // 对方的请求时间原封返回
+	optional uint32 mytime		= 2; // 当前应答的本地时间,秒,必须填,用来防止加速
+}
+
+message SetPingTimeNullUserPmd_CS
+{
+	optional uint32 pingmsec 	= 1;         // 当前ping值,毫秒
+	optional uint32 accid 		= 2;         // 玩家id,不填表示自己
+}
+
+//设置心跳超时检测时间,每个游戏可能会不一样,这个时间也决定了ping值得刷新时间
+message SetTickTimeoutNullUserPmd_CS
+{
+	required uint32 sec	= 1;
+	required uint32 times = 2[default = 2];		// 连续探测超过几次就断开
+}
+
+message RequestCloseNullUserPmd_CS
+{
+	required string reason	= 1;
+}
+
+// websocket帧头
+message FrameHeaderNullUserPmd_CS
+{
+	required uint32 bitmask		= 1;	// FrameHeader位枚举
+	required bytes data			= 2;
+}
+
+// websocket帧头
+message CheckVersionUserPmd_CS
+{
+	optional uint32 versionserver		= 1;
+	optional uint32 versionclient		= 2;
+}
+
+message ForwardBwNullUserPmd_CS
+{
+	optional bytes data		= 3;
+}
+
+message ForwardToZoneNullUserPmd_CS
+{
+	optional uint32 gameid		= 1;
+	optional uint32 zoneid		= 2;
+	optional uint32 accid		= 3;
+	optional bytes data			= 4;
+}
+
+message UserInitData
+{
+    optional int64   x   = 1;
+    optional int64   y   = 2;
+    optional int64   z   = 3;
+    optional string data = 4;
+}
+
+message FrameSyncData
+{
+	optional uint64 tempid		= 1; // 房间内临时用户编号,也可以是accountid,但是为了后期后话流量,可以选择用更小的id
+	optional string data		= 2;
+    optional UserInitData init  = 3; // 玩家初始化信息
+}
+
+// TODO: MaxDefaultNullUserPmd
+message MaxDefualtNullUserPmd
+{
+}
+
+// 帧同步启动
+message StartFrameSyncNullUserPmd_CS
+{
+	optional uint32 msec			= 1; // 频率,毫秒,1000/msec=帧率
+	optional uint32 randseed		= 2; // 随机种子
+	optional string initdata		= 3; // 起始数据
+	optional uint64 roomid			= 4; // 如果填了这个,表示帧同步数据可以通过网关转发,而不用经过unilight,提高ping值
+}
+
+// 帧同步下发
+message BroadListFrameSyncNullUserPmd_S
+{
+	optional uint32 framenum		= 1; // 当前帧计数
+	repeated FrameSyncData datalist	= 2;
+}
+
+// 帧同步上行
+message RequestUpFrameSyncNullUserPmd_C
+{
+	optional string data			= 1;
+}
+
+message HistoryFrameSyncData
+{
+	optional uint32 framenum		= 1; // 当前帧计数
+	repeated FrameSyncData datalist	= 2;
+}
+
+// 帧同步历史列表
+message HistoryListFrameSyncNullUserPmd_S
+{
+	repeated HistoryFrameSyncData datalist	= 1;
+	optional bool finished					= 2; // 因为列表可能会很大,需要分段发送,就需要有个结束标志
+}
+
+// 帧同步结束,上发结算消息
+message StopFrameSyncNullUserPmd_SC
+{
+	optional string resultdata		= 1; // 结算数据
+}
+
+message JsonCompressKey
+{
+	optional string key		= 1; // key
+	repeated JsonCompressKey json	= 2; //嵌套描述
+}
+// json压缩约定消息
+message JsonCompressNullUserPmd_CS
+{
+	optional string key		= 1; // key
+	repeated JsonCompressKey json	= 2;
+	optional uint32 omit		= 3; // 0表示不省略,1表示省略,默认不省略,default省略,{} ,"",0
+	optional uint32 add		= 4; // 0表示重置,1表示添加
+	repeated string msglist		= 5; //消息列表
+}

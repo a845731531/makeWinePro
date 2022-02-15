@@ -1,0 +1,980 @@
+package GameCmd;
+
+import "Cmd.proto";
+
+// 宝宝状态(自己宝宝状态设置)
+enum BabyState
+{
+	BabyState_None   	= 0;			// 没有被寄养或者领养
+	BabyState_Wait		= 1;			// 等待认领
+	BabyState_Player	= 2;			// 别人领养了
+	BabyState_Recycle	= 3;			// 回来等待主人回收(客户端不用)
+}
+
+// 奇异兽类型枚举
+enum DemonType
+{
+	DemonType_None		= 0;			// 不存在
+	DemonType_Follow	= 1;            // 侍宠
+	DemonType_Ride		= 2;            // 骑宠
+	DemonType_Join		= 3;            // 战宠
+}
+
+// 宠物乐园项目枚举
+enum DemonParkIndex
+{
+	DemonPark_None		= 0;			// 不存在
+	DemonPark_Castle	= 1;            // 魔幻城堡
+	DemonPark_Horse		= 2;            // 旋转木马
+	DemonPark_Car		= 3;            // 雪山飞车
+	DemonPark_FastRun	= 4;            // 飞速狂飙
+	DemonPark_FastSwim	= 5;            // 急流勇进
+	DemonPark_Ghost		= 6;            // 幽灵惊魂
+	DemonPark_Max		= 7;
+}
+
+// 宠物存储，服务器使用
+enum CorpsDemonIndex
+{
+	CorpsDemon_Owner		= 1;		// 主人
+	CorpsDemon_OwnerLevel	= 2;        // 主人等级
+	CorpsDemon_BeginTime	= 3;        // 开始游园时间
+	CorpsDemon_EndTime		= 4;        // 结束游园时间
+	CorpsDemon_TotalExp		= 5;        // 累积经验
+	CorpsDemon_ExtExp		= 6;        // 额外经验
+	CorpsDemon_PresentOne	= 7;        // 额外礼物1
+	CorpsDemon_PresentTwo	= 8;        // 额外礼物2
+	CorpsDemon_PresentThree	= 9;        // 额外礼物3
+	CorpsDemon_PlayType		= 10;       // 游玩项目
+	CorpsDemon_End			= 11;       // 游玩是否结束,0未结束，1结束，2已领回
+	CorpsDemon_ID			= 12;       // 宠物ID
+	CorpsDemon_PresentOneNum	= 13;   // 额外礼物1个数
+	CorpsDemon_PresentTwoNum	= 14;   // 额外礼物2个数
+	CorpsDemon_PresentThreeNum	= 15;   // 额外礼物3个数
+	CorpsDemon_Baseid		= 16;       // 宠物原型
+	CorpsDemon_NpcID		= 17;       // 宠物NPCID
+}
+
+enum enmInviteBreedAction
+{
+	InviteBreedAction_Bar		= 0;	// 开始进度条
+	InviteBreedAction_Commit	= 1;    // 合成
+	InviteBreedAction_Cancel	= 2;    // 取消
+}
+
+enum DemonUserCmdConst
+{
+	option allow_alias = true;
+
+	BABY_ADOPT_PERSON_SIZE = 1;		// 每个人可以领养的奇异兽的最大数量
+	MAX_DEMON_PARK_DEMON_NUM = 45;	// 游乐场宠物最大数目
+	g_dwDemonCircleLevelNum = 30;	// 宠物魔阵技能
+}
+// 结拜成员
+message BroMember
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+	optional uint32 position = 3;
+	optional string positionname = 4;
+	optional uint32 sex = 5;
+	optional uint32 profession = 6;
+	optional uint32 clanid = 7;
+	optional string clanname = 8;
+}
+
+// 帮会职位
+enum enumClanPosition
+{
+	CLAN_POSITION_NORMAL	= 0;	// 普通成员
+	CLAN_POSITION_HONORARY	= 1;	// 荣誉长老
+	CLAN_POSITION_VICELEADER	= 2;// 副会长
+	CLAN_POSITION_LEADER	= 3;	// 会长
+	CLAN_POSITION_MAX	= 4;
+}
+
+// 帮会常量
+enum enumClanConst
+{
+	option allow_alias = true;
+	CLAN_VP_COUNT = 2;	// 副会长人数
+	CLAN_HE_COUNT = 2;	// 荣誉长老人数
+	CLAN_MEM_COUNT = 50;// 帮会成员数
+	CLAN_NUMBER_COUNT = 100;	// 全服帮会数目
+	CLAN_APPLICANT_CNT = 49; // 帮会申请者个数
+	CREATE_CLAN_LEVEL = 30; // 创建帮会等级
+	CREATE_CLAN_COST  = 300; // 建帮元宝
+	DONATE_GOLD_COST = 10;	// 捐献金币基数
+	CLAN_ITEM_MAX	= 60;	// 帮会仓库空间
+	CLAN_DEPOT_LOG_MAX = 200; //帮会仓库日志最大存储条数
+	CLAN_RANK_NUMBER = 50; // 帮会排行榜输出条数
+	CHANGE_CLAN_NAME_COST = 1888; //帮会更名
+	CLEAR_CLAN_NUM = 15;			//清理帮会时间
+	//结拜占用
+	CREATE_BRO_COST = 500;
+	BRO_CHANGE_BRONAME = 500;
+	BRO_CHANGE_SELFNAME = 100;
+	CLAN_BOSS_WAIT		= 180;		//三分钟
+}
+
+// 帮会成员信息
+message ClanMember
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+	optional uint32 sex = 3;
+	optional enumClanPosition position = 4;
+	optional enumProfession profession = 5;
+	optional uint32 level = 6;
+	optional uint32 cntbt = 7;
+	optional bool online = 8;
+	optional bool hasteam = 9;
+	optional bool isleader = 10;
+	optional uint32 suite = 11;
+	optional uint32 weapon = 12;
+	optional uint32 power = 13;
+	optional uint32 offlinetime = 14;
+	optional uint32 clandevote= 15;
+	optional uint32 rebirthlv= 16;
+}
+// 帮会信息
+message ClanInfo
+{
+	optional uint32 clanid = 1;
+	optional string name = 2;
+	optional uint32 level = 3;
+	optional uint32 leader = 4;
+	optional string leadername = 5;
+	optional uint32 memnum = 6;
+	optional uint32 memmax = 7;
+	optional bool isapply = 8;
+	optional uint32 applynum = 9;
+	optional uint32 powerlimit= 10;
+	optional uint32 bosslevel = 11;
+	optional string notice = 12;
+	optional uint32 skillfir = 13;
+	optional uint32 skillsec = 14;
+	optional uint32 skillthr = 15;
+}
+
+// 申请者信息
+message ApplicantInfo
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+	optional enumProfession profession = 3;
+	optional uint32 level = 4;
+	optional uint32 sex = 5;
+	optional bool online = 6;
+	optional bool hasteam = 7;
+	optional uint32 power = 8;
+}
+
+// 帮会等级信息
+message ClanLevelInfo
+{
+	optional uint32 level = 1;
+	optional uint32 upgradefunds = 2;
+	optional uint32 upgrademin = 3;
+	optional uint32 upgrademax = 4;
+	optional uint32 memmax = 5;
+	optional uint32 phyattackmin = 6;
+	optional uint32 phyattackmax = 7;
+	optional uint32 magattackmin = 8;
+	optional uint32 magattackmax = 9;
+	optional uint32 roadattackmin = 10;
+	optional uint32 roadattackmax = 11;
+	optional uint32 phydefmin = 12;     //物理防御最小
+	optional uint32 phydefmax = 13;     //物理防御最大
+}
+
+// 帮会仓库日志信息
+message ClanDepotLogInfo
+{
+	optional uint32 userid = 1;
+	optional string username = 2;
+	optional uint32 qwthisid = 3;
+	optional uint32 dwobjectid = 4;
+	optional string equipname = 5;
+	optional uint32 type = 6;
+	optional uint32 num = 7;
+	optional uint32 flag = 8;
+	optional uint32 value = 9;
+	optional string time = 10;
+}
+
+message ClanCurrentLevelInfo
+{
+	optional uint32 level = 1;
+	optional uint32 upgradefunds = 2;
+	optional uint32 upgrademin = 3;
+	optional uint32 upgrademax = 4;
+	optional uint32 memmax = 5;
+	optional uint32 phyattackmin = 6;
+	optional uint32 phyattackmax = 7;
+	optional uint32 magattackmin = 8;
+	optional uint32 magattackmax = 9;
+	optional uint32 roadattackmin = 10;
+	optional uint32 roadattackmax = 11;
+	optional uint32 phydefmin = 12;     //物理防御最小
+	optional uint32 phydefmax = 13;     //物理防御最大
+}
+
+message ClanSkillInfo
+{
+	optional uint32 skillid = 1;
+	optional uint32 level = 2;
+}
+
+message DemonUserCmd
+{
+	enum Param
+	{
+		//ProtoDefineBeing
+		//stRequestAdoptOutBabyDemonUserCmd = 1;
+
+		stRequestClanListInfoDemonUserCmd_CS	= 2;
+		stRequestClanPowerRankInfoDemonUserCmd_CS = 3;
+		stRetClanListInfoDemonUserCmd_CS		= 4;
+		stRetApplyResultDemonUserCmd_CS			= 5;
+		stRequestCreateClanDemonUserCmd_CS		= 6;
+		stRetAddClanMemDemonUserCmd_CS			= 7;
+		stRetClanApplyDemonUserCmd_S			= 8;
+		stRetAddApplyUserDemonUserCmd_CS		= 9;
+		stReqClanDonateMoneyDemonUserCmd_CS		= 10;
+		stRetClanInfoDemonUserCmd_CS			= 13;
+
+		stRequestJoinClanDemonUserCmd_CS		= 15;
+		stRequestCancelJoinDemonUserCmd_CS		= 16;
+		stInviteJoinClanDemonUserCmd_CS			= 17;
+		stAnwserInviteJoinDemonUserCmd_CS		= 18;
+		stRetInviteJoinDemonUserCmd_CS			= 19;
+
+		stRetApplicantInfoUpdateDemonUserCmd_CS	= 20;
+		stRequestModifyPositionDemonUserCmd_CS	= 21;
+		stRequestKickMemDemonUserCmd_CS			= 22;
+		stRetItemCntbtDemonUserCmd_CS			= 24;
+		stRequestModifyNoticeDemonUserCmd_CS	= 26;
+		stRetModifyNoticeDemonUserCmd_CS		= 27;
+		stRequestApplyDemonUserCmd_CS		    = 30;
+		stRequestClanUpgradeDemonUserCmd_CS		= 33;
+		stRetClanConstructDemonUserCmd_CS		= 32;
+		stRequestDonateLevelDemonUserCmd_CS		= 34;
+
+		stRequestChangeLeaderDemonUserCmd_CS	= 35;
+		stRequestClanPackageDemonUserCmd_CS		= 38;
+		stRetClanPkgInfoDemonUserCmd_CS			= 39;
+		stRequestExchangeItemDemonUserCmd_CS	= 40;
+		stRequestRecoverItemDemonUserCmd_CS		= 41;
+		stRetRemoveItemDemonUserCmd_CS			= 42;
+		stRequestDonateItemDemonUserCmd_CS		= 43;
+		stRequestDonateMoneyDemonUserCmd_CS		= 44;
+		stRetMemInfoUpdateDemonUserCmd_CS		= 45;
+		stRetClanPowerRankInfoDemonUserCmd_CS	= 46;
+		stRequestDisMissClanDemonUserCmd_CS		= 47;
+		stRequestExitClanDemonUserCmd_CS		= 48;
+		stRetRemoveClanMemDemonUserCmd_CS		= 49;
+		stRetCancelApplyUserDemonUserCmd_CS		= 50;
+		stRetDonateLevelDemonUserCmd_CS			= 51;
+		stRetChangeLeaderDemonUserCmd_CS		= 52;
+		stRetClanFundsDemonUserCmd_CS			= 53;
+		stReqClanSignDemonUserCmd_CS			= 55;
+		stRequestAutoRecoverItemDemonUserCmd_CS		= 57;
+
+		stRequestClanDepotLogDemonUserCmd_CS 	= 58;
+		stRetClanDepotLogDemonUserCmd_CS		= 59;
+
+		//stEvolveDemonUserCmd = 11;
+		//stSetDemonMaxNumDemonUserCmd = 14;
+		//stReliveAndClearDemonUserCmd = 23;
+		//stStudyDemonUserCmd = 25;
+		//stDemonDealEggHatchDemonUserCmd = 54;
+        //stRequireIncLevelUpDemonUserCmd_C = 56;
+        //替换消息
+		//stStopAdoptOutBabyDemonUserCmd = 100;
+		stSendBabyDemonUserCmd	 = 101;
+		//stCheckOutBabyExpDemonUserCmd = 102;
+		stRefreshBabyStateDemonUserCmd = 103;
+		//stRequestDemonDataDemonUserCmd = 104;
+		stRefreshDemonNameDemonUserCmd = 105;
+		stSetCurDemonUserCmd = 106;
+		//stAssignDemonPointDemonUserCmd = 107;
+		//stChangeDemonNamePropertyDemonUserCmd = 108;
+		//stAddDemonToolPropertyDemonUserCmd = 109;
+		stNotifyDemonLevelupDemonUserCmd = 110;
+		stNotifyDemonStudySkillDemonUserCmd = 112;
+		//stChangeDemonIntoExpDemonUserCmd = 113;
+		//stSetCurDemonAndJoinDemonUserCmd = 114;
+		//stChangeDemonPropertyDemonUserCmd = 115;
+		//stExpBallDemonUserCmd = 116;
+		//stSealDemonUserCmd = 117;
+		//stSkillLeachDemonUserCmd = 118;
+		//stComposeSkillCardDemonUserCmd = 119;
+		//stForgetSkillDemonUserCmd = 120;
+		//stStudySkillDemonUserCmd = 121;
+		//stReliveDemonUserCmd = 122;
+		//stSingleBreedDemonUserCmd = 123;	
+		stInviteBreedDemonUserCmd = 124;
+		stAnswerBreedDemonUserCmd = 125;
+		//stRequestChangeDemonDemonUserCmd = 126;
+		stChangeDemonDemonUserCmd = 127;
+		stOtherChangeDemonDemonUserCmd = 128;
+		stBreedDemonUserCmd = 129;
+		//stRequestRemoveDemonDemonUserCmd = 130;
+		stRemoveDemonDemonUserCmd = 131;
+		//stChangeModelDemonUserCmd = 132;
+		//stCancelModelDemonUserCmd = 133;
+		//stRequestLockDemonDemonUserCmd = 134;
+		stLockDemonDemonUserCmd = 145;
+		stReturnDemonDataDemonUserCmd = 146;
+		//stDemonAddScholarByMoneyDemonUserCmd = 147;
+		//stDemonParkIntoRegisterDemonUserCmd = 148;
+		stDeleteBabyDemonUserCmd = 149;
+		//stStopAdoptOtherBabyDemonUserCmd = 150;
+		//stRequestAdoptBabyToFriendDemonUserCmd = 151;
+		//stRebuildDemonUserCmd = 152;
+		//stRequestMyDemonParkInfoDemonUserCmd = 153;
+		stReturnMyDemonParkInfoDemonUserCmd = 154;
+		//stDemonParkBackDemonUserCmd = 155;
+		stDemonRequestEggHatchDemonUserCmd = 156;
+		stDemonReturnEggHatchDemonUserCmd = 157;
+		stAdoptOtherBabyDemonUserCmd = 158;
+		//stDemonDevourDemonUserCmd = 159;
+		stSyncFreeGetDemonTimeDemonUserCmd = 200;
+		stRequestSkillLevelUpDemonUserCmd = 160;
+		stReqSkillInfoDemonUserCmd		  = 161;
+		stRetClanActiveAndBoomDemonUserCmd_CS	= 162;
+		stGiveMoneyByActiveDemonUserCmd_CS	= 163;
+		stRefreshClanGXDemonUserCmd_CS	= 164;
+		stModifyPowerLimitClanGXDemonUserCmd_CS	= 165;
+		//stCheckClanMoreInfoDemonUserCmd = 166;
+		stCheckClanBossStateDemonUserCmd = 167;
+		stCheckBroMoneysDemonUserCmd	=	168;
+        stReqPetsInfoDemonUserCmd_CS    = 169;      //宠物出战信息、皮肤信息
+                //stRequestClanMemberListDemonUserCmd_CS = 169;
+		//ProtoDefineEnd
+	}
+}
+
+
+// 领养别人的宝宝
+message stAdoptOtherBabyDemonUserCmd
+{
+	optional uint32 id = 1;					// 宝宝id(也是userid)
+}
+
+// 通知客户端添加宝宝
+message stSendBabyDemonUserCmd
+{
+	optional BabyData data = 1;
+}
+
+// 通知客户端删除宝宝
+message stDeleteBabyDemonUserCmd
+{
+	optional uint32 id = 1;					// 宝宝id
+}
+
+// 更新宝宝状态
+message stRefreshBabyStateDemonUserCmd
+{
+	optional uint32 id = 1;					// 宝宝ID
+	optional uint32 state = 2;				// 宝宝状态
+	optional uint32 adoptid = 3;			// 领养者,状态为被领养有效
+}
+
+
+
+// 刷新跟随奇异兽名字
+message stRefreshDemonNameDemonUserCmd
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+}
+
+
+// 设置当前出战的宠物 召唤
+message stSetCurDemonUserCmd
+{
+	optional uint32 demonid = 1;
+}
+
+message DemonPointData
+{
+	optional uint32 id = 1;
+	optional uint32 num = 2;
+}
+
+
+// 通知客户端奇异兽升级(九屏)
+message stNotifyDemonLevelupDemonUserCmd
+{
+	optional uint32 userid = 1;				// 主人id
+}
+
+// 通知客户端当前奇异兽领悟技能
+message stNotifyDemonStudySkillDemonUserCmd
+{
+	optional uint32 skillid = 1;
+	optional uint32 demonid = 2;
+}
+
+
+// 邀请参与邀请繁殖
+message stInviteBreedDemonUserCmd
+{
+	optional uint32 target = 1;				// 受邀者
+	optional uint32 invite = 2;             // 发起者
+	optional string name = 3;               // 发起者的玩家名字
+}
+
+// 回应是否参与邀请
+message stAnswerBreedDemonUserCmd
+{
+	optional uint32 agree = 1;				// 大于零同意
+	optional uint32 target = 2;             // 受邀者
+	optional uint32 invite = 3;             // 发起者
+}
+
+
+// 邀请繁殖-添加繁殖宠物给自己
+message stChangeDemonDemonUserCmd
+{
+	optional uint32 demonthisid = 1;		// 宠物thisid
+}
+
+// 邀请繁殖-对方添加的宠物信息
+message stOtherChangeDemonDemonUserCmd
+{
+	optional ItemSerialize demonobject = 1;	// 宠物数据
+}
+
+// 邀请繁殖
+message stBreedDemonUserCmd
+{
+	optional uint32 action = 1;				// 邀请繁殖
+	optional uint32 otheruserid = 2;        // 对方userid，用于校验
+}
+
+// 邀请繁殖-删除宠物
+message stRemoveDemonDemonUserCmd
+{
+	optional uint32 userid = 1;				// 删除道具的userid
+}
+
+
+// 邀请繁殖-锁定宠物
+message stLockDemonDemonUserCmd
+{
+	optional uint32 userid = 1;				// 删除道具的userid
+}
+
+// 返回所有奇异兽道具数据
+message stReturnDemonDataDemonUserCmd
+{
+	repeated ItemSerialize data = 1;		// 装备及奇异兽数据
+}
+
+
+// 返回我的宠物游园信息
+message stReturnMyDemonParkInfoDemonUserCmd
+{
+	message Data
+	{
+		optional uint32 type = 1;			// 项目 详见 DemonParkIndex
+		optional uint32 index = 2;          // 服务器用 团存储位置 领回操作时填此值
+		optional uint32 bend = 3;           // 是否结束 0未结束 1已结束
+		optional uint32 demonid = 4;        // 宠物的道具ID
+		optional uint32 lefttime = 5;       // 剩余时间(秒)
+		optional uint32 totalexp = 6;       // 累积经验
+		optional uint32 extexp = 7;         // 额外经验
+		optional uint32 present1 = 8;       // 额外礼物1
+		optional uint32 num1 = 9;           // 额外礼物1个数
+		optional uint32 present2 = 10;      // 额外礼物2
+		optional uint32 num2 = 11;          // 额外礼物2个数
+		optional uint32 present3 = 12;      // 额外礼物3
+		optional uint32 num3 = 13;          // 额外礼物3个数
+	}
+	repeated Data data = 2;
+}
+
+
+// 宠物扭蛋操作类型
+enum DemonGetOperationType
+{
+	DemonGetOperationType_Lucky = 1;			// 幸运扭蛋
+	DemonGetOperationType_Pay 	= 2;			// 付费扭蛋
+}
+// 宠物扭蛋免费次数重置周期
+enum DemonFreeGetCountResetType
+{
+	DemonFreeGetCountResetType_Day 		= 1;	// 天
+	DemonFreeGetCountResetType_Week 	= 2;	// 周
+	DemonFreeGetCountResetType_Month 	= 3;	// 月
+	DemonFreeGetCountResetType_Year 	= 4;	// 年
+	DemonFreeGetCountResetType_Infinite = 5;	// 无限
+}
+
+// 宠物扭蛋免费次数间隔时间单位
+enum DemonFreeTimeIntervalType
+{
+	DemonFreeTimeIntervalType_Minute 	= 1;	// 分钟
+	DemonFreeTimeIntervalType_Hour 		= 2;	// 小时
+	DemonFreeTimeIntervalType_Day 		= 3;	// 天
+	DemonFreeTimeIntervalType_Week 		= 4;	// 周
+	DemonFreeTimeIntervalType_Month 	= 5;	// 月
+}
+
+// 扭蛋申请
+message stDemonRequestEggHatchDemonUserCmd
+{
+	optional DemonGetOperationType operationtype = 1;// 扭蛋操作类型
+	optional uint32 getcount 			= 2;	// 连抽次数
+	optional bool isfree 				= 3;	// 是否免费
+}
+
+// 扭蛋结果
+message stDemonReturnEggHatchDemonUserCmd
+{
+	repeated uint32 demonids = 1;
+}
+
+
+message DemonFreeGetStatus
+{
+	optional DemonGetOperationType operationtype = 1;
+	optional uint32 remainingtime = 2;
+	optional uint32 remainingcount = 3;
+}
+
+// 同步免费抽取宠物剩余时间
+message stSyncFreeGetDemonTimeDemonUserCmd
+{
+	repeated DemonFreeGetStatus data = 1;
+}
+
+
+
+// 帮会信息列表
+message stRequestClanListInfoDemonUserCmd_CS
+{
+}
+
+// 帮会信息列表(服务器返回)
+message stRetClanListInfoDemonUserCmd_CS
+{
+	repeated ClanInfo data = 1;
+    optional uint32 time = 2;
+}
+
+// 创建帮会
+message stRequestCreateClanDemonUserCmd_CS
+{
+	optional string name = 1;	// 帮会名称
+	optional uint32 clanid = 2;
+}
+
+// 入帮申请向帮主或副帮主发提示
+message stRetClanApplyDemonUserCmd_S
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+	optional uint32 isapply = 3; //申请:1,取消:0
+}
+
+// 帮会信息(服务器返回)
+message stRetClanInfoDemonUserCmd_CS
+{
+	optional uint32 clanid = 1;
+	optional string name = 2;
+	optional uint32 leader = 3;
+	optional string leadername = 4;
+	optional uint32 level = 5;
+	optional uint32 memmax = 6;
+	optional uint32 clanfunds = 7;
+	optional uint32 donatelevel = 8;
+	optional string notice = 9;
+	optional ClanLevelInfo nextlevel = 10;
+	repeated ClanMember memdata = 11;
+	repeated ApplicantInfo requestlist = 12;
+	optional uint32 leadersuite = 13;
+	optional uint32 leaderweapon = 14;
+	optional uint32 clanboom = 15;
+	optional uint32 clanactive = 16;
+	optional uint32 powerlimit= 17;
+	optional uint32 leaderwings = 18;
+	optional ClanCurrentLevelInfo currentlevel = 19;
+}
+
+// 申请加入帮会
+message stRequestJoinClanDemonUserCmd_CS
+{
+	optional uint32 clanid = 1;
+}
+//申请加入
+message	stRetAddApplyUserDemonUserCmd_CS
+{
+	optional ApplicantInfo info = 1;
+}
+
+// 取消申请加入帮会
+message stRequestCancelJoinDemonUserCmd_CS
+{
+	optional uint32 clanid = 1;
+}
+//取消申请
+message stRetCancelApplyUserDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+}
+
+// 邀请加入帮会
+message	stInviteJoinClanDemonUserCmd_CS
+{
+	optional uint32 userid = 1;		// 目标用户id
+}
+
+// 邀请加入帮会(服务器返回)
+message stRetInviteJoinDemonUserCmd_CS
+{
+	optional uint32 userid = 1;		// 邀请者
+	optional string username = 2;	// 邀请者名称
+	optional uint32 clanid = 3;
+	optional string clanname = 4;	// 帮会名称
+}
+
+// 是否同意邀请
+message stAnwserInviteJoinDemonUserCmd_CS
+{
+	optional uint32 userid = 1;		// 邀请者id
+	optional uint32 clanid = 2;		// 要加入的帮会id
+	optional uint32 ret = 3;		// 同意与否
+}
+//新增成员
+message stRetAddClanMemDemonUserCmd_CS
+{
+	optional ClanMember data = 1;
+}
+
+// 修改职位(提升或降低)
+message stRequestModifyPositionDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+	optional enumClanPosition position = 2;
+}
+
+// 返回修改职位结果
+message stReqClanDonateMoneyDemonUserCmd_CS
+{
+	optional uint32 num = 1;
+	optional uint32 goldnum = 2;
+}
+// 成员信息更新
+message stRetMemInfoUpdateDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+	optional uint32 level = 3;
+	optional uint32 cntbt = 4;
+	optional enumClanPosition position = 5;
+	optional bool online = 6;
+	optional bool hasteam = 7;
+	optional bool isleader = 8;
+	optional uint32 power = 9;
+	optional uint32 offlinetime = 10;
+	optional uint32 clandevote = 11;
+	optional uint32 rebirthlv = 12;
+}
+
+// 申请者信息更新
+message stRetApplicantInfoUpdateDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+	optional string name = 2;
+	optional uint32 level = 3;
+	optional bool online = 4;
+	optional bool hasteam = 5;
+	optional uint32 power = 6;
+}
+
+// 踢出帮会
+message stRequestKickMemDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+}
+//删除成员
+message stRetRemoveClanMemDemonUserCmd_CS
+{
+	optional uint32 flag = 1;	//1:退出帮会,2:踢出帮会,3:解散帮会
+	optional uint32 clanid = 2;
+	optional uint32 userid = 3;
+	optional string name = 4;
+}
+
+// 请求修改帮会公告
+message stRequestModifyNoticeDemonUserCmd_CS
+{
+	optional string notice = 1;
+}
+
+// 请求修改帮会公告(服务器返回)
+message stRetModifyNoticeDemonUserCmd_CS
+{
+	optional string notice = 1;
+}
+
+// 申请者列表(服务器返回)
+message stRetClanApplicantListDemonUserCmd_CS
+{
+	optional uint32 userid = 1;				// 请求者
+	optional enumClanPosition position = 2; // 请求者职位
+	repeated ApplicantInfo data = 3;
+}
+
+// 申请通过或拒绝
+message stRequestApplyDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+	optional uint32 ispass = 2;		// 0:拒绝;1:通过
+	optional uint32 isall = 3;		// 0:单个申请通过或拒绝;1:一键通过或拒绝
+}
+//申请结果
+message stRetApplyResultDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+	optional uint32 isall = 2; //0:单个申请通过或拒绝;1:一键通过或拒绝
+	optional uint32 ispass = 3;
+	optional string clanname = 4;
+	repeated uint32 applylist = 5;
+}
+
+// 帮会建设(服务器返回)
+message stRetClanConstructDemonUserCmd_CS
+{
+	optional uint32 clanid = 1;
+	optional uint32 level = 2;
+	optional uint32 clanfunds = 3;
+	optional uint32 memmax = 4;
+	optional ClanLevelInfo nextlevel = 5;
+	optional ClanCurrentLevelInfo currentlevel = 6;
+}
+
+// 帮会升级
+message stRequestClanUpgradeDemonUserCmd_CS
+{
+	optional uint32 clanid = 1;
+}
+
+// 帮会捐献等级
+message stRequestDonateLevelDemonUserCmd_CS
+{
+	optional uint32 donatelevel = 1;
+}
+
+message stRetDonateLevelDemonUserCmd_CS
+{
+	optional uint32 donatelevel = 1;
+}
+
+// 转换会长
+message stRequestChangeLeaderDemonUserCmd_CS
+{
+	optional uint32 userid = 1;
+}
+message stRetChangeLeaderDemonUserCmd_CS
+{
+	optional uint32 leader = 1;
+	optional string leadername = 2;
+	optional uint32 leadersuite = 3;
+	optional uint32 leaderweapon = 4;
+	optional uint32 leaderwings = 5;
+}
+
+// 请求帮会仓库
+message stRequestClanPackageDemonUserCmd_CS
+{
+}
+
+// 请求仓库(服务器返回)
+message stRetClanPkgInfoDemonUserCmd_CS
+{
+	repeated ItemSerialize itemlist = 1;
+    repeated uint32 exnum = 2;
+}
+
+// 兑换道具
+message stRequestExchangeItemDemonUserCmd_CS
+{
+	optional uint32 qwThisID = 1;
+	optional bool isexchange = 2;
+}
+
+// 回收道具
+message stRequestRecoverItemDemonUserCmd_CS
+{
+	optional uint32 rtype = 1;
+	repeated uint32 qwThisID = 2;
+}
+
+//自动回收
+message stRequestAutoRecoverItemDemonUserCmd_CS
+{
+	repeated uint32 qwThisID = 1;
+}
+
+// 兑换/回收道具(服务器返回)
+message stRetRemoveItemDemonUserCmd_CS
+{
+	repeated uint32 qwThisID = 1;
+	optional uint32 userid = 2;		// 操作者
+	optional string name = 3;		// 操作者名称
+	optional uint32 flag = 4;		// 兑换或回收;兑换:1,回收:2
+}
+
+// 捐献道具
+message stRequestDonateItemDemonUserCmd_CS
+{
+	optional uint32 qwThisID = 1;	// 道具唯一ID
+	optional bool isdonate = 2;
+}
+
+// 捐献金币
+message stRequestDonateMoneyDemonUserCmd_CS
+{
+	optional uint32 type = 1;		//将MoneyType
+	optional uint32 num = 2;
+	optional uint32 remain = 3;		//捐献次数
+	optional uint32 reqtype = 4;
+}
+message stRetClanFundsDemonUserCmd_CS
+{
+	optional uint32 funds = 1;
+}
+
+// 请求帮会仓库日志
+message stRequestClanDepotLogDemonUserCmd_CS
+{
+	optional uint32 num = 1;
+}
+
+// 返回帮会仓库日志
+message stRetClanDepotLogDemonUserCmd_CS
+{
+	repeated ClanDepotLogInfo data = 1;
+}
+
+// 解散帮会
+message stRequestDisMissClanDemonUserCmd_CS
+{
+}
+// 退出帮会
+message stRequestExitClanDemonUserCmd_CS
+{
+}
+
+//帮会战力榜
+message stRequestClanPowerRankInfoDemonUserCmd_CS
+{
+}
+
+message ClanRank
+{
+	optional uint32 order = 1;
+	optional uint32 clanid = 2;
+	optional string name = 3;
+	optional uint32 level = 4;
+	optional uint32 num = 5;
+	optional uint32 power = 6;
+	optional string leadername = 7;
+	optional uint32 fashion = 8;		// 主宰特效等级
+    optional uint32 leaderid = 9;       // 帮主id
+}
+//返回帮会战力榜
+message stRetClanPowerRankInfoDemonUserCmd_CS
+{
+	repeated ClanRank data = 1;
+}
+
+//返回道具贡献值
+message stRetItemCntbtDemonUserCmd_CS
+{
+	optional uint32 qwthisid = 1;
+	optional uint32 dwobjectid = 2;
+	optional uint32 pkgnum = 3;
+	optional uint32 cntbt = 4;
+	optional uint32 flag = 5;	//1:捐献,2:兑换
+}
+
+message stReqClanSignDemonUserCmd_CS
+{
+	optional uint32 stype = 1; //0:打开界面,1:签到
+	optional uint32 state = 2; //0:没有签到,1:已签到 上行不填充
+	optional uint32 num = 3; //剩余次数, 上行不填充
+}
+//宗门技能
+message stRequestSkillLevelUpDemonUserCmd
+{
+	optional uint32 uid = 1;
+	optional uint32 clanid = 2;
+	optional uint32 skillid = 3;
+	optional uint32 level = 4;
+	optional uint32 type = 5;
+}
+message stReqSkillInfoDemonUserCmd
+{
+	optional uint32	btype		= 1;	//类型
+	optional uint32 clanid		= 2;
+	repeated ClanSkillInfo data = 3;	//技能数据返回
+}
+message stRetClanActiveAndBoomDemonUserCmd_CS
+{
+	optional uint32 btype = 1;
+	optional uint32 clanactive = 2;
+	optional uint32 clanboom = 3;
+	optional uint32 clanfund = 4;
+	optional uint32 uid = 5;
+}
+message stGiveMoneyByActiveDemonUserCmd_CS
+{
+	optional uint32 btype = 1;
+	optional uint32 uid = 2;
+	optional uint32 clanid = 3;
+	optional uint32 remain = 4;
+	optional uint32 num = 5;
+	optional uint32 money = 6;
+	optional uint32 active = 7;
+	optional string talk = 8;
+}
+message	stRefreshClanGXDemonUserCmd_CS
+{
+	optional uint32 btype = 1;	// 1 请求显示 2 返回值
+	optional uint32 clanid = 2;
+	optional uint32 gxmoney = 3;
+	optional uint32 exnum = 4;	// 兑换次数
+}
+message	stModifyPowerLimitClanGXDemonUserCmd_CS
+{
+	optional uint32 clanid = 1;
+	optional uint32 powerlimit = 2;
+	optional uint32 etype = 3;
+}
+
+message stCheckClanBossStateDemonUserCmd
+{
+	optional bool canCall = 1;
+}
+message stCheckBroMoneysDemonUserCmd
+{
+	optional uint32 moneys = 1;
+}
+
+message stReqPetsInfoDemonUserCmd_CS
+{
+    optional uint32 dwReqType =   1;           //客户端请求类型:1是宠物出战或休息,2皮肤穿戴, 3购买皮肤, 4设置攻击类型
+    optional uint32 dwReqSubType = 2;          //请求子类型 1是宠物，2是精灵
+    optional uint32 dwFightStatus = 3;         //宠物参战状态，1是已参战，0是未参战
+    optional uint32 dwCurSkinId   = 4;         //当前皮肤id
+    repeated uint32 tSkinList     = 5;         //已拥有皮肤列表
+    optional uint32 dwAtkType     = 6;         //攻击类型，0是跟随攻击，1是自动攻击
+    optional uint32 dwExtData     = 7;          //扩展数据,宠物返回这个字段大于0代表购买了buf加成
+}

@@ -1,0 +1,82 @@
+package GameCmd;
+
+//
+message ChildCmd
+{
+	enum Param
+	{
+        stPregnantChildCmd_NT = 101;//怀晕推送
+		stChildLsChildCmd_NT = 102;//小孩列表推送
+        stSpeedupChildCmd_CS = 103;//加速出生
+        stSpeedupChildCmd_SC = 104;//加速出生 返回
+		stRefreshChildCmd_NT = 105;//刷新通知
+		stNewPetnameChildCmd_CS = 106;//修改昵称
+		stNewPetnameChildCmd_SC = 107;//修改昵称 返回
+    }
+}
+
+//孩子数据
+message tChildData
+{
+	optional uint32 childId = 1; //孩子id
+	optional string name = 2;//名称
+	optional string petname = 3;//昵称
+	optional uint32 state = 4; //状态（0标识被怀着，1标识出生）
+	optional uint32 pregnantTime = 5; //被怀上的时间
+	optional uint32 bornTime = 6; //出生的时间
+	optional uint32 fatherId = 7; //父亲id
+	optional uint32 motherId = 8; //母亲id
+	optional string fatherName = 9;//父亲名称
+	optional string motherName = 10;//母亲名称
+}
+
+
+
+//怀孕通知
+message stPregnantChildCmd_NT
+{
+    optional tChildData childData = 1;		// 怀孕数据
+}
+
+//小孩列表推送（包括未出生的）
+message stChildLsChildCmd_NT
+{
+	repeated tChildData childData = 1;		// 孩子数据
+}
+
+//加速出生
+message stSpeedupChildCmd_CS
+{
+	optional uint32 propId = 1;		        // 加速道具id
+    optional uint32 propNum = 2;		    // 加速道具数量
+}
+
+//加速出生 返回
+message stSpeedupChildCmd_SC
+{
+	optional uint32 errCode = 1;		        // 
+    optional string errMsg = 2;		            // 
+}
+
+//刷新通知(加速会通知 怀孕结束通知)
+message stRefreshChildCmd_NT
+{
+	optional tChildData childData = 1;
+}
+
+
+//修改昵称
+message stNewPetnameChildCmd_CS
+{
+	optional uint32 childId = 1;
+	optional string petname = 2;
+}
+
+//修改昵称 返回
+message stNewPetnameChildCmd_SC
+{
+	optional uint32 errCode = 1;		        // 
+    optional string errMsg = 2;		            // 
+	optional uint32 childId = 3;		//孩子id
+	optional string petname = 4;		//孩子昵称
+}
